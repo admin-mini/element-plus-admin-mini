@@ -1,0 +1,16 @@
+/**
+  该文件用于vscode js提示
+  配置参考文章 https://segmentfault.com/a/1190000018013282?utm_source=tag-newest
+*/
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "types": ["element-plus/global"],
+    "lib": ["ESNext", "DOM"],
+    "paths": {
+      "@/*": ["src/*"]
+    }
+  },
+  "exclude": ["node_modules", "dist"],
+  "include": ["src/**/*"]
+}

@@ -1,0 +1,517 @@
+{
+    "apifoxProject": "1.0.0",
+    "$schema": {
+        "app": "apifox",
+        "type": "project",
+        "version": "1.2.0"
+    },
+    "info": {
+        "name": "mock",
+        "description": "",
+        "mockRule": {
+            "rules": [],
+            "enableSystemRule": true
+        }
+    },
+    "apiCollection": [
+        {
+            "name": "根目录",
+            "auth": {},
+            "parentId": 0,
+            "serverId": "",
+            "description": "",
+            "identityPattern": {
+                "httpApi": {
+                    "type": "methodAndPath",
+                    "bodyType": "",
+                    "fields": []
+                }
+            },
+            "preProcessors": [
+                {
+                    "id": "inheritProcessors",
+                    "type": "inheritProcessors",
+                    "data": {}
+                }
+            ],
+            "postProcessors": [
+                {
+                    "id": "inheritProcessors",
+                    "type": "inheritProcessors",
+                    "data": {}
+                }
+            ],
+            "inheritPostProcessors": {},
+            "inheritPreProcessors": {},
+            "items": [
+                {
+                    "name": "用户列表",
+                    "api": {
+                        "id": "112510442",
+                        "method": "get",
+                        "path": "/user/list",
+                        "parameters": {},
+                        "auth": {},
+                        "commonParameters": {
+                            "query": [],
+                            "body": [],
+                            "cookie": [],
+                            "header": []
+                        },
+                        "responses": [
+                            {
+                                "id": "325134070",
+                                "name": "成功",
+                                "code": 200,
+                                "contentType": "json",
+                                "jsonSchema": {
+                                    "type": "object",
+                                    "x-apifox-refs": {
+                                        "01HAVG2T5C4TSS1016FM6Y4EXR": {
+                                            "$ref": "#/definitions/62021245",
+                                            "x-apifox-overrides": {
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {},
+                                                        "x-apifox-orders": [
+                                                            "01HAVG39JHAWRW637KS143J0FY"
+                                                        ],
+                                                        "x-apifox-refs": {
+                                                            "01HAVG39JHAWRW637KS143J0FY": {
+                                                                "$ref": "#/definitions/62021687"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "required": [
+                                                "data"
+                                            ]
+                                        }
+                                    },
+                                    "x-apifox-orders": [
+                                        "01HAVG2T5C4TSS1016FM6Y4EXR"
+                                    ],
+                                    "properties": {}
+                                }
+                            }
+                        ],
+                        "responseExamples": [],
+                        "requestBody": {
+                            "type": "none",
+                            "parameters": []
+                        },
+                        "description": "",
+                        "tags": [],
+                        "status": "developing",
+                        "serverId": "",
+                        "operationId": "",
+                        "sourceUrl": "",
+                        "ordering": 10,
+                        "cases": [],
+                        "mocks": [],
+                        "customApiFields": "{}",
+                        "advancedSettings": {},
+                        "mockScript": {},
+                        "codeSamples": [],
+                        "commonResponseStatus": {},
+                        "responseChildren": [],
+                        "preProcessors": [],
+                        "postProcessors": [],
+                        "inheritPostProcessors": {},
+                        "inheritPreProcessors": {}
+                    }
+                },
+                {
+                    "name": "登陆",
+                    "api": {
+                        "id": "112513156",
+                        "method": "post",
+                        "path": "/user/login",
+                        "parameters": {},
+                        "auth": {},
+                        "commonParameters": {
+                            "query": [],
+                            "body": [],
+                            "cookie": [],
+                            "header": []
+                        },
+                        "responses": [
+                            {
+                                "id": "325138927",
+                                "name": "成功",
+                                "code": 200,
+                                "contentType": "json",
+                                "jsonSchema": {
+                                    "type": "object",
+                                    "x-apifox-refs": {
+                                        "01HAVGF2NK3SR5DGQ4GXCVM4MP": {
+                                            "$ref": "#/definitions/62022094",
+                                            "x-apifox-overrides": {}
+                                        }
+                                    },
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {},
+                                            "x-apifox-orders": [
+                                                "01HAVGFZYXNBD8Q723G377PYP2"
+                                            ],
+                                            "required": [],
+                                            "x-apifox-refs": {
+                                                "01HAVGFZYXNBD8Q723G377PYP2": {
+                                                    "$ref": "#/definitions/62021687"
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "x-apifox-orders": [
+                                        "01HAVGF2NK3SR5DGQ4GXCVM4MP",
+                                        "data"
+                                    ]
+                                }
+                            }
+                        ],
+                        "responseExamples": [],
+                        "requestBody": {
+                            "type": "application/json",
+                            "parameters": [],
+                            "jsonSchema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    }
+                                },
+                                "x-apifox-orders": [
+                                    "username",
+                                    "password"
+                                ],
+                                "required": [
+                                    "username",
+                                    "password"
+                                ]
+                            }
+                        },
+                        "description": "",
+                        "tags": [],
+                        "status": "developing",
+                        "serverId": "",
+                        "operationId": "",
+                        "sourceUrl": "",
+                        "ordering": 20,
+                        "cases": [],
+                        "mocks": [],
+                        "customApiFields": "{}",
+                        "advancedSettings": {},
+                        "mockScript": {},
+                        "codeSamples": [],
+                        "commonResponseStatus": {},
+                        "responseChildren": [],
+                        "preProcessors": [],
+                        "postProcessors": [],
+                        "inheritPostProcessors": {},
+                        "inheritPreProcessors": {}
+                    }
+                },
+                {
+                    "name": "用户新增",
+                    "api": {
+                        "id": "112513670",
+                        "method": "post",
+                        "path": "/user/add",
+                        "parameters": {},
+                        "auth": {},
+                        "commonParameters": {
+                            "query": [],
+                            "body": [],
+                            "cookie": [],
+                            "header": []
+                        },
+                        "responses": [
+                            {
+                                "id": "325139548",
+                                "name": "成功",
+                                "code": 200,
+                                "contentType": "json",
+                                "jsonSchema": {
+                                    "type": "object",
+                                    "x-apifox-refs": {
+                                        "01HAVGHXANHGB3TDT3R16JZCAS": {
+                                            "$ref": "#/definitions/62022094",
+                                            "x-apifox-overrides": {}
+                                        }
+                                    },
+                                    "properties": {},
+                                    "x-apifox-orders": [
+                                        "01HAVGHXANHGB3TDT3R16JZCAS"
+                                    ]
+                                }
+                            }
+                        ],
+                        "responseExamples": [],
+                        "requestBody": {
+                            "type": "application/json",
+                            "parameters": [],
+                            "jsonSchema": {
+                                "type": "object",
+                                "properties": {
+                                    "01HAVGHC26ZWZVKSZA6STMKRQB": {
+                                        "x-tmp-pending-properties": true
+                                    }
+                                },
+                                "x-apifox-orders": [
+                                    "01HAVGHC26ZWZVKSZA6STMKRQB"
+                                ],
+                                "required": [
+                                    "01HAVGHC26ZWZVKSZA6STMKRQB"
+                                ]
+                            }
+                        },
+                        "description": "",
+                        "tags": [],
+                        "status": "developing",
+                        "serverId": "",
+                        "operationId": "",
+                        "sourceUrl": "",
+                        "ordering": 30,
+                        "cases": [],
+                        "mocks": [],
+                        "customApiFields": "{}",
+                        "advancedSettings": {},
+                        "mockScript": {},
+                        "codeSamples": [],
+                        "commonResponseStatus": {},
+                        "responseChildren": [],
+                        "preProcessors": [],
+                        "postProcessors": [],
+                        "inheritPostProcessors": {},
+                        "inheritPreProcessors": {}
+                    }
+                },
+                {
+                    "name": "用户编辑",
+                    "api": {
+                        "id": "112515133",
+                        "method": "post",
+                        "path": "/user/edit",
+                        "parameters": {},
+                        "auth": {},
+                        "commonParameters": {
+                            "query": [],
+                            "body": [],
+                            "cookie": [],
+                            "header": []
+                        },
+                        "responses": [
+                            {
+                                "id": "325142671",
+                                "name": "成功",
+                                "code": 200,
+                                "contentType": "json",
+                                "jsonSchema": {
+                                    "$ref": "#/definitions/62022094"
+                                }
+                            }
+                        ],
+                        "responseExamples": [],
+                        "requestBody": {
+                            "type": "none",
+                            "parameters": []
+                        },
+                        "description": "",
+                        "tags": [],
+                        "status": "developing",
+                        "serverId": "",
+                        "operationId": "",
+                        "sourceUrl": "",
+                        "ordering": 40,
+                        "cases": [],
+                        "mocks": [],
+                        "customApiFields": "{}",
+                        "advancedSettings": {},
+                        "mockScript": {},
+                        "codeSamples": [],
+                        "commonResponseStatus": {},
+                        "responseChildren": [],
+                        "preProcessors": [],
+                        "postProcessors": [],
+                        "inheritPostProcessors": {},
+                        "inheritPreProcessors": {}
+                    }
+                }
+            ]
+        }
+    ],
+    "socketCollection": [],
+    "docCollection": [],
+    "schemaCollection": [
+        {
+            "name": "根目录",
+            "items": [
+                {
+                    "name": "列表",
+                    "displayName": "",
+                    "id": "#/definitions/62021245",
+                    "description": "",
+                    "schema": {
+                        "jsonSchema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "type": "integer",
+                                    "mock": {
+                                        "mock": "@integer(0)"
+                                    }
+                                },
+                                "data": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {},
+                                        "x-apifox-orders": []
+                                    }
+                                },
+                                "total": {
+                                    "type": "integer",
+                                    "mock": {
+                                        "mock": "@integer(60, 100)"
+                                    }
+                                }
+                            },
+                            "x-apifox-orders": [
+                                "code",
+                                "total",
+                                "data"
+                            ],
+                            "required": [
+                                "code",
+                                "data",
+                                "total"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "user",
+                    "displayName": "",
+                    "id": "#/definitions/62021687",
+                    "description": "",
+                    "schema": {
+                        "jsonSchema": {
+                            "type": "object",
+                            "properties": {
+                                "userId": {
+                                    "type": "string"
+                                },
+                                "username": {
+                                    "type": "string"
+                                },
+                                "nickName": {
+                                    "type": "string"
+                                },
+                                "loginTime": {
+                                    "type": "string"
+                                },
+                                "createTime": {
+                                    "type": "string"
+                                }
+                            },
+                            "x-apifox-orders": [
+                                "userId",
+                                "username",
+                                "nickName",
+                                "loginTime",
+                                "createTime"
+                            ],
+                            "required": [
+                                "userId",
+                                "createTime",
+                                "loginTime",
+                                "nickName",
+                                "username"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "标准响应",
+                    "displayName": "",
+                    "id": "#/definitions/62022094",
+                    "description": "",
+                    "schema": {
+                        "jsonSchema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "type": "integer",
+                                    "mock": {
+                                        "mock": "@integer(0)"
+                                    }
+                                },
+                                "msg": {
+                                    "type": "string"
+                                }
+                            },
+                            "x-apifox-orders": [
+                                "code",
+                                "msg"
+                            ],
+                            "required": [
+                                "code",
+                                "msg"
+                            ]
+                        }
+                    }
+                }
+            ]
+        }
+    ],
+    "responseCollection": [],
+    "apiTestCaseCollection": [
+        {
+            "name": "根目录",
+            "children": [],
+            "items": []
+        }
+    ],
+    "testCaseReferences": [],
+    "environments": [],
+    "commonScripts": [],
+    "databaseConnections": [],
+    "globalVariables": [],
+    "commonParameters": null,
+    "projectSetting": {
+        "id": "2749084",
+        "auth": {},
+        "servers": [
+            {
+                "id": "default",
+                "name": "默认服务"
+            }
+        ],
+        "gateway": [],
+        "language": "zh-CN",
+        "apiStatuses": [
+            "developing",
+            "testing",
+            "released",
+            "deprecated"
+        ],
+        "mockSettings": {},
+        "preProcessors": [],
+        "postProcessors": [],
+        "advancedSettings": {},
+        "initialDisabledMockIds": [],
+        "cloudMock": {
+            "security": "free",
+            "enable": true,
+            "tokenKey": "apifoxToken"
+        }
+    }
+}
