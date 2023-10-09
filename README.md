@@ -2,7 +2,7 @@
  element-plus-admin-mini 完全免费、可商用，基于Vue3+vite+element-plus+js,提炼了大量项目使用频率最高的功能；
 
 [中文文档](http://admin-mini.gitee.io/element-plus-admin-mini-docs/)
-[预览](http://admin-mini.gitee.io/element-plus-admin-mini-pure/)
+[预览](http://admin-mini.gitee.io/element-plus-admin-mini-mini/)
 
 # 特性
 - 动态开发环境切换：（开发、测试、生产、mock）轻松切换

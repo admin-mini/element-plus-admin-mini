@@ -1,4 +1,4 @@
-import{r as m,c as t,o as v,d as _,e as a,f as s,g as u,t as o,h as y}from"./index-b4104920.js";const b={class:"admin-view"},f={class:"admin-view-header"},w={class:"admin-view-body"},h={style:{display:"block","white-space":"pre-wrap",background:"var(--el-color-black)",color:"var(--el-color-white)","margin-top":"30px",padding:"20px"}},V={__name:"index",setup(g){const e=m({});let i=`<template>
+import{r as m,c as t,o as v,d as _,e as a,f as s,g as u,t as o,h as y}from"./index-8c6450b1.js";const b={class:"admin-view"},f={class:"admin-view-header"},w={class:"admin-view-body"},h={style:{display:"block","white-space":"pre-wrap",background:"var(--el-color-black)",color:"var(--el-color-white)","margin-top":"30px",padding:"20px"}},V={__name:"index",setup(g){const e=m({});let i=`<template>
     <div class="admin-view">
         <div class="admin-view-header">
             <admin-bread></admin-bread>
