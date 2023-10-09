@@ -44,7 +44,8 @@ const router = useRouter()
 const postForm = ref()
 const systemStore = useSystemStore()
 const postData = reactive({
-  code: '123'
+  userName: 'admin',
+  passWord: "123456"
 })
 
 const rules = reactive({
