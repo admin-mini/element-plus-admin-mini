@@ -29,7 +29,7 @@ function togglePosition() {
                         <Notification />
                     </el-icon>
                 </div>
-                <div class="brand-text">Element-Plus-Admin-Pure</div>
+                <div class="brand-text">Element-Plus-Admin-Mini</div>
             </div>
             <div class="admin-menu" v-if="menuPositionStorge == 'horizontal'">
                 <base-navigator :mode="menuPositionStorge"></base-navigator>
