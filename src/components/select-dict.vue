@@ -1,7 +1,7 @@
 <template>
   <el-select v-model="val" collapse-tags collapse-tags-tooltip style="width: 100%">
     <el-option v-for="option in options" :key="option[props.valueKey]" :value="option[props.valueKey]"
-      :label="option[props.labelKey]"></el-option>
+      :label="option[props.labelKey]" :disabled="option.disabled"></el-option>
   </el-select>
 </template>
 

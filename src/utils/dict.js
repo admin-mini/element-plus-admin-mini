@@ -1,14 +1,14 @@
 let dict = {
   SETTING: {
-    OPEN_PERMISSION: false, //是否开启权限
+    OPEN_PERMISSION: true, //是否开启权限
     API_URL: '/api/', //API具体路径
     IMG_URL: '/picTemp/',
     AREA_CODE: 131000
   },
   userType: [
-    { value: '1', label: '管理员', color: 'success' },
-    { value: '2', label: '操作员', color: 'danger' },
-    { value: '3', label: '录入员', color: 'warning' }
+    { value: '1', label: '管理员', color: 'success', disabled: false },
+    { value: '2', label: '操作员', color: 'danger', disabled: false },
+    { value: '3', label: '录入员', color: 'warning', disabled: true }
   ]
 }
 //生产环境使用/index.html引用的setting.js
