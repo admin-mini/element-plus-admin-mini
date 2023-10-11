@@ -22,9 +22,9 @@
 import { userList } from '@/api'
 import useAdminTable from '@/plugins/use-admin-table'
 const emits = defineEmits(["success"])
-const $table = useAdminTable()
-$table.api = userList
-
+const $table = useAdminTable({
+    api: userList
+})
 function choose(row) {
     emits("success", row)
 }

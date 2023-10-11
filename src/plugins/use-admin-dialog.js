@@ -25,14 +25,15 @@ export default function useAdminDialog() {
       { default: () => vnode }
     )
     dialogVnode.appContext = vm.appContext
+    vnode.props = vnode.props || []
     let _success = vnode.props.onSuccess || function () {}
     let _end = vnode.props.onEnd || function () {}
     vnode.props.onSuccess = function (...arr) {
-      _success(...arr)
+      _success && _success(...arr)
       close()
     }
     vnode.props.onEnd = function (...arr) {
-      _end(...arr)
+      _end && _end(...arr)
       close()
     }
     function close() {

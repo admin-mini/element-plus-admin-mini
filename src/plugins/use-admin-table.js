@@ -1,8 +1,7 @@
 import { reactive, onMounted } from 'vue'
 
 import { ElMessage } from 'element-plus'
-export default function userAdminTable(options) {
-  options = Object.assign({ autoSearch: true }, options)
+export default function useAdminTable(options) {
   const rules = reactive({})
   const $table = reactive({
     pageLayout: 'total, sizes, prev, pager, next, jumper',
@@ -22,11 +21,13 @@ export default function userAdminTable(options) {
     rules: rules,
     ref: null, //如果指定会自动执行validate校验表单
     parse: (data) => data.data, //格式化返回数据
-    parseQuery: (query) => query //格式化请求数据
+    parseQuery: (query) => query, //格式化请求数据
+    autoSearch: true //是否在mounted周期中自动调用search
   })
+  Object.assign($table, options)
 
   onMounted(function () {
-    if (!options.autoSearch) {
+    if (!$table.autoSearch) {
       return false
     }
     if ($table.api) {
@@ -89,6 +90,6 @@ export default function userAdminTable(options) {
   return $table
 }
 
-userAdminTable.install = function (app) {
+useAdminTable.install = function (app) {
   void app
 }

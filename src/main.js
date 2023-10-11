@@ -14,6 +14,7 @@ import adminComponent from './components/index'
 import adminUtils from './utils/index'
 import directive from './directive/index.js'
 const app = createApp(App)
+app.config.globalProperties.$env = import.meta.env
 app.use(createPinia())
 app.use(directive)
 app.use(plugins)

@@ -33,6 +33,14 @@ for (let path in autoImportPageInfo) {
     autoImportRotes.push(route)
   }
 }
+
+autoImportRotes.push({
+  path: '',
+  weight: 100,
+  meta: { name: '首页', icon: 'House' },
+  component: () => import('@/views/home.vue')
+})
+
 autoImportRotes.sort((a, b) => {
   return (b.weight || 0) - (a.weight || 0)
 })
@@ -40,13 +48,6 @@ export default [
   {
     path: '/',
     component: BaseLayout,
-    children: [
-      {
-        path: '',
-        meta: { name: '首页', icon: 'House' },
-        component: () => import('@/views/home.vue')
-      },
-      ...autoImportRotes
-    ]
+    children: [...autoImportRotes]
   }
 ]

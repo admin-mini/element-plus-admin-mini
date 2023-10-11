@@ -1,10 +1,10 @@
 <template>
   <div class="admin-login-container">
     <div class="header" @click="systemStore.increment">
-      <el-icon size="54px">
+      <el-icon size="40px">
         <Notification />
       </el-icon>
-      管理平台
+      {{ $env.VITE_APP_NAME }}
     </div>
     <div class="admin-login">
       <div class="admin-login-banner">
