@@ -3,7 +3,7 @@ import { ElMessage } from 'element-plus'
 import dict from '@/utils/dict'
 import { useSystemStore } from '@/stores/index'
 
-const systemStore = useSystemStore()
+let systemStore
 
 const ajax = axios.create({
   baseURL: dict.SETTING.API_URL
@@ -11,6 +11,7 @@ const ajax = axios.create({
 // 添加请求拦截器
 ajax.interceptors.request.use(
   function (config) {
+    systemStore = useSystemStore()
     config.headers['Authorization'] = systemStore.state.token
     return config
   },
