@@ -1,0 +1,1 @@
+import{_ as c,j as r,w as t,i as o,o as s,f as e,e as _,d as l}from"./index-1M5D14Jb.js";const d={},f=l("br",null,null,-1);function p(i,u){const a=o("el-link"),n=o("el-alert");return s(),r(n,{type:"warning"},{default:t(()=>[e(" 你访问的路径不存在，请使用正常方式访问！ "),f,e(" page 404 "),_(a,{href:"#/"},{default:t(()=>[e("跳转至首页")]),_:1})]),_:1})}const x=c(d,[["render",p]]);export{x as default};
