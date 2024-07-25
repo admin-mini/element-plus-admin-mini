@@ -1,5 +1,5 @@
 <template>
-  <el-select v-model="val" collapse-tags collapse-tags-tooltip style="width: 100%">
+  <el-select v-model="val" collapse-tags collapse-tags-tooltip style="display: block;">
     <el-option v-for="option in options" :key="option[props.valueKey]" :value="option[props.valueKey]"
       :label="option[props.labelKey]" :disabled="option.disabled"></el-option>
   </el-select>

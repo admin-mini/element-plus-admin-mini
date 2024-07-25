@@ -1,8 +1,5 @@
 <template>
     <div class="admin-view">
-        <div class="admin-view-header">
-            <admin-bread></admin-bread>
-        </div>
         <div class="admin-view-body">
             {{ postData }}
             <el-divider></el-divider>

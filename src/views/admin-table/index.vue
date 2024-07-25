@@ -1,8 +1,6 @@
 <template>
   <div class="admin-view">
-    <div class="admin-view-header">
-      <admin-bread></admin-bread>
-    </div>
+   
     <div class="admin-view-search">
       <el-form ref="queryFrom" @submit.prevent="$table.search" :inline="true" :model="$table.query">
         <el-form-item label="帐号" prop="username" :rules="[$rules.required]">

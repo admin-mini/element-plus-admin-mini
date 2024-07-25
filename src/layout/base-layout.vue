@@ -74,6 +74,9 @@ function togglePosition() {
                 <base-navigator :mode="menuPositionStorge"></base-navigator>
             </div>
             <div class="admin-body-view">
+                <div class="admin-view-bread">
+                    <admin-bread></admin-bread>
+                </div>
                 <router-view />
             </div>
         </div>

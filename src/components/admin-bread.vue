@@ -21,7 +21,6 @@ const router = useRouter()
 .admin-bread {
     box-sizing: border-box;
     width: 100%;
-    padding: 24px 0;
     padding-top: 0;
     font-size: inherit;
     display: flex;
