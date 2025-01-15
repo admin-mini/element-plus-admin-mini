@@ -1,6 +1,8 @@
 import BaseLayout from '@/layout/base-layout.vue'
 //eslint-disable-next-line
-import { RouterView } from 'vue-router'
+// import { RouterView } from 'vue-router'
+import RouterView from './admin-router-view.vue'
+
 const autoImportPage = import.meta.glob(['@/views/**/index.vue'])
 const autoImportPageInfo = import.meta.glob(['@/views/**/auto-route.js'], { eager: true })
 
@@ -34,12 +36,31 @@ for (let path in autoImportPageInfo) {
   }
 }
 
-autoImportRotes.push({
-  path: '',
-  weight: 100,
-  meta: { name: '首页', icon: 'House' },
-  component: () => import('@/views/home.vue')
-})
+autoImportRotes = autoImportRotes.concat([
+  {
+    path: '',
+    weight: 100,
+    meta: { name: '首页', icon: 'House' },
+    component: () => import('@/views/home.vue')
+  },
+  {
+    path: '/system/',
+    meta: { name: '系统设置', icon: 'House' },
+    component: RouterView,
+    children: [
+      {
+        path: 'role',
+        meta: { name: '角色管理', icon: 'House' },
+        component: () => import('@/views/system/role/index.vue')
+      },
+      {
+        path: 'user',
+        meta: { name: '用户管理', icon: 'House' },
+        component: () => import('@/views/system/user/index.vue')
+      }
+    ]
+  }
+])
 
 autoImportRotes.sort((a, b) => {
   return (b.weight || 0) - (a.weight || 0)

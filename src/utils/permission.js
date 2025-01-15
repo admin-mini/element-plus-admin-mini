@@ -1,4 +1,6 @@
 import { useSystemStore } from '@/stores'
+import { useSystemSetting } from '@/stores/setting'
+
 import dict from '@/utils/dict'
 
 export default function hasPermission(userPermission) {
@@ -6,14 +8,15 @@ export default function hasPermission(userPermission) {
   if (!systemStore.isLogin) {
     return false
   }
-  if (!dict.SETTING.OPEN_PERMISSION) {
+  if (!useSystemSetting().setting.openPermission) {
     //是否开启权限
     return true
   }
-  if (systemStore.isSuperAdmin) {
+  //所有权限
+  if (systemStore.state.permissions[0] == '*:*:*') {
     return true
   }
 
   userPermission = userPermission.map((item) => item.toString())
-  return userPermission.includes(systemStore.state.utype.toString())
+  return userPermission.includes(systemStore.state.permissions.toString())
 }

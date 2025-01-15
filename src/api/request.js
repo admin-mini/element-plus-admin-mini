@@ -1,18 +1,20 @@
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
-import dict from '@/utils/dict'
 import { useSystemStore } from '@/stores/index'
+import { useSystemSetting } from '@/stores/setting'
 
 let systemStore
 
-const ajax = axios.create({
-  baseURL: dict.SETTING.API_URL
-})
+const request = axios.create()
+
 // 添加请求拦截器
-ajax.interceptors.request.use(
+request.interceptors.request.use(
   function (config) {
+    config.baseURL = useSystemSetting().setting.apiUrl
+
     systemStore = useSystemStore()
-    config.headers['Authorization'] = systemStore.state.token
+    // config.headers['Authorization'] = systemStore.state.token
+    config.headers['Authorization'] = 'Bearer ' + systemStore.state.token // 让每个请求携带自定义token 请根据实际情况自行修改
     return config
   },
   function (error) {
@@ -21,12 +23,12 @@ ajax.interceptors.request.use(
   }
 )
 // 添加响应拦截器
-ajax.interceptors.response.use(
+request.interceptors.response.use(
   function (response) {
     if (response.headers.authorization) {
       systemStore.setToken(response.headers.authorization)
     }
-    if (response.data.code == 2) {
+    if (response.data.code == 401) {
       ElMessage.info('登陆超时')
       systemStore.logout()
     }
@@ -50,4 +52,4 @@ ajax.interceptors.response.use(
   }
 )
 
-export default ajax
+export default request

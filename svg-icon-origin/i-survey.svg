@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>编组 13</title>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="图标" transform="translate(-21.000000, -584.000000)">
+            <g id="编组-13" transform="translate(21.000000, 584.000000)">
+                <polygon id="路径" fill="#3157EA" fill-rule="nonzero" points="7.5 0 7.98944135 0.325065966 12.5627855 3.36248516 11.5839028 4.82528201 7.5 2.11306026 1.76470588 5.92190378 1.76470588 14.241937 13.2352941 14.241937 13.2352941 11.161116 15 11.161116 15 16 0 16 0 4.98117854 0.392911592 4.7202235 7.01055865 0.325065966"></polygon>
+                <g id="编组-8" transform="translate(11.050253, 9.701598) rotate(-315.000000) translate(-11.050253, -9.701598) translate(9.050253, 4.701598)">
+                    <polygon id="矩形" fill="#3157EA" points="0 0 4 0 4 8 2 10 0 8"></polygon>
+                    <rect id="矩形" fill="#FFFFFF" x="0" y="3" width="4" height="1"></rect>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -1,24 +1,30 @@
-let dict = {
-  SETTING: {
-    OPEN_PERMISSION: true, //是否开启权限
-    API_URL: '/api/', //API具体路径
-    IMG_URL: '/picTemp/',
-    AREA_CODE: 131000
-  },
-  userType: [
-    { value: '1', label: '管理员', color: 'success', disabled: false },
-    { value: '2', label: '操作员', color: 'danger', disabled: false },
-    { value: '3', label: '录入员', color: 'warning', disabled: true }
-  ]
+import { getDicts } from '@/api/system/dict/data'
+import { ref } from 'vue'
+
+let dict = ref({
+  //固定key
+  // useType:[{value:1,label:'管理员'}]
+})
+export function getDict(keys) {
+  keys = keys.filter((key) => {
+    return !dict.value[key]
+  })
+  //用promise.all返回
+  return Promise.all(
+    keys.map((key) => {
+      return getDicts(key).then((res) => {
+        res.data.data.map((item) => {
+          item.label = item.dictLabel
+          item.value = item.dictValue
+        })
+        dict.value[key] = makeDict(res.data.data)
+      })
+    })
+  )
 }
-//生产环境使用/index.html引用的setting.js
-if (!import.meta.env.DEV && window.ADMIN_SETTING) {
-  Object.assign(dict.SETTING, window.ADMIN_SETTING)
-}
-for (let key in dict) {
-  if (key != 'SETTING') {
-    makeDict(dict[key])
-  }
+
+for (let key in dict.value) {
+  makeDict(dict.value[key])
 }
 export function makeDict(obj, labelKey = 'label', valueKey = 'value') {
   return Object.defineProperties(obj, {
@@ -57,4 +63,4 @@ function getLabel(val) {
   }
   return this.get(val)[this.labelKey]
 }
-export default dict
+export default dict.value

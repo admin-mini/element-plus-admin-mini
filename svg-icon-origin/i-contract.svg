@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="15px" height="16px" viewBox="0 0 15 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>编组 11</title>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="图标" transform="translate(-22.000000, -336.000000)">
+            <g id="编组-11" transform="translate(22.000000, 336.000000)">
+                <rect id="矩形" stroke="#3157EA" stroke-width="2" x="1" y="1" width="13" height="14"></rect>
+                <rect id="矩形" fill="#3157EA" x="4" y="4" width="7" height="2"></rect>
+                <rect id="矩形备份-22" fill="#3157EA" x="4" y="7" width="4" height="2"></rect>
+                <polygon id="星形" fill="#3157EA" points="10 12.35 8.53053687 13.1225425 8.81117935 11.4862712 7.62235871 10.3274575 9.26526843 10.0887288 10 8.6 10.7347316 10.0887288 12.3776413 10.3274575 11.1888206 11.4862712 11.4694631 13.1225425"></polygon>
+            </g>
+        </g>
+    </g>
+</svg>

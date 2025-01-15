@@ -1,9 +1,11 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import { useSystemStore } from '@/stores/index'
+
 import staticRoutes from './routes'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import dict from '@/utils/dict'
+import { useSystemSetting } from '@/stores/setting'
 NProgress.configure({ showSpinner: false })
 
 export const routes = staticRoutes
@@ -33,13 +35,14 @@ router.getFullPath = function (route) {
 
 router.beforeEach((to) => {
   const systemStore = useSystemStore()
+  const systemSetting = useSystemSetting()
   NProgress.start()
   if (
     // 检查用户是否已登录
     !systemStore.isLogin &&
     // ❗️ 避免无限重定向
     to.name !== 'login' &&
-    dict.SETTING.OPEN_PERMISSION
+    systemSetting.setting.openPermission
   ) {
     // 将用户重定向到登录页面
     return { name: 'login' }
