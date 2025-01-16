@@ -40,22 +40,27 @@ autoImportRotes = autoImportRotes.concat([
   {
     path: '',
     weight: 100,
-    meta: { name: '首页', icon: 'House' },
+    meta: { name: '首页', icon: 'HomeFilled' },
     component: () => import('@/views/home.vue')
   },
   {
     path: '/system/',
-    meta: { name: '系统设置', icon: 'House' },
+    meta: { name: '系统设置', icon: 'Tools' },
     component: RouterView,
     children: [
       {
         path: 'role',
-        meta: { name: '角色管理', icon: 'House' },
+        meta: { name: '角色管理', icon: 'Avatar' },
         component: () => import('@/views/system/role/index.vue')
       },
       {
+        path: 'role/auth/:roleId(\\d+)',
+        component: () => import('@/views/system/role/authUser.vue'),
+        meta: { name: '分配用户', hide: true }
+      },
+      {
         path: 'user',
-        meta: { name: '用户管理', icon: 'House' },
+        meta: { name: '用户管理', icon: 'UserFilled' },
         component: () => import('@/views/system/user/index.vue')
       }
     ]

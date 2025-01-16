@@ -1,15 +1,16 @@
 <template>
-  <div class="admin-container">
+  <div class="admin-container" :class="menuPositionStorge">
     <div class="admin-header">
       <div class="admin-header-left">
         <div class="header-brand">
-          <!-- <img src="/static/logo.png" /> -->
-          <el-icon size="34px">
-            <Notification />
+          <el-icon size="28px">
+            <GoodsFilled />
           </el-icon>
+
         </div>
         <div class="brand-text">{{ $env.VITE_APP_NAME }}</div>
       </div>
+      <admin-bread v-if="menuPositionStorge == 'vertical'"></admin-bread>
       <div class="admin-menu" v-if="menuPositionStorge == 'horizontal'">
         <base-navigator :mode="menuPositionStorge"></base-navigator>
       </div>
@@ -51,10 +52,7 @@
         <base-navigator :mode="menuPositionStorge"></base-navigator>
       </div>
       <div class="admin-body-view" v-loading="settingLoading">
-        <div class="admin-view-bread">
-          <tag-list v-if="systemSetting.setting.useTag"></tag-list>
-          <admin-bread v-else></admin-bread>
-        </div>
+        <tag-list v-if="systemSetting.setting.useTag"></tag-list>
 
         <router-view v-if="!settingLoading" />
       </div>

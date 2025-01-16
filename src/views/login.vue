@@ -77,11 +77,12 @@ function submit() {
             await systemStore.login(res.data.token)
             router.replace('/')
           } else {
-            if (res.data.msg == '验证码已失效') {
-              getCode()
-            }
+            getCode()
             ElMessage.error(res.data.msg)
           }
+        })
+        .catch(() => {
+          getCode()
         })
         .finally(() => {
 

@@ -1,4 +1,4 @@
-import { dayjs} from "element-plus"
+import { dayjs, ElMessageBox } from 'element-plus'
 /**
  *
  * @param {string} url 要下载的地址
@@ -191,4 +191,69 @@ export function tree2arr(tree, chilField = 'children') {
   }
   tree2arr(tree)
   return treeRes
+}
+
+/**
+ * 参数处理
+ * @param {*} params  参数
+ */
+export function tansParams(params) {
+  let result = ''
+  for (const propName of Object.keys(params)) {
+    const value = params[propName]
+    var part = encodeURIComponent(propName) + '='
+    if (value !== null && value !== '' && typeof value !== 'undefined') {
+      if (typeof value === 'object') {
+        for (const key of Object.keys(value)) {
+          if (value[key] !== null && value[key] !== '' && typeof value[key] !== 'undefined') {
+            let params = propName + '[' + key + ']'
+            var subPart = encodeURIComponent(params) + '='
+            result += subPart + encodeURIComponent(value[key]) + '&'
+          }
+        }
+      } else {
+        result += part + encodeURIComponent(value) + '&'
+      }
+    }
+  }
+  return result
+}
+
+// 验证是否为blob格式
+export function blobValidate(data) {
+  return data.type !== 'application/json'
+}
+
+export function syncConfirm(tip, req) {
+  return new Promise((resolve, reject) => {
+    ElMessageBox.confirm(tip, '提示', {
+      type: 'warning',
+      beforeClose: (action, instance, done) => {
+        if (action === 'confirm') {
+          instance.confirmButtonLoading = true
+          req()
+            .then((res) => {
+              if (res.data.code == 200) {
+                resolve()
+              } else {
+                reject()
+                ElMessage.error(res.data.msg)
+              }
+            })
+            .finally(() => {
+              instance.confirmButtonLoading = false
+              done()
+            })
+            .catch(() => {
+              reject()
+            })
+        } else {
+          done()
+          reject()
+        }
+      }
+    }).catch(() => {
+      reject()
+    })
+  })
 }

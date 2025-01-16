@@ -3,17 +3,17 @@ export default defineComponent({
   props: {
     cols: {
       //默认列数量
-      type: Number,
+      type: [Number, String],
       default: 2
     },
     xGap: {
       //列间距
-      type: Number,
+      type: [Number, String],
       default: 0
     },
     yGap: {
       //行间距
-      type: Number,
+      type: [Number, String],
       default: 0
     }
   },
@@ -41,7 +41,6 @@ export default defineComponent({
       })
       let slotsResult = []
       defualtSlots.map((slot) => {
-        console.log(slot.props?.newRow)
         if (slot.props?.newRow == true) {
           //插入一个占满整行的div
           slotsResult.push(<div style={{ gridColumn: `1 / span ${props.cols}` }}></div>)

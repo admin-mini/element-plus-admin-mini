@@ -1,6 +1,6 @@
 <template>
   <div class="admin-view">
-   
+
     <div class="admin-view-search">
       <el-form ref="queryFrom" @submit.prevent="$table.search" :inline="true" :model="$table.query">
         <el-form-item label="帐号" prop="username" :rules="[$rules.required]">
@@ -14,7 +14,7 @@
             v-model:end="$table.query.endTime"></date-picker-range>
         </el-form-item>
         <el-form-item>
-          <el-button native-type="submit" type="primary" :loading="$table.loading">搜索</el-button>
+          <el-button native-type="submit" type="primary" icon="Search" :loading="$table.loading">搜索</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -57,8 +57,8 @@
     </div>
   </div>
 </template>
-<script  setup>
-import { userList, userDel } from '@/api'
+<script setup>
+import { listUser, delUser } from '@/api/system/user'
 import { h, ref } from 'vue'
 import useAdminDialog from '@/plugins/use-admin-dialog'
 import useAdminTable from '@/plugins/use-admin-table'
@@ -66,7 +66,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import dict from "@/utils/dict"
 const adminDialog = useAdminDialog()
 const $table = useAdminTable()
-$table.api = userList
+$table.api = listUser
 const queryFrom = ref()
 $table.ref = queryFrom
 $table.query.username = "test"
@@ -118,7 +118,7 @@ async function openPassword(row) {
 function openDel(row) {
   row.loading = true;
   ElMessageBox.confirm("确定删除？", "提示", { type: "warning" }).then(() => {
-    userDel({
+    delUser({
       userId: row.userId
     }).then(res => {
       if (res.data.code == 0) {
