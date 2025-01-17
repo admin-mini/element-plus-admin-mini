@@ -25,4 +25,11 @@ $table.api = props.api
 emits("init", $table)
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+.admin-dialog-container {
+    .admin-view-body {
+        padding: 0;
+        border: 0;
+    }
+}
+</style>

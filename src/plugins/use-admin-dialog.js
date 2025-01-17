@@ -25,7 +25,6 @@ export default function useAdminDialog() {
         vnode = createVNode(vnode.default, props)
       }
     }
-    console.log(vnode)
     onBeforeUnmount(() => {
       close()
     }, vm)

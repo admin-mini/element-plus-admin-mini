@@ -44,8 +44,7 @@
             <el-table-column label="用户名称" prop="userName" :show-overflow-tooltip="true" />
             <el-table-column label="用户昵称" prop="nickName" :show-overflow-tooltip="true" />
             <el-table-column label="部门" prop="dept.deptName" :show-overflow-tooltip="true" />
-            <el-table-column label="手机号码" prop="status" width="120"
-              :formatter="$formatter.dict($dict.sys_normal_disable)" />
+            <el-table-column label="手机号码" prop="phonenumber" width="120" />
             <el-table-column label="状态">
               <template #default="scope">
                 <el-switch :model-value="scope.row.status" active-value="0" inactive-value="1"

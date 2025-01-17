@@ -55,6 +55,8 @@
                 <el-link v-if="$p(['system:role:edit'])" type="primary" @click="openEdit(scope.row)">修改</el-link>
                 <el-link v-if="$p(['system:role:remove'])" type="primary" @click="openDel(scope.row)">删除</el-link>
                 <el-link v-if="$p(['system:role:edit'])" type="primary" @click="openAuth(scope.row)">分配用户</el-link>
+                <el-link v-if="$p(['system:role:edit'])" type="primary" @click="openDataScope(scope.row)">数据权限</el-link>
+
               </el-space>
             </template>
           </el-table-column>
@@ -79,8 +81,6 @@ let $table;
 const router = useRouter();
 
 function openAuth(row) {
-
-  console.log(router)
   router.push({
     path: '/system/role/auth/' + row.roleId,
   })
@@ -100,6 +100,22 @@ function handleExport() {
   download("system/role/export", {
     ...$table.query,
   }, `role_${new Date().getTime()}.xlsx`);
+}
+function openDataScope(row) {
+  adminDialog({
+    component: import('./data-scope.vue'),
+    props: {
+      row
+    },
+    dialogProps: {
+      title: '数据权限',
+      width: "500px",
+    },
+    onSuccess: () => {
+      $table.getTable()
+    }
+  })
+
 }
 function openAdd() {
   adminDialog({

@@ -20,17 +20,20 @@ const computedRoutes = computed(() => {
     })
   }
 })
+const activeMenu = computed(() => {
+  const { meta, fullPath } = route;
+  // if set path, the sidebar will highlight the path you set
+  if (meta.activeMenu) {
+    return meta.activeMenu;
+  }
+  return fullPath;
+})
+
 </script>
 <template>
-  <el-menu router :default-active="route.fullPath" mode="horizontal">
-    <base-navigator-item
-      :show-timeout="0"
-      :hide-timeout="0"
-      :popper-offset="0"
-      v-for="route in computedRoutes"
-      :key="route.path"
-      :route="route"
-    ></base-navigator-item>
+  <el-menu router :default-active="activeMenu" mode="horizontal">
+    <base-navigator-item :show-timeout="0" :hide-timeout="0" :popper-offset="0" v-for="route in computedRoutes"
+      :key="route.path" :route="route"></base-navigator-item>
   </el-menu>
 </template>
 

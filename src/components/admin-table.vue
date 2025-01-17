@@ -2,14 +2,14 @@
     <!-- 
      为了方便统一管理样式，将表格、分页器、按钮等放在一个容器中，通过插槽的方式展示
       -->
-    <div class="admin-view-search">
+    <div class="admin-view-search" v-if="slots.search">
         <slot name="search"></slot>
     </div>
     <div class="admin-view-body">
-        <div class="admin-table-btns">
+        <div class="admin-table-btns" v-if="slots.btn">
             <slot name="btn"></slot>
         </div>
-        <div class="admin-table-list">
+        <div class="admin-table-list" v-if="slots.table">
             <slot name="table"></slot>
             <div class="admin-pager-container">
                 <!-- <slot name="pager"></slot> -->
@@ -22,8 +22,9 @@
 </template>
 
 <script setup>
-import { h, ref } from 'vue'
+import { h, ref, useSlots } from 'vue'
 import useAdminTable from '@/plugins/use-admin-table'
+const slots = useSlots()
 const props = defineProps(['api', 'query'])
 const emits = defineEmits(['init',])
 const $table = useAdminTable()

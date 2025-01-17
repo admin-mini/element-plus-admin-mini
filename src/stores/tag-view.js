@@ -1,3 +1,4 @@
+import { routeMap } from '@/router'
 import { defineStore } from 'pinia'
 import { computed, nextTick, ref, toValue } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -7,8 +8,9 @@ export const useTagView = defineStore('tagList', () => {
   const router = useRouter()
 
   // state
-  const tagList = ref([router.currentRoute.value])
   const active = ref(router.currentRoute.value.fullPath)
+  const tagList = ref([])
+
   const exclude = computed(() => {
     let arr = []
     for (let key in viewKeyMap.value) {
@@ -21,6 +23,12 @@ export const useTagView = defineStore('tagList', () => {
   const viewKeyMap = ref({
     [active.value]: true
   })
+  routeMap.values().forEach((item) => {
+    if (item.meta?.affix) {
+      addTag(router.resolve(item))
+    }
+  })
+  addTag(router.currentRoute.value) //将当前路由添加到tagList中
   // actions
   //刷新
   const refresh = () => {
@@ -51,14 +59,17 @@ export const useTagView = defineStore('tagList', () => {
     list.splice(newIndex, 0, item)
   }
   router.afterEach((to, from) => {
+    addTag(to)
+  })
+  function addTag(to) {
     active.value = to.fullPath
-    if (tagList.value.find((item) => item.fullPath == to.fullPath)) {
+    if (tagList.value.find((item) => item.fullPath == to.fullPath) || to.name === 'login') {
       return
     }
+
     viewKeyMap.value[to.fullPath] = true
     tagList.value.push(toValue(to))
-  })
-
+  }
   return {
     active,
     tagList,

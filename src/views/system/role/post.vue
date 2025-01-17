@@ -97,26 +97,15 @@ if (!props.row) {
 
 }
 /** 树权限（展开/折叠）*/
-function handleCheckedTreeExpand(value, type) {
-  if (type == "menu") {
-    let treeList = menuOptions.value;
-    for (let i = 0; i < treeList.length; i++) {
-      menuRef.value.store.nodesMap[treeList[i].id].expanded = value;
-    }
-  } else if (type == "dept") {
-    let treeList = deptOptions.value;
-    for (let i = 0; i < treeList.length; i++) {
-      deptRef.value.store.nodesMap[treeList[i].id].expanded = value;
-    }
+function handleCheckedTreeExpand(value) {
+  let treeList = menuOptions.value;
+  for (let i = 0; i < treeList.length; i++) {
+    menuRef.value.store.nodesMap[treeList[i].id].expanded = value;
   }
 }
 /** 树权限（全选/全不选） */
-function handleCheckedTreeNodeAll(value, type) {
-  if (type == "menu") {
-    menuRef.value.setCheckedNodes(value ? menuOptions.value : []);
-  } else if (type == "dept") {
-    deptRef.value.setCheckedNodes(value ? deptOptions.value : []);
-  }
+function handleCheckedTreeNodeAll(value) {
+  menuRef.value.setCheckedNodes(value ? menuOptions.value : []);
 }
 
 

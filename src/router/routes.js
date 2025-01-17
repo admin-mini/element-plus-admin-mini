@@ -35,12 +35,18 @@ for (let path in autoImportPageInfo) {
     autoImportRotes.push(route)
   }
 }
-
+/**
+ * meta.hide = true 不会显示在侧边栏
+ * meta.affix = true 会在侧边栏固定
+ * meta.weight 排序权重
+ * meta.name 侧边栏显示名称
+ * meta.icon 侧边栏图标 系统优先使用element-plus图标库，如果匹配不到，则使用svg-icon图标，具体可参考/components/svg-icon.vue
+ */
 autoImportRotes = autoImportRotes.concat([
   {
     path: '',
     weight: 100,
-    meta: { name: '首页', icon: 'HomeFilled' },
+    meta: { name: '首页', icon: 'HomeFilled', affix: true },
     component: () => import('@/views/home.vue')
   },
   {
@@ -55,8 +61,8 @@ autoImportRotes = autoImportRotes.concat([
       },
       {
         path: 'role/auth/:roleId(\\d+)',
-        component: () => import('@/views/system/role/authUser.vue'),
-        meta: { name: '分配用户', hide: true }
+        component: () => import('@/views/system/role-auth-user/index.vue'),
+        meta: { name: '分配用户', hide: true, activeMenu: '/system/role' }
       },
       {
         path: 'user',

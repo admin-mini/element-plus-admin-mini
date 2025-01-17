@@ -2,7 +2,7 @@
   <div class="admin-tag-list">
     <el-tabs v-model="tagView.active" type="card" @tab-click="({ paneName }) => tagView.setActive(paneName)"
       @tab-remove="handleTabRemove" id="js-tag-list">
-      <el-tab-pane v-for="item in tagView.tagList" :key="item.fullPath" :closable="tagView.tagList.length > 1"
+      <el-tab-pane v-for="item in tagView.tagList" :key="item.fullPath" :closable="!item.meta.affix"
         :name="item.fullPath">
         <template #label>
           <svg-icon class="_icon" :name="item.meta.icon" v-if="item.meta.icon"></svg-icon> {{ item.meta.name }}
