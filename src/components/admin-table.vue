@@ -11,9 +11,9 @@
         </div>
         <div class="admin-table-list" v-if="slots.table">
             <slot name="table"></slot>
-            <div class="admin-pager-container">
-                <!-- <slot name="pager"></slot> -->
-                <el-pagination :layout="$table.pageLayout" background v-model:current-page="$table.query.page"
+            <div class="admin-pager-container" v-if="props.noPage === undefined">
+                <slot name="pager" v-if="slots.pager"></slot>
+                <el-pagination v-else :layout="$table.pageLayout" background v-model:current-page="$table.query.page"
                     :page-size="$table.query.size" :total="$table.total" @size-change="$table.handleSizeChange"
                     @current-change="$table.handleCurrentChange" />
             </div>
@@ -25,11 +25,17 @@
 import { h, ref, useSlots } from 'vue'
 import useAdminTable from '@/plugins/use-admin-table'
 const slots = useSlots()
-const props = defineProps(['api', 'query'])
+const props = defineProps(['api', 'query', 'no-page']);
+console.log(props)
 const emits = defineEmits(['init',])
 const $table = useAdminTable()
 const queryFrom = ref()
 $table.ref = queryFrom
+if (props.noPage) {
+    delete $table.query.pageSize
+    delete $table.query.pageNum
+}
+
 if (props.query) {
     for (let key in props.query) {
         $table.query[key] = props.query[key]

@@ -149,25 +149,48 @@ export function formatDateFull(timestamp) {
  * 一维数组转tree结构
  * @param {array} data 一维数组对象
  */
-export function arrToTree(data, idKey = 'id', pidKey = 'pid', topId = 0) {
-  // 递归
+export function arrToTree(data, id, parentId, children) {
+  let config = {
+    id: id || 'id',
+    parentId: parentId || 'parentId',
+    childrenList: children || 'children'
+  }
 
-  function getNode(id) {
-    let node = []
-    for (let i = 0; i < data.length; i++) {
-      if (data[i][pidKey] == id) {
-        data[i].children = getNode(data[i][idKey])
-        node.push(data[i])
-      }
+  var childrenListMap = {}
+  var nodeIds = {}
+  var tree = []
+
+  for (let d of data) {
+    let parentId = d[config.parentId]
+    if (childrenListMap[parentId] == null) {
+      childrenListMap[parentId] = []
     }
-    if (node.length == 0) {
-      return
-    } else {
-      return node
+    nodeIds[d[config.id]] = d
+    childrenListMap[parentId].push(d)
+  }
+
+  for (let d of data) {
+    let parentId = d[config.parentId]
+    if (nodeIds[parentId] == null) {
+      tree.push(d)
     }
   }
-  // 根节点
-  return getNode(topId)
+
+  for (let t of tree) {
+    adaptToChildrenList(t)
+  }
+
+  function adaptToChildrenList(o) {
+    if (childrenListMap[o[config.id]] !== null) {
+      o[config.childrenList] = childrenListMap[o[config.id]]
+    }
+    if (o[config.childrenList]) {
+      for (let c of o[config.childrenList]) {
+        adaptToChildrenList(c)
+      }
+    }
+  }
+  return tree
 }
 
 /**

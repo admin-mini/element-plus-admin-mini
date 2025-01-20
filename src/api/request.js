@@ -18,6 +18,13 @@ request.interceptors.request.use(
     systemStore = useSystemStore()
     // config.headers['Authorization'] = systemStore.state.token
     config.headers['Authorization'] = 'Bearer ' + systemStore.state.token // 让每个请求携带自定义token 请根据实际情况自行修改
+    // get请求映射params参数
+    if (config.method === 'get' && config.params) {
+      let url = config.url + '?' + tansParams(config.params)
+      url = url.slice(0, -1)
+      config.params = {}
+      config.url = url
+    }
     return config
   },
   function (error) {

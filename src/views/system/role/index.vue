@@ -14,8 +14,8 @@
               <select-dict :dict="$dict.sys_normal_disable" v-model="$table.query.status" show-all></select-dict>
             </el-form-item>
             <el-form-item label="创建时间">
-              <date-picker-range v-model:begin="$table.query.beginTime"
-                v-model:end="$table.query.endTime"></date-picker-range>
+              <date-picker-range v-model:begin="$table.query.params.beginTime"
+                v-model:end="$table.query.params.endTime"></date-picker-range>
             </el-form-item>
             <template #last>
               <el-button native-type="submit" type="primary" icon="Search" :loading="$table.loading">搜索</el-button>

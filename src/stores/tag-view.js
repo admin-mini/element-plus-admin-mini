@@ -43,10 +43,21 @@ export const useTagView = defineStore('tagList', () => {
     if (index === -1) {
       return
     }
-    tagList.value.splice(index, 1)
+
+    // 如果关闭的是当前激活的标签页，需要确定跳转目标
     if (tag == route.fullPath) {
-      router.replace(tagList.value[0].fullPath)
+      // 优先跳转到右侧标签页，如果没有则跳转到左侧标签页
+      const nextTag = tagList.value[index - 1] || tagList.value[index + 1]
+      if (nextTag) {
+        router.replace(nextTag.fullPath)
+      } else {
+        // 如果没有相邻标签页，跳转到首页
+        router.replace('/')
+      }
     }
+
+    // 删除标签页
+    tagList.value.splice(index, 1)
   }
   const setActive = (tag) => {
     active.value = tag

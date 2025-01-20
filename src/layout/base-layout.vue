@@ -48,13 +48,16 @@
     </div>
 
     <div class="admin-body">
-      <div class="admin-slide" v-if="menuPositionStorge == 'vertical'">
+
+      <el-scrollbar class="admin-slide" v-if="menuPositionStorge == 'vertical'">
         <base-navigator :mode="menuPositionStorge"></base-navigator>
-      </div>
+      </el-scrollbar>
+
       <div class="admin-body-view" v-loading="settingLoading">
         <tag-list v-if="systemSetting.setting.useTag"></tag-list>
-
-        <router-view v-if="!settingLoading" />
+        <el-scrollbar v-if="menuPositionStorge == 'vertical'">
+          <router-view v-if="!settingLoading" />
+        </el-scrollbar>
       </div>
     </div>
   </div>

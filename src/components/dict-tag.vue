@@ -1,22 +1,11 @@
 <template>
   <div>
-    <template v-for="(item, index) in options">
-      <template v-if="values.includes(item.value)">
-        <span
-          v-if="(item.elTagType == 'default' || item.elTagType == '') && (item.elTagClass == '' || item.elTagClass == null)"
-          :key="item.value"
-          :index="index"
-          :class="item.elTagClass"
-        >{{ item.label + " " }}</span>
-        <el-tag
-          v-else
-          :disable-transitions="true"
-          :key="item.value + ''"
-          :index="index"
-          :type="item.elTagType === 'primary' ? '' : item.elTagType"
-          :class="item.elTagClass"
-        >{{ item.label + " " }}</el-tag>
-      </template>
+    <template v-for="(item, index) in options.filter(item => values.includes(item.value))">
+      <span v-if="(item.listClass == 'default' || item.listClass == '')" :key="item.value" :index="index"
+        :class="item.cssClass">{{ item.label + " " }}</span>
+      <el-tag v-else :disable-transitions="true" :key="item.value + ''" :index="index" :type="item.listClass"
+        :class="item.cssClass">{{ item.label + " "
+        }}</el-tag>
     </template>
     <template v-if="unmatch && showValue">
       {{ unmatchArray | handleArray }}
@@ -25,6 +14,8 @@
 </template>
 
 <script setup>
+import { computed, ref } from 'vue';
+
 // 记录未匹配的项
 const unmatchArray = ref([]);
 
@@ -55,7 +46,7 @@ const values = computed(() => {
 const unmatch = computed(() => {
   unmatchArray.value = [];
   // 没有value不显示
-  if (props.value === null || typeof props.value === 'undefined' || props.value === '' || props.options.length === 0) return false
+  if (props.value === null || typeof props.value === 'undefined' || props.value === '' || !props.options || props.options?.length === 0) return false
   // 传入值为数组
   let unmatch = false // 添加一个标志来判断是否有未匹配项
   values.value.forEach(item => {
@@ -76,7 +67,7 @@ function handleArray(array) {
 </script>
 
 <style scoped>
-.el-tag + .el-tag {
+.el-tag+.el-tag {
   margin-left: 10px;
 }
 </style>

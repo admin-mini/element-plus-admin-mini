@@ -11,6 +11,7 @@ export default function useAdminTable(options) {
     loading: false,
     api: undefined,
     query: {
+      params: {},
       pageNum: 1,
       pageSize: 10
     },

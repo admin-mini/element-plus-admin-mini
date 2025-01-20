@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
+    "@vueup/vue-quill": "^1.2.0",
     "axios": "^1.7.9",
     "element-plus": "^2.9.3",
     "file-saver": "^2.0.5",

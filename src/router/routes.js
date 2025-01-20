@@ -68,6 +68,58 @@ autoImportRotes = autoImportRotes.concat([
         path: 'user',
         meta: { name: '用户管理', icon: 'UserFilled' },
         component: () => import('@/views/system/user/index.vue')
+      },
+      {
+        path: 'dept',
+        meta: { name: '部门管理', icon: 'Stamp' },
+        component: () => import('@/views/system/dept/index.vue')
+      },
+      {
+        path: 'post',
+        meta: { name: '岗位管理', icon: 'Briefcase' },
+        component: () => import('@/views/system/post/index.vue')
+      },
+      {
+        path: 'dict',
+        meta: { name: '字典管理', icon: 'Collection' },
+        component: () => import('@/views/system/dict/index.vue')
+      },
+      {
+        path: 'dict/data/:dictId(\\d+)',
+        component: () => import('@/views/system/dict/data.vue'),
+        meta: { name: '字典数据', hide: true, activeMenu: '/system/dict' }
+      },
+      {
+        path: 'config',
+        meta: { name: '参数设置', icon: 'Setting' },
+        component: () => import('@/views/system/config/index.vue')
+      },
+      {
+        path: 'notice',
+        meta: { name: '通知公告', icon: 'Bell' },
+        component: () => import('@/views/system/notice/index.vue')
+      },
+      {
+        path: 'log',
+        meta: { name: '日志管理', icon: 'Document' },
+        component: RouterView,
+        children: [
+          {
+            path: 'oper',
+            meta: { name: '操作日志', icon: 'Operation' },
+            component: () => import('@/views/system/log/oper/index.vue')
+          },
+          {
+            path: 'login',
+            meta: { name: '登录日志', icon: 'UserFilled' },
+            component: () => import('@/views/system/log/login/index.vue')
+          }
+        ]
+      },
+      {
+        path: 'menu',
+        meta: { name: '菜单管理', icon: 'Menu' },
+        component: () => import('@/views/system/menu/index.vue')
       }
     ]
   }

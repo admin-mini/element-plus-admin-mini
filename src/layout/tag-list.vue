@@ -39,10 +39,11 @@ function handleTabRemove(fullPath) {
   width: 100%;
   flex-shrink: 0;
   border-top: 1px solid var(--el-border-color);
-  border-bottom: 1px solid var(--el-border-color);
+  // border-bottom: 1px solid var(--el-border-color);
   background: var(--el-bg-color);
   box-sizing: border-box;
   padding: 8px 10px;
+  box-shadow: 0 1px 4px rgba(113, 128, 166, .1);
 
   .el-tabs__nav-next,
   .el-tabs__nav-prev {

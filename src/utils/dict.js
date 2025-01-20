@@ -10,6 +10,14 @@ let dict = ref({
     { value: '3', label: '本部门数据权限' },
     { value: '4', label: '本部门及以下数据权限' },
     { value: '5', label: '仅本人数据权限' }
+  ],
+  listClassOptions: [
+    { value: 'default', label: '默认' },
+    { value: 'primary', label: '主要' },
+    { value: 'success', label: '成功' },
+    { value: 'info', label: '信息' },
+    { value: 'warning', label: '警告' },
+    { value: 'danger', label: '危险' }
   ]
 })
 export function getDict(keys) {

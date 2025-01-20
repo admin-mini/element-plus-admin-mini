@@ -10,7 +10,7 @@ body {
   color: #222831;
   font-size: 16px;
   overflow: hidden;
-  --el-bg-color-page: #f6f8f9;
+  --el-bg-color-page: #f0f2f5;
   --el-border-color: #dcdfe6;
   --slide-bg: #282c34;
   --slide-width: 240px;
@@ -250,7 +250,7 @@ input:-internal-autofill-selected {
   height: 100%;
   padding: 24px;
   box-sizing: border-box;
-  overflow-y: auto;
+  // overflow-y: auto;
   display: flex;
   flex-direction: column;
 }
@@ -261,14 +261,16 @@ input:-internal-autofill-selected {
   background: var(--el-bg-color);
   flex-shrink: 0;
   margin-bottom: 24px;
-  border: 1px solid var(--el-border-color);
+  // border: 1px solid var(--el-border-color);
+  border-radius: var(--el-border-radius-base);
 }
 .admin-view-body {
   box-sizing: border-box;
   padding: 24px;
   flex: 1;
   background: var(--el-bg-color);
-  border: 1px solid var(--el-border-color);
+  // border: 1px solid var(--el-border-color);
+  border-radius: var(--el-border-radius-base);
 }
 .admin-table-btns {
   padding-bottom: 15px;
@@ -320,7 +322,11 @@ input:-internal-autofill-selected {
 .el-input {
   --el-form-inline-content-width: auto;
 }
-
+html {
+  .el-input-number {
+    width: 100%;
+  }
+}
 html.dark {
   color-scheme: dark;
   --el-color-primary: #589ef8;
