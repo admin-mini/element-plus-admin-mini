@@ -27,15 +27,14 @@
         </el-form-item>
         <el-form-item label="菜单权限">
           <div style="width: 100%;">
-            <el-checkbox v-model="menuExpand" @change="handleCheckedTreeExpand($event, 'menu')">展开/折叠</el-checkbox>
-            <el-checkbox v-model="menuNodeAll" @change="handleCheckedTreeNodeAll($event, 'menu')">全选/全不选</el-checkbox>
-            <el-checkbox v-model="postData.menuCheckStrictly"
-              @change="handleCheckedTreeConnect($event, 'menu')">父子联动</el-checkbox>
+            <el-checkbox v-model="expandAll" @change="expandAllChange()">展开/折叠</el-checkbox>
+            <el-checkbox v-model="nodeAll" @change="handleCheckedTreeNodeAll()">全选/全不选</el-checkbox>
+            <el-checkbox v-model="postData.menuCheckStrictly">父子联动</el-checkbox>
           </div>
           <div
             style="width:100%;height:200px; overflow-y: auto;padding:10px; border:1px solid var(--el-border-color);border-radius: var(--el-border-radius-base);">
-            <el-tree class="tree-border" :data="menuOptions" show-checkbox ref="menuRef" node-key="id"
-              :check-strictly="!postData.menuCheckStrictly" empty-text="加载中，请稍候"
+            <el-tree class="tree-border" :default-expand-all="expandAll" :data="treeOptions" show-checkbox ref="treeRef"
+              node-key="id" :check-strictly="!postData.menuCheckStrictly" empty-text="加载中，请稍候"
               :props="{ label: 'label', children: 'children' }"></el-tree>
           </div>
         </el-form-item>
@@ -55,65 +54,67 @@
 import { roleMenuTreeselect, treeselect, } from '@/api/system/menu';
 import { addRole, updateRole, getRole } from '@/api/system/role';
 import { getDict } from '@/utils/dict';
+import { tree2arr } from '@/utils/utils';
 import { ElMessage } from 'element-plus';
-import { nextTick, ref, useTemplateRef, } from 'vue'
+import { nextTick, onMounted, ref, useTemplateRef, } from 'vue'
 getDict(['sys_normal_disable'])
 const emits = defineEmits(['end', 'success'])
 const props = defineProps(["row"]);
 const postForm = ref()
 const loading = ref(false);
-const menuOptions = ref([])
-const menuNodeAll = ref(false)
-const menuExpand = ref(false)
-const menuRef = useTemplateRef('menuRef')
+const treeOptions = ref([])
+const nodeAll = ref(false)
+const expandAll = ref(false)
+const treeRef = useTemplateRef('treeRef')
 const rules = {}
 const postData = ref({
   roleSort: 0,
   status: '0'
 })
-
-if (!props.row) {
-  treeselect().then(response => {
-    menuOptions.value = response.data.data;
-  });
-} else {
-  getRole(props.row.roleId).then((res) => {
-    if (res.data.code == 200) {
-      postData.value = res.data.data
-    }
-  }).then(() => {
-    nextTick(() => {
+let allTreeNode = [];//记录一维数组
+onMounted(() => {
+  if (!props.row) {
+    treeselect().then(response => {
+      treeOptions.value = response.data.data;
+      allTreeNode = tree2arr(treeOptions.value)
+    });
+  } else {
+    getRole(props.row.roleId).then((res) => {
+      if (res.data.code == 200) {
+        postData.value = res.data.data
+      }
+    }).then(() => {
       roleMenuTreeselect(props.row.roleId).then((res) => {
-        menuOptions.value = res.data.menus;
+        treeOptions.value = res.data.menus;
+        allTreeNode = tree2arr(treeOptions.value)
         let checkedKeys = res.data.checkedKeys;
         checkedKeys.forEach((v) => {
           nextTick(() => {
-            menuRef.value.setChecked(v, true, false);
+            treeRef.value.setChecked(v, true, false);
           });
         });
       });
     })
-  })
 
-}
-/** 树权限（展开/折叠）*/
-function handleCheckedTreeExpand(value) {
-  let treeList = menuOptions.value;
-  for (let i = 0; i < treeList.length; i++) {
-    menuRef.value.store.nodesMap[treeList[i].id].expanded = value;
+  }
+})
+
+function expandAllChange() {
+  for (let i = 0; i < allTreeNode.length; i++) {
+    treeRef.value.store.nodesMap[allTreeNode[i].id].expanded = expandAll.value;
   }
 }
 /** 树权限（全选/全不选） */
-function handleCheckedTreeNodeAll(value) {
-  menuRef.value.setCheckedNodes(value ? menuOptions.value : []);
+function handleCheckedTreeNodeAll() {
+  treeRef.value.setCheckedNodes(nodeAll.value ? allTreeNode : []);
 }
 
 
 function getMenuAllCheckedKeys() {
   // 目前被选中的菜单节点
-  let checkedKeys = menuRef.value.getCheckedKeys();
+  let checkedKeys = treeRef.value.getCheckedKeys();
   // 半选中的菜单节点
-  let halfCheckedKeys = menuRef.value.getHalfCheckedKeys();
+  let halfCheckedKeys = treeRef.value.getHalfCheckedKeys();
   checkedKeys.unshift.apply(checkedKeys, halfCheckedKeys);
   return checkedKeys;
 }

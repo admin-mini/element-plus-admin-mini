@@ -11,17 +11,16 @@
         <el-form-item label="权限字符">
           <select-dict :dict="$dict.dataScopeOptions" v-model="postData.dataScope"></select-dict>
         </el-form-item>
-        <el-form-item label="菜单权限">
+        <el-form-item label="菜单权限" v-if="postData.dataScope == 2">
           <div style="width: 100%;">
-            <el-checkbox v-model="menuExpand" @change="handleCheckedTreeExpand($event)">展开/折叠</el-checkbox>
-            <el-checkbox v-model="menuNodeAll" @change="handleCheckedTreeNodeAll($event)">全选/全不选</el-checkbox>
-            <el-checkbox v-model="postData.menuCheckStrictly"
-              @change="handleCheckedTreeConnect($event)">父子联动</el-checkbox>
+            <el-checkbox v-model="expandAll" @change="expandAllChange()">展开/折叠</el-checkbox>
+            <el-checkbox v-model="nodeAll" @change="handleCheckedTreeNodeAll()">全选/全不选</el-checkbox>
+            <el-checkbox v-model="postData.deptCheckStrictly">父子联动</el-checkbox>
           </div>
           <div
             style="width:100%;height:200px; overflow-y: auto;padding:10px; border:1px solid var(--el-border-color);border-radius: var(--el-border-radius-base);">
-            <el-tree default-expand-all class="tree-border" :data="deptOptions" show-checkbox ref="deptRef "
-              node-key="id" :check-strictly="!postData.menuCheckStrictly" empty-text="加载中，请稍候"
+            <el-tree :default-expand-all="expandAll" class="tree-border" :data="treeOptions" show-checkbox ref="treeRef"
+              node-key="id" :check-strictly="!postData.deptCheckStrictly" empty-text="加载中，请稍候"
               :props="{ label: 'label', children: 'children' }"></el-tree>
           </div>
         </el-form-item>
@@ -38,70 +37,67 @@
 </template>
 
 <script setup>
-import { treeselect, } from '@/api/system/menu';
-import { addRole, updateRole, getRole, deptTreeSelect } from '@/api/system/role';
+import { dataScope, getRole, deptTreeSelect } from '@/api/system/role';
 import { getDict } from '@/utils/dict';
+import { tree2arr } from '@/utils/utils';
 import { ElMessage } from 'element-plus';
-import { nextTick, ref, useTemplateRef, } from 'vue'
+import { nextTick, onMounted, ref, useTemplateRef, } from 'vue'
 getDict(['sys_normal_disable'])
 const emits = defineEmits(['end', 'success'])
 const props = defineProps(["row"]);
 const postForm = ref()
 const loading = ref(false);
-const deptOptions = ref([])
-const menuNodeAll = ref(false)
-const menuExpand = ref(true)
-const deptRef = useTemplateRef('deptRef ')
+const treeOptions = ref([])
+const nodeAll = ref(false)
+const expandAll = ref(true)
+const treeRef = useTemplateRef('treeRef')
 const rules = {}
 const postData = ref({
   roleSort: 0,
   status: '0'
 })
-
-getRole(props.row.roleId).then((res) => {
-  if (res.data.code == 200) {
-    postData.value = res.data.data
-  }
-}).then(() => {
-  nextTick(() => {
+let allTreeNode = [];//记录一维数组
+onMounted(() => {
+  getRole(props.row.roleId).then((res) => {
+    if (res.data.code == 200) {
+      postData.value = res.data.data
+    }
+  }).then(() => {
     deptTreeSelect(props.row.roleId).then((res) => {
-      deptOptions.value = res.data.depts;
+      treeOptions.value = res.data.depts;
+      allTreeNode = tree2arr(treeOptions.value)
+      console.log(allTreeNode)
       let checkedKeys = res.data.checkedKeys;
       checkedKeys.forEach((v) => {
         nextTick(() => {
-          deptRef.value.setChecked(v, true, false);
-          handleCheckedTreeExpand(true)
+          treeRef.value.setChecked(v, true, false);
+
         });
       });
     });
   })
 })
-/** 树权限（展开/折叠）*/
-function handleCheckedTreeExpand(value) {
-  let treeList = deptOptions.value;
-  for (let i = 0; i < treeList.length; i++) {
-    deptRef.value.store.nodesMap[treeList[i].id].expanded = value;
+function expandAllChange() {
+  for (let i = 0; i < allTreeNode.length; i++) {
+    treeRef.value.store.nodesMap[allTreeNode[i].id].expanded = expandAll.value;
   }
 }
 /** 树权限（全选/全不选） */
-function handleCheckedTreeNodeAll(value) {
-  deptRef.value.setCheckedNodes(value ? deptOptions.value : []);
+function handleCheckedTreeNodeAll() {
+  treeRef.value.setCheckedNodes(nodeAll.value ? allTreeNode : []);
 }
 
-
-function getMenuAllCheckedKeys() {
+function getAllCheckedKeys() {
   // 目前被选中的菜单节点
-  let checkedKeys = deptRef.value.getCheckedKeys();
+  let checkedKeys = treeRef.value.getCheckedKeys();
   // 半选中的菜单节点
-  let halfCheckedKeys = deptRef.value.getHalfCheckedKeys();
-  checkedKeys.unshift.apply(checkedKeys, halfCheckedKeys);
-  return checkedKeys;
+  let halfCheckedKeys = treeRef.value.getHalfCheckedKeys();
+  return checkedKeys.concat(halfCheckedKeys);;
 }
 const submitForm = (formEl) => {
   formEl.validate((valid) => {
     if (valid) {
-      let fn = props.row ? updateRole : addRole;
-      fn({ ...postData.value, menuIds: getMenuAllCheckedKeys() }).then(res => {
+      dataScope({ ...postData.value, deptIds: getAllCheckedKeys() }).then(res => {
         if (res.data.code == 200) {
           ElMessage.success(res.data.msg)
           emits("success")
