@@ -1,8 +1,8 @@
-import BaseLayout from '@/layout/base-layout.vue'
 //eslint-disable-next-line
 // import { RouterView } from 'vue-router'
-import RouterView from './admin-router-view.vue'
-
+// import RouterView from '@/layout/admin-router-view.vue'
+import parentView from '@/layout/parent-view.vue'
+import layout from '@/layout/base-layout.vue'
 const autoImportPage = import.meta.glob(['@/views/**/index.vue'])
 const autoImportPageInfo = import.meta.glob(['@/views/**/auto-route.js'], { eager: true })
 
@@ -17,7 +17,7 @@ for (let path in autoImportPageInfo) {
     meta: {
       name: realPath
     },
-    component: autoImportPage['/src/views/' + realPath + '/index.vue'] || RouterView
+    component: autoImportPage['/src/views/' + realPath + '/index.vue']
   }
   let info = autoImportPageInfo[path]
   if (info) {
@@ -45,14 +45,20 @@ for (let path in autoImportPageInfo) {
 autoImportRotes = autoImportRotes.concat([
   {
     path: '',
-    weight: 100,
-    meta: { name: '首页', icon: 'HomeFilled', affix: true },
-    component: () => import('@/views/home.vue')
+    meta: { name: '首页', icon: 'HomeFilled' },
+    component: layout,
+    children: [
+      {
+        path: '/home',
+        meta: { name: '首页', icon: 'HomeFilled', affix: true },
+        component: () => import('@/views/home.vue')
+      }
+    ]
   },
   {
     path: '/system/',
     meta: { name: '系统设置', icon: 'Tools' },
-    component: RouterView,
+    component: layout,
     children: [
       {
         path: 'role',
@@ -102,7 +108,7 @@ autoImportRotes = autoImportRotes.concat([
       {
         path: 'log',
         meta: { name: '日志管理', icon: 'Document' },
-        component: RouterView,
+        component: parentView,
         children: [
           {
             path: 'oper',
@@ -128,10 +134,4 @@ autoImportRotes = autoImportRotes.concat([
 autoImportRotes.sort((a, b) => {
   return (b.weight || 0) - (a.weight || 0)
 })
-export default [
-  {
-    path: '/',
-    component: BaseLayout,
-    children: [...autoImportRotes]
-  }
-]
+export default autoImportRotes

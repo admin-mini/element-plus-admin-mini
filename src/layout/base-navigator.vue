@@ -5,12 +5,12 @@ import { routes } from '@/router/index.js'
 import { useRoute } from 'vue-router'
 import hasPermission from '@/utils/permission'
 const route = useRoute()
-const rootRoutes = reactive(routes[0])
+
 const computedRoutes = computed(() => {
-  return computedRole(rootRoutes.children)
+  return computedRole(routes)
   function computedRole(arr) {
     return arr.filter((item) => {
-      if ((item.meta.p && !hasPermission(item.meta.p)) || item.meta.hide) {
+      if ((item.meta?.p && !hasPermission(item.meta?.p)) || item.meta?.hide) {
         return false
       }
       if (item.children) {

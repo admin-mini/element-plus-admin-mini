@@ -8,7 +8,7 @@
       <div class="list-container">
         <div v-for="(item, index) in iconList" class="icon-item-wrapper" :key="index" @click="selectedIcon(item)">
           <div :class="['icon-item', { active: activeIcon === item }]">
-            <svg-icon :icon-class="item" class-name="icon" style="height: 25px;width: 16px;" />
+            <svg-icon :name="item" />
             <span>{{ item }}</span>
           </div>
         </div>
@@ -20,6 +20,7 @@
 <script setup>
 import { ref } from 'vue';
 import icons from './requireIcons'
+console.log(icons)
 const props = defineProps({
   activeIcon: {
     type: String
@@ -28,7 +29,7 @@ const props = defineProps({
 
 const iconName = ref('');
 const iconList = ref(icons);
-const emit = defineEmits(['selected']);
+const modal = defineModel('modelValue')
 
 function filterIcons() {
   iconList.value = icons
@@ -38,7 +39,7 @@ function filterIcons() {
 }
 
 function selectedIcon(name) {
-  emit('selected', name)
+  modal.value = name;
   document.body.click()
 }
 
@@ -82,6 +83,7 @@ defineExpose({
           max-width: 100%;
           height: 100%;
           padding: 0 5px;
+          align-items: center;
 
           &:hover {
             background: #ececec;

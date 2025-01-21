@@ -6,6 +6,7 @@ import packageJson from '../../package.json'
 import router from '@/router/index'
 import Cookies from 'js-cookie'
 import { getInfo } from '@/api/login'
+import { getRouters } from '@/api/menu'
 const LOCALSTORAGEKEY = packageJson.name
 var localState = {}
 try {
@@ -35,6 +36,14 @@ export const useSystemStore = defineStore('user', () => {
         state.value.permissions = res.data.permissions
         state.value.roles = res.data.roles
         state.value.user = res.data.user
+      }
+    })
+  }
+  getRoutes()
+  function getRoutes() {
+    getRouters().then((res) => {
+      if (res.data.code == 200) {
+        // console.log(res.data.data)
       }
     })
   }

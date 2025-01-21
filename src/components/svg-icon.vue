@@ -1,6 +1,9 @@
 <template>
     <span class="el-icon" v-if="isCustom">
-        <SvgIcon1 :name="props.name"></SvgIcon1>
+        <customSvg :name="props.name"></customSvg>
+        <!-- <svg aria-hidden="true">
+            <use :xlink:href="symbolId" />
+        </svg> -->
     </span>
     <el-icon v-else-if="getIcon()">
         <component :is="getIcon()">
@@ -9,11 +12,19 @@
 </template>
 
 <script setup>
-import SvgIcon1 from '~virtual/svg-component'
+import customSvg from '~virtual/svg-component'
 import { computed, resolveComponent } from 'vue'
 
 function getIcon() {
-    return resolveComponent(props.name)
+    //先判断是否有这个组件
+    if (props.name == '#') {
+        return null
+    }
+    let comp = resolveComponent(props.name)
+    if (typeof comp === 'string') {
+        return null
+    }
+    return comp
 }
 const props = defineProps({
     prefix: {

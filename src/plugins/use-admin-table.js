@@ -1,7 +1,8 @@
-import { reactive, onMounted, nextTick } from 'vue'
+import { reactive, onMounted, nextTick, getCurrentInstance } from 'vue'
 
 import { ElMessage } from 'element-plus'
 export default function useAdminTable(options) {
+  const vm = getCurrentInstance()
   const rules = reactive({})
   const $table = reactive({
     pageLayout: 'total, sizes, prev, pager, next, jumper',
@@ -32,14 +33,15 @@ export default function useAdminTable(options) {
   }
   Object.assign($table, options)
 
-  onMounted(function () {
+  onMounted(function (a, b) {
+    // console.log(vm)
     if (!$table.autoSearch) {
       return false
     }
     if ($table.api) {
       search()
     }
-  })
+  }, vm)
 
   function handleSizeChange(size) {
     $table.query.pageSize = size

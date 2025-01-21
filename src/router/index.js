@@ -13,8 +13,18 @@ const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
   routes: [
     ...routes,
-    { path: '/login', name: 'login', component: () => import('@/views/login.vue') },
-    { path: '/:pathMatch(.*)*', component: () => import('@/views/page-404.vue') }
+    {
+      path: '/login',
+      name: 'login',
+      meta: { noKeep: true },
+      component: () => import('@/views/login.vue')
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'p404',
+      meta: { noKeep: true },
+      component: () => import('@/views/page-404.vue')
+    }
   ]
 })
 export const routeMap = new Map() // key<Symbol>:permission<array>

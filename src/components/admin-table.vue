@@ -26,7 +26,6 @@ import { h, ref, useSlots } from 'vue'
 import useAdminTable from '@/plugins/use-admin-table'
 const slots = useSlots()
 const props = defineProps(['api', 'query', 'no-page']);
-console.log(props)
 const emits = defineEmits(['init',])
 const $table = useAdminTable()
 const queryFrom = ref()

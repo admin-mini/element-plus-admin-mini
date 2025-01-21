@@ -29,11 +29,10 @@
                     v-loading="$table.loading" row-key="menuId"
                     :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
                     <el-table-column prop="menuName" label="菜单名称" :show-overflow-tooltip="true">
+                    </el-table-column>
+                    <el-table-column prop="icon" label="图标">
                         <template #default="scope">
-                            <span v-if="scope.row.icon" class="mr-5">
-                                <!-- <svg-icon :name="scope.row.icon" /> -->
-                            </span>
-                            {{ scope.row.menuName }}
+                            <svg-icon :name="scope.row.icon" />
                         </template>
                     </el-table-column>
                     <el-table-column prop="orderNum" label="排序" width="60" align="center" />
@@ -75,7 +74,7 @@ getDict(['sys_normal_disable', 'sys_show_hide'])
 const adminDialog = useAdminDialog()
 let $table
 const refreshTable = ref(true)
-const isExpandAll = ref(true)
+const isExpandAll = ref(false)
 
 function onTableInit(table) {
     $table = table;

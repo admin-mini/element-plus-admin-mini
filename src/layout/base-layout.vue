@@ -53,10 +53,15 @@
         <base-navigator :mode="menuPositionStorge"></base-navigator>
       </el-scrollbar>
 
-      <div class="admin-body-view" v-loading="settingLoading">
+      <div class="admin-body-view" >
         <tag-list v-if="systemSetting.setting.useTag"></tag-list>
         <el-scrollbar v-if="menuPositionStorge == 'vertical'">
-          <router-view v-if="!settingLoading" />
+          <admin-router-view ></admin-router-view>
+          <!-- <router-view v-slot="{ Component, route }" >
+            <keep-alive>
+              <component :is="Component"  />
+            </keep-alive>
+          </router-view> -->
         </el-scrollbar>
       </div>
     </div>
@@ -66,7 +71,7 @@
 import { useSystemStore } from '@/stores'
 import baseNavigator from './base-navigator.vue'
 import { useDark, useToggle, useStorage } from '@vueuse/core'
-
+import adminRouterView from "./admin-router-view.vue"
 import { h, ref } from 'vue'
 import useAdminDialog from '@/plugins/use-admin-dialog'
 import tagList from './tag-list.vue'
@@ -74,7 +79,7 @@ import { useSystemSetting } from '@/stores/setting'
 const adminDialog = useAdminDialog()
 const systemStore = useSystemStore()
 const systemSetting = useSystemSetting()
-const settingLoading = ref(false)
+
 
 function logout() {
   systemStore.logout()

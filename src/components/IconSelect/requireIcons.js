@@ -1,8 +1,6 @@
 let icons = []
-const modules = import.meta.glob('./../../assets/icons/svg/*.svg');
+const modules = import.meta.glob('/svg-icon-origin/*.svg')
 for (const path in modules) {
-  const p = path.split('assets/icons/svg/')[1].split('.svg')[0];
-  icons.push(p);
+  const p = path.split('svg-icon-origin/')[1].split('.svg')[0]
 }
-
 export default icons

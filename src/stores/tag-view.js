@@ -23,7 +23,7 @@ export const useTagView = defineStore('tagList', () => {
   const viewKeyMap = ref({
     [active.value]: true
   })
-  routeMap.values().forEach((item) => {
+  Array.from(routeMap.values()).forEach((item) => {
     if (item.meta?.affix) {
       addTag(router.resolve(item))
     }
@@ -55,9 +55,10 @@ export const useTagView = defineStore('tagList', () => {
         router.replace('/')
       }
     }
-
     // 删除标签页
-    tagList.value.splice(index, 1)
+    setTimeout(() => {
+      tagList.value.splice(index, 1)
+    })
   }
   const setActive = (tag) => {
     active.value = tag
@@ -73,14 +74,26 @@ export const useTagView = defineStore('tagList', () => {
     addTag(to)
   })
   function addTag(to) {
-    active.value = to.fullPath
-    if (tagList.value.find((item) => item.fullPath == to.fullPath) || to.name === 'login') {
+    active.value = router.resolve(to).fullPath
+    if (tagList.value.find((item) => item.fullPath == to.fullPath) || to.meta?.noKeep) {
       return
     }
 
     viewKeyMap.value[to.fullPath] = true
     tagList.value.push(toValue(to))
   }
+  //获取用于缓存的tag key
+  const tagKeys = computed(() => {
+    let arr = []
+    tagList.value.map((item) => {
+      if (item.matched.length > 2) {
+        arr.push(router.resolve(item.matched[1]).fullPath)
+      }
+      arr.push(item.fullPath)
+    })
+    return arr
+  })
+
   return {
     active,
     tagList,
@@ -89,6 +102,7 @@ export const useTagView = defineStore('tagList', () => {
     sort,
     remove,
     setActive,
-    refresh
+    refresh,
+    tagKeys
   }
 })

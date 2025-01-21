@@ -23,7 +23,7 @@ const props = defineProps({
   // 数据
   options: {
     type: Array,
-    default: null,
+    default: [],
   },
   // 当前的值
   value: [Number, String, Array],
