@@ -1,15 +1,7 @@
-import hasPermission from '@/utils/permission'
-export default {
-  install(app) {
-    app.config.globalProperties.$p = hasPermission
-    app.directive('p', (el, binding) => {
-      computePermission(el, binding)
-    })
-  }
-}
-function computePermission(el, options) {
-  let domPermissionList = options.value
-  if (!hasPermission(domPermissionList)) {
-    el.remove()
-  }
+import hasRole from './permission/hasRole'
+import hasPermi from './permission/hasPermi'
+
+export default function directive(app) {
+  app.directive('hasRole', hasRole)
+  app.directive('hasPermi', hasPermi)
 }

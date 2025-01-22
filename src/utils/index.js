@@ -1,7 +1,7 @@
 import dict from './dict'
 import formatter from './formatter'
 import rules from './rules'
-import hasPermission from './permission'
+// import hasPermission from './permission'
 
 import * as utils from './utils'
 export default {
@@ -10,6 +10,6 @@ export default {
     app.config.globalProperties.$rules = rules
     app.config.globalProperties.$utils = utils
     app.config.globalProperties.$formatter = formatter
-    app.config.globalProperties.$hasPermission = hasPermission
+    // app.config.globalProperties.$hasPermission = hasPermission
   }
 }

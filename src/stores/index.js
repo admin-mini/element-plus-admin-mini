@@ -39,11 +39,10 @@ export const useSystemStore = defineStore('user', () => {
       }
     })
   }
-  getRoutes()
+  // getRoutes()
   function getRoutes() {
     getRouters().then((res) => {
       if (res.data.code == 200) {
-        // console.log(res.data.data)
       }
     })
   }

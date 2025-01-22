@@ -1,7 +1,7 @@
 <template>
   <router-view v-slot="{ Component, route }" v-if="systemSetting.setting.useTag">
     <keep-alive :include="tagView.tagKeys" :exclude="tagView.exclude">
-      <component :is="computeComponent(Component, route)" :key="getKey()"
+      <component :is="Component" :key="getKey()"
         v-if="tagView.viewKeyMap[route.fullPath]" />
     </keep-alive>
   </router-view>

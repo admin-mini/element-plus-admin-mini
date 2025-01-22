@@ -1,4 +1,3 @@
-import { routeMap } from '@/router'
 import { defineStore } from 'pinia'
 import { computed, nextTick, ref, toValue } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -23,11 +22,7 @@ export const useTagView = defineStore('tagList', () => {
   const viewKeyMap = ref({
     [active.value]: true
   })
-  Array.from(routeMap.values()).forEach((item) => {
-    if (item.meta?.affix) {
-      addTag(router.resolve(item))
-    }
-  })
+
   addTag(router.currentRoute.value) //将当前路由添加到tagList中
   // actions
   //刷新
@@ -56,9 +51,10 @@ export const useTagView = defineStore('tagList', () => {
       }
     }
     // 删除标签页
-    setTimeout(() => {
-      tagList.value.splice(index, 1)
-    })
+    tagList.value.splice(index, 1)
+    //  setTimeout(()=>{
+    //    tagList.value.splice(index, 1)
+    //  })
   }
   const setActive = (tag) => {
     active.value = tag
