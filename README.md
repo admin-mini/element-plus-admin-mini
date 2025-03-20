@@ -98,6 +98,7 @@
 }
 //其他代码
  ```
+[兼容若依分支](https://github.com/admin-mini/element-plus-admin-mini/tree/ruoyi)
 
 [中文文档](http://admin-mini.gitee.io/element-plus-admin-mini-docs/)
 
