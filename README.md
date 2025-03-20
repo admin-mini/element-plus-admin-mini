@@ -1,5 +1,6 @@
+ **预览**
+ ![demo](./demo.jpg)
  ![logo](./logo.jpg)
-
  # 更新日志：
   ### 0.0.3 20250320
 - 更新adminDialog 以及应用方式
