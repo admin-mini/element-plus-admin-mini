@@ -14,15 +14,16 @@
 
 <script setup>
 import { useSystemStore } from "@/stores";
-import { useSystemSetting } from "@/stores/setting";
+import SETTING from "@/utils/setting";
+
 import { QuillEditor } from "@vueup/vue-quill";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
 import { ElMessage } from "element-plus";
 import { computed, ref, useTemplateRef, watch, onMounted } from "vue";
 const systemStore = useSystemStore()
-const systemSetting = useSystemSetting()
+
 const quillEditorRef = ref();
-const uploadUrl = ref(systemSetting.setting.apiUrl + "/common/upload"); // 上传的图片服务器地址
+const uploadUrl = ref(SETTING.apiUrl + "/common/upload"); // 上传的图片服务器地址
 const headers = ref({
   Authorization: "Bearer " + systemStore.state.token
 });

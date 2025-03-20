@@ -1,5 +1,5 @@
 <template>
-  <admin-dialog>
+  <admin-dialog-content>
     <el-form ref="formRef" :model="postData" label-width="80px">
       <admin-space cols="1">
         <el-form-item label="岗位名称" prop="postName" :rules="[$rules.required]">
@@ -27,7 +27,7 @@
       <el-button @click="emits('end')">取消</el-button>
       <el-button type="primary" @click="submitForm" :loading="loading">确定</el-button>
     </template>
-  </admin-dialog>
+  </admin-dialog-content>
 </template>
 
 <script setup>
@@ -51,32 +51,30 @@ const postData = ref({
   postCode: undefined,
   postName: undefined,
   postSort: 0,
-  status: "0",
+  status: '0',
   remark: undefined
 })
 
 if (props.row) {
-  getPost(props.row.postId).then(res => {
-    Object.assign(postData.value, res.data.data)
+  getPost(props.row.postId).then((res) => {
+    Object.assign(postData.value, res.data)
   })
 }
 
 function submitForm() {
-  formRef.value?.validate(valid => {
+  formRef.value?.validate((valid) => {
     if (valid) {
       loading.value = true
       const fn = postData.value.postId ? updatePost : addPost
-      fn(postData.value).then(res => {
-        if (res.data.code === 200) {
-          ElMessage.success(res.data.msg)
+      fn(postData.value)
+        .then((res) => {
+          ElMessage.success(res.msg)
           emits('success')
-        } else {
-          ElMessage.error(res.data.msg)
-        }
-      }).finally(() => {
-        loading.value = false
-      })
+        })
+        .finally(() => {
+          loading.value = false
+        })
     }
   })
 }
-</script> 
+</script>

@@ -41,7 +41,13 @@ export default defineComponent({
       })
       let slotsResult = []
       defualtSlots.map((slot) => {
-        if (slot.props?.newRow == true) {
+        if (
+          slot.props &&
+          (slot.props.newRow != undefined ||
+            slot.props.newRow ||
+            slot.props['new-row'] ||
+            slot.props['new-row'] != undefined)
+        ) {
           //插入一个占满整行的div
           slotsResult.push(<div style={{ gridColumn: `1 / span ${props.cols}` }}></div>)
         }

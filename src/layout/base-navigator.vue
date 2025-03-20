@@ -4,7 +4,7 @@ import { computed, reactive } from 'vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
-import usePermissionStore from "@/stores/permission.js"
+import { usePermissionStore } from "@/stores/permission.js"
 const permissionStore = usePermissionStore();
 
 const activeMenu = computed(() => {
@@ -19,10 +19,11 @@ const activeMenu = computed(() => {
 
 </script>
 <template>
-  
+
   <el-menu router :default-active="activeMenu" mode="horizontal">
-    <base-navigator-item :show-timeout="0" :hide-timeout="0" :popper-offset="0" v-for="route in permissionStore.sidebarRouters"
-      :key="route.path" :route="route"></base-navigator-item>
+    <base-navigator-item :show-timeout="0" :hide-timeout="0" :popper-offset="0"
+      v-for="route in permissionStore.sidebarRouters.filter(item => !item.hidden)" :key="route.path"
+      :route="route"></base-navigator-item>
   </el-menu>
 </template>
 

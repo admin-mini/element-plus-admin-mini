@@ -25,10 +25,10 @@
       </template>
 
       <template #btn>
-        <el-button type="primary" icon="Plus" @click="openAdd" v-if="$p(['system:role:add'])">新增</el-button>
-        <el-button type="primary" plain icon="Edit" :disabled="$table.selection.length != 1" @click="openEdit()"
+        <el-button type="primary" icon="Plus" @click="handleAdd" v-if="$p(['system:role:add'])">新增</el-button>
+        <el-button type="primary" plain icon="Edit" :disabled="$table.selection.length != 1" @click="handleEdit()"
           v-if="$p(['system:role:edit'])">修改</el-button>
-        <el-button type="primary" plain icon="Delete" :disabled="$table.selection.length == 0" @click="openDel()"
+        <el-button type="primary" plain icon="Delete" :disabled="$table.selection.length == 0" @click="handleDel()"
           v-if="$p(['system:role:remove'])">删除</el-button>
         <el-button type="primary" plain icon="Download" @click="handleExport"
           v-if="$p(['system:role:export'])">导出</el-button>
@@ -52,10 +52,11 @@
           <el-table-column label="操作" width="300">
             <template #default="scope">
               <el-space spacer="|">
-                <el-link v-if="$p(['system:role:edit'])" type="primary" @click="openEdit(scope.row)">修改</el-link>
-                <el-link v-if="$p(['system:role:remove'])" type="primary" @click="openDel(scope.row)">删除</el-link>
-                <el-link v-if="$p(['system:role:edit'])" type="primary" @click="openAuth(scope.row)">分配用户</el-link>
-                <el-link v-if="$p(['system:role:edit'])" type="primary" @click="openDataScope(scope.row)">数据权限</el-link>
+                <el-link v-if="$p(['system:role:edit'])" type="primary" @click="handleEdit(scope.row)">修改</el-link>
+                <el-link v-if="$p(['system:role:remove'])" type="primary" @click="handleDel(scope.row)">删除</el-link>
+                <el-link v-if="$p(['system:role:edit'])" type="primary" @click="handleAuth(scope.row)">分配用户</el-link>
+                <el-link v-if="$p(['system:role:edit'])" type="primary"
+                  @click="handleDataScope(scope.row)">数据权限</el-link>
 
               </el-space>
             </template>
@@ -80,9 +81,9 @@ const adminDialog = useAdminDialog()
 let $table;
 const router = useRouter();
 
-function openAuth(row) {
+function handleAuth(row) {
   router.push({
-    path: '/system/role/auth/' + row.roleId,
+    path: '/system/role-auth/user/' + row.roleId,
   })
 }
 /** 角色状态修改 */
@@ -101,50 +102,56 @@ function handleExport() {
     ...$table.query,
   }, `role_${new Date().getTime()}.xlsx`);
 }
-function openDataScope(row) {
+function handleDataScope(row) {
   adminDialog({
     component: import('./data-scope.vue'),
     props: {
-      row
+      row,
+      onSuccess: () => {
+        $table.getTable()
+      }
     },
     dialogProps: {
       title: '数据权限',
       width: "500px",
     },
-    onSuccess: () => {
-      $table.getTable()
-    }
+
   })
 
 }
-function openAdd() {
+function handleAdd() {
   adminDialog({
     component: import('./post.vue'),
-    props: {},
+    props: {
+      onSuccess: () => {
+        $table.getTable()
+      }
+    },
     dialogProps: {
       title: '新增',
       width: "500px",
     },
-    onSuccess: () => {
-      $table.getTable()
-    }
+
   })
 
 }
-async function openEdit(row) {
+function handleEdit(row) {
   row = row || $table.selection[0]
   adminDialog(
-    h((await import('./post.vue')).default, {
-      row: row,
-      onSuccess: () => {
-        $table.getTable()
-      }
-    }),
-    { title: '修改', width: "500px" }
+    {
+      component: import('./post.vue'),
+      props: {
+        row: row,
+        onSuccess: () => {
+          $table.getTable()
+        }
+      },
+      dialogProps: { title: '修改', width: "500px" }
+    }
   )
 }
 
-function openDel(row) {
+function handleDel(row) {
   let ids = row ? [row.roleId] : $table.selection.map(item => item.roleId)
   ElMessageBox.confirm(`确定删除${ids.length}条数据？`, "提示", {
     type: "warning",
@@ -152,11 +159,7 @@ function openDel(row) {
       if (action === 'confirm') {
         instance.confirmButtonLoading = true
         delRole(ids.join()).then(res => {
-          if (res.data.code == 200) {
-            $table.getTable()
-          } else {
-            ElMessage.error(res.data.msg)
-          }
+          $table.getTable()
         }).finally(() => {
           instance.confirmButtonLoading = false
           done()

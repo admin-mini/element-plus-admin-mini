@@ -7,7 +7,7 @@
         </a>
         <el-collapse-transition>
             <div class="debugger-inner" v-show="show">
-                <a :href="'?debug=http://nk.ynnn.net/api/'">test</a>
+                <a :href="'?debug=http://vue.ruoyi.vip/prod-api/'">test</a>
                 <a :href="'?debug=https://mock.apifox.cn/m1/3332315-0-default'">apiFox</a>
             </div>
         </el-collapse-transition>

@@ -23,11 +23,11 @@
             </template>
 
             <template #btn>
-                <el-button type="primary" icon="Plus" @click="openAdd" v-if="$p(['system:post:add'])">新增</el-button>
-                <el-button type="primary" plain icon="Edit" :disabled="$table.selection.length != 1" @click="openEdit()"
-                    v-if="$p(['system:post:edit'])">修改</el-button>
+                <el-button type="primary" icon="Plus" @click="handleAdd" v-if="$p(['system:post:add'])">新增</el-button>
+                <el-button type="primary" plain icon="Edit" :disabled="$table.selection.length != 1"
+                    @click="handleEdit()" v-if="$p(['system:post:edit'])">修改</el-button>
                 <el-button type="primary" plain icon="Delete" :disabled="$table.selection.length == 0"
-                    @click="openDel()" v-if="$p(['system:post:remove'])">删除</el-button>
+                    @click="handleDel()" v-if="$p(['system:post:remove'])">删除</el-button>
                 <el-button type="warning" plain icon="Download" @click="handleExport"
                     v-if="$p(['system:post:export'])">导出</el-button>
             </template>
@@ -49,9 +49,9 @@
                     <el-table-column label="操作" align="center" width="200">
                         <template #default="scope">
                             <el-space spacer="|">
-                                <el-link type="primary" @click="openEdit(scope.row)"
+                                <el-link type="primary" @click="handleEdit(scope.row)"
                                     v-if="$p(['system:post:edit'])">修改</el-link>
-                                <el-link type="primary" @click="openDel(scope.row)"
+                                <el-link type="primary" @click="handleDel(scope.row)"
                                     v-if="$p(['system:post:remove'])">删除</el-link>
                             </el-space>
                         </template>
@@ -75,31 +75,37 @@ getDict(['sys_normal_disable'])
 const adminDialog = useAdminDialog()
 let $table
 
-async function openAdd() {
+function handleAdd() {
     adminDialog(
-        h((await import('./post.vue')).default, {
-            onSuccess: () => {
-                $table.getTable()
-            }
-        }),
-        { title: '新增岗位', width: "500px" }
+        {
+            component: import('./post.vue'),
+            props: {
+                onSuccess: () => {
+                    $table.getTable()
+                }
+            },
+            dialogProps: { title: '新增岗位', width: "500px" }
+        }
     )
 }
 
-async function openEdit(row) {
+function handleEdit(row) {
     row = row || $table.selection[0]
     adminDialog(
-        h((await import('./post.vue')).default, {
-            row: row,
-            onSuccess: () => {
-                $table.getTable()
-            }
-        }),
-        { title: '修改岗位', width: "500px" }
+        {
+            component: import('./post.vue'),
+            props: {
+                row: row,
+                onSuccess: () => {
+                    $table.getTable()
+                }
+            },
+            dialogProps: { title: '修改岗位', width: "500px" }
+        }
     )
 }
 
-function openDel(row) {
+function handleDel(row) {
     let ids = row ? [row.postId] : $table.selection.map(item => item.postId)
     syncConfirm(
         `是否确认删除岗位编号为"${ids.join(',')}"的数据项?`,

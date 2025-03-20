@@ -1,4 +1,4 @@
-import request from '@/api/request'
+import request from '../request'
 
 // 查询在线用户列表
 export function list(query) {

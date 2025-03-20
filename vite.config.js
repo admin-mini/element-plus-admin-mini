@@ -6,30 +6,41 @@ import dynamicProxy from './vite.dynamic.proxy'
 import path from 'path'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
-import UnpluginSvgComponent from 'unplugin-svg-component/vite'
+import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+import UnoCSS from 'unocss/vite'
 export default defineConfig({
   plugins: [
+    UnoCSS(),
     vue(),
     vueJsx(),
     AutoImport({
-      resolvers: [ElementPlusResolver()]
+      imports: ['vue', 'vue-router', 'pinia'],
+      dts: true,
+      resolvers: [
+        ElementPlusResolver()
+        // (name) => {
+        //   if (name === 'dict') {
+        //     return {
+        //       from: '@/utils/dict', // 模块路径
+        //       name: ['getDict', 'default'] // 导出的名称（如果需要导出默认模块）
+        //     }
+        //   }
+        // }
+      ]
     }),
-    Components({
-      resolvers: [ElementPlusResolver()]
-    }),
+    // Components({
+    //   resolvers: [ElementPlusResolver()]
+    // }),
     dynamicProxy({
       path: new RegExp('^/api'),
       default: 'http://vue.ruoyi.vip/prod-api/',
       changeOrigin: false
     }),
-    UnpluginSvgComponent({
-      // 指定需要缓存的图标文件夹
-      iconDir: [path.resolve(process.cwd(), 'svg-icon-origin')],
-      // 指定symbolId格式
-      symbolIdFormatter: (svgName) => svgName.replace(/\.svg$/, ''),
-      svgSpriteDomId: '__svg__icons__dom__',
-      scanStrategy: 'text'
+    createSvgIconsPlugin({
+      iconDirs: [path.resolve(process.cwd(), 'svg-icon')],
+      symbolId: 'icon-[dir]-[name]',
+      svgoOptions: false
     })
   ],
   css: {
@@ -43,12 +54,22 @@ export default defineConfig({
   },
   resolve: {
     alias: {
+      '~': path.resolve(__dirname, './'),
       '@': fileURLToPath(new URL('./src', import.meta.url))
-    }
+    },
+    extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue']
   },
   base: '/element-plus-admin-mini',
   server: {
     host: '0.0.0.0',
     port: 9988
+  },
+  build: {
+    rollupOptions: {
+      input: {
+        index: path.resolve(__dirname, 'index.html')
+        // print: path.resolve(__dirname, 'print.html')
+      }
+    }
   }
 })

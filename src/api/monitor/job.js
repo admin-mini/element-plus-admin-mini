@@ -1,4 +1,4 @@
-import request from '@/api/request'
+import request from '../request'
 
 // 查询定时任务调度列表
 export function listJob(query) {

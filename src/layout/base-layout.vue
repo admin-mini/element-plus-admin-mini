@@ -1,5 +1,5 @@
 <template>
-  <div class="admin-container" :class="menuPositionStorge">
+  <div class="admin-container" :class="menuPositionStorge" v-if="systemStore.isLogin">
     <div class="admin-header">
       <div class="admin-header-left">
         <div class="header-brand">
@@ -27,6 +27,7 @@
             <BottomLeft v-else />
           </el-icon>
         </el-button>
+
         <el-dropdown>
           <span class="el-dropdown-link">
             <el-avatar :size="26" :src="systemStore.state?.user?.avatar" style="margin-right: 5px" />
@@ -39,7 +40,9 @@
           </span>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item @click="changePassword">修改密码</el-dropdown-item>
+              <router-link to="/user/profile">
+                <el-dropdown-item>个人中心</el-dropdown-item>
+              </router-link>
               <el-dropdown-item @click="logout" divided>退出</el-dropdown-item>
             </el-dropdown-menu>
           </template>
@@ -53,10 +56,10 @@
         <base-navigator :mode="menuPositionStorge"></base-navigator>
       </el-scrollbar>
 
-      <div class="admin-body-view" >
-        <tag-list v-if="systemSetting.setting.useTag"></tag-list>
-        <el-scrollbar v-if="menuPositionStorge == 'vertical'">
-          <admin-router-view ></admin-router-view>
+      <div class="admin-body-view">
+        <tag-list v-if="SETTING.useTag"></tag-list>
+        <el-scrollbar view-style="height:100%">
+          <admin-router-view></admin-router-view>
           <!-- <router-view v-slot="{ Component, route }" >
             <keep-alive>
               <component :is="Component"  />
@@ -72,20 +75,17 @@ import { useSystemStore } from '@/stores'
 import baseNavigator from './base-navigator.vue'
 import { useDark, useToggle, useStorage } from '@vueuse/core'
 import adminRouterView from "./admin-router-view.vue"
-import { h, ref } from 'vue'
 import useAdminDialog from '@/plugins/use-admin-dialog'
 import tagList from './tag-list.vue'
-import { useSystemSetting } from '@/stores/setting'
+import SETTING from '@/utils/setting'
 const adminDialog = useAdminDialog()
 const systemStore = useSystemStore()
-const systemSetting = useSystemSetting()
+
+
 
 
 function logout() {
   systemStore.logout()
-}
-async function changePassword() {
-  adminDialog(h((await import('./change-password.vue')).default, {}), { title: '修改密码', width: 400 })
 }
 
 const isDark = useDark()

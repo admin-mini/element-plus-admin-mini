@@ -1,16 +1,33 @@
 <template>
   <div class="admin-tag-list">
+
     <el-tabs v-model="tagView.active" type="card" @tab-click="({ paneName }) => tagView.setActive(paneName)"
       @tab-remove="handleTabRemove" id="js-tag-list">
+
       <el-tab-pane v-for="item in tagView.tagList" :key="item.fullPath" :closable="!item.meta.affix"
         :name="item.fullPath">
         <template #label>
-          <svg-icon class="_icon" :name="item.meta.icon" v-if="item.meta.icon"></svg-icon> {{ item.meta.name }}
-          <!-- <el-button @click="tagView.refresh()">刷</el-button> -->
+          <el-dropdown trigger="contextmenu" style="color:inherit">
+            <div>
+              <svg-icon class="_icon" :name="item.meta.icon" v-if="item.meta.icon && item.meta.icon != '#'"></svg-icon>
+              {{ item.meta.title }}
+            </div>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item @click="tagView.remove(item)">关闭</el-dropdown-item>
+                <el-dropdown-item @click="tagView.removeOther(item)">关闭其他</el-dropdown-item>
+                <el-dropdown-item @click="tagView.removeRight(item)">关闭右侧</el-dropdown-item>
+                <el-dropdown-item @click="tagView.refresh(item)">刷新</el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
         </template>
       </el-tab-pane>
+
     </el-tabs>
+
   </div>
+
 </template>
 
 <script setup>
@@ -18,15 +35,21 @@ import { useTagView } from '@/stores/tag-view'
 import Sortable from 'sortablejs'
 import { onMounted } from 'vue'
 const tagView = useTagView()
-
+function command() {
+  console.log(arguments)
+}
 onMounted(() => {
-  const el = document.querySelector('#js-tag-list .el-tabs__nav')
-  new Sortable(el, {
-    animation: 150,
-    onEnd: (evt) => {
-      tagView.sort(evt.oldIndex, evt.newIndex)
-    }
-  })
+  try {
+    const el = document.querySelector('#js-tag-list .el-tabs__nav')
+    new Sortable(el, {
+      animation: 150,
+      onEnd: (evt) => {
+        tagView.sort(evt.oldIndex, evt.newIndex)
+      }
+    })
+  } catch (err) {
+    console.warn(err)
+  }
 })
 
 function handleTabRemove(fullPath) {
@@ -44,6 +67,7 @@ function handleTabRemove(fullPath) {
   box-sizing: border-box;
   padding: 8px 10px;
   box-shadow: 0 1px 4px rgba(113, 128, 166, .1);
+  z-index: 2;
 
   .el-tabs__nav-next,
   .el-tabs__nav-prev {

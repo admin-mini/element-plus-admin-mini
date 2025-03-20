@@ -1,10 +1,10 @@
 import axios from 'axios'
 import { ElLoading, ElMessage } from 'element-plus'
 import { useSystemStore } from '@/stores/index'
-import { useSystemSetting } from '@/stores/setting'
 import { blobValidate, tansParams } from '@/utils/utils'
 import { saveAs } from 'file-saver'
 import errorCode from '@/utils/errorCode'
+import SETTING from '@/utils/setting'
 
 let systemStore
 
@@ -13,7 +13,7 @@ const request = axios.create()
 // 添加请求拦截器
 request.interceptors.request.use(
   function (config) {
-    config.baseURL = useSystemSetting().setting.apiUrl
+    config.baseURL = SETTING.apiUrl
 
     systemStore = useSystemStore()
     // config.headers['Authorization'] = systemStore.state.token
@@ -38,21 +38,39 @@ request.interceptors.response.use(
     if (response.headers.authorization) {
       systemStore.setToken(response.headers.authorization)
     }
+    // 二进制数据则直接返回
+    if (
+      response.request.responseType === 'blob' ||
+      response.request.responseType === 'arraybuffer'
+    ) {
+      return response.data
+    }
     if (response.data.code == 401) {
       ElMessage.info('登陆超时')
       systemStore.logout()
+      return Promise.reject('timeout')
     }
-    if (response.data.code == 3) {
-      ElMessage({
-        message: '无权限！',
-        type: 'warning',
-        duration: 5 * 1000
-      })
+    // if (response.data.code == 3) {
+    //   ElMessage({
+    //     message: '无权限！',
+    //     type: 'warning',
+    //     duration: 5 * 1000
+    //   })
+    // }
+    response.data.code = response.data.code == 0 ? 200 : response.data.code
+    if (response.data.code != 200) {
+      ElMessage.error(response.data.msg)
+      return Promise.reject('error')
     }
-    return response
+    return response.data
   },
   function (error) {
-    console.warn('请求错误', error) // for debug
+    console.log(error)
+    if (error.status != 200) {
+      ElMessage.error(error.message)
+    }
+    // console.warn('请求错误', error) // for debug
+
     // Message({
     //   message: error.message,
     //   type: 'error',
@@ -81,7 +99,6 @@ export function download(url, params, filename, config) {
       ...config
     })
     .then(async (data) => {
-      data = data.data
       const isBlob = blobValidate(data)
       if (isBlob) {
         const blob = new Blob([data])
@@ -100,5 +117,11 @@ export function download(url, params, filename, config) {
       downloadLoadingInstance.close()
     })
 }
-
+export function uploadFile(data) {
+  return request.post('/common/upload', data, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+}
 export default request

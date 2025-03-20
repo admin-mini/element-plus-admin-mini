@@ -20,7 +20,7 @@
             </template>
 
             <template #btn>
-                <el-button type="primary" icon="Plus" @click="openAdd()" v-if="$p(['system:dept:add'])">新增</el-button>
+                <el-button type="primary" icon="Plus" @click="handleAdd()" v-if="$p(['system:dept:add'])">新增</el-button>
                 <el-button type="info" plain icon="Sort" @click="toggleExpandAll">展开/折叠</el-button>
             </template>
 
@@ -40,11 +40,11 @@
                         <template #default="scope">
                             <el-space spacer="|">
                                 <el-link v-if="$p(['system:dept:edit'])" type="primary"
-                                    @click="openEdit(scope.row)">修改</el-link>
+                                    @click="handleEdit(scope.row)">修改</el-link>
                                 <el-link v-if="$p(['system:dept:add'])" type="primary"
-                                    @click="openAdd(scope.row)">新增</el-link>
+                                    @click="handleAdd(scope.row)">新增</el-link>
                                 <el-link v-if="scope.row.parentId != 0 && $p(['system:dept:remove'])" type="primary"
-                                    @click="openDel(scope.row)">删除</el-link>
+                                    @click="handleDel(scope.row)">删除</el-link>
                             </el-space>
                         </template>
                     </el-table-column>
@@ -71,8 +71,8 @@ const treeData = ref([])
 
 function onTableInit(table) {
     $table = table;
-    $table.parse = (data) => {
-        return arrToTree(data.data, 'deptId', 'parentId')
+    $table.parse = (res) => {
+        return arrToTree(res.data, 'deptId', 'parentId')
     }
 }
 
@@ -84,7 +84,7 @@ function toggleExpandAll() {
     })
 }
 
-function openAdd(row) {
+function handleAdd(row) {
     adminDialog({
         component: import('./post.vue'),
         dialogProps: {
@@ -100,7 +100,7 @@ function openAdd(row) {
     })
 }
 
-function openEdit(row) {
+function handleEdit(row) {
     adminDialog({
         component: import('./post.vue'),
         props: {
@@ -117,7 +117,7 @@ function openEdit(row) {
     })
 }
 
-function openDel(row) {
+function handleDel(row) {
     syncConfirm(
         `是否确认删除名称为"${row.deptName}"的部门?`,
         () => delDept(row.deptId)

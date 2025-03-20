@@ -38,8 +38,10 @@
     "http-proxy": "^1.18.1",
     "prettier": "^3.4.2",
     "sass": "^1.83.1",
+    "unocss": "^65.4.3",
     "unplugin-auto-import": "^19.0.0",
     "unplugin-vue-components": "^28.0.0",
-    "vite": "^6.0.7"
+    "vite": "^6.0.7",
+    "vite-plugin-svg-icons": "^2.0.1"
   }
 }

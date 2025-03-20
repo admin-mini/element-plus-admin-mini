@@ -1,5 +1,5 @@
-import { render, getCurrentInstance, onBeforeUnmount, createVNode, h } from 'vue'
-import { ElDialog, useGlobalComponentSettings } from 'element-plus'
+import { render, getCurrentInstance, onBeforeUnmount, createVNode, h, Suspense } from 'vue'
+import { ElDialog, ElDrawer, useGlobalComponentSettings } from 'element-plus'
 const Dialog = {
   setup(props, context) {
     // this is meant to fix global methods like `ElMessage(opts)`, this way we can inject current locale
@@ -7,7 +7,9 @@ const Dialog = {
     // refer to: https://github.com/element-plus/element-plus/issues/2610#issuecomment-887965266
     useGlobalComponentSettings() //解决弹出组件无法获取全局配置问题
     return () => {
-      return h('div', null, context.slots)
+      //加入Suspense
+
+      return h('div', null, h(Suspense, null, context.slots))
     }
   }
 }
@@ -15,11 +17,18 @@ import 'element-plus/es/components/dialog/style/css'
 export default function useAdminDialog() {
   const vm = getCurrentInstance()
 
-  return async function (vnode, opts) {
+  return async function (vnode, opts, type) {
+    type = type || 'dialog'
     if (vnode.component) {
       opts = vnode.dialogProps
+      type = vnode.dialogType || 'dialog'
+      if (type == 'drawer') {
+        opts.size = opts.width
+        opts.headerClass = 'admin-drawer-header'
+        opts.bodyClass = 'admin-drawer-body'
+        opts.footerClass = 'admin-drawer-footer'
+      }
       let props = vnode.props
-
       if (vnode.component instanceof Promise) {
         vnode = await vnode.component
         vnode = createVNode(vnode.default, props)
@@ -30,8 +39,9 @@ export default function useAdminDialog() {
     }, vm)
 
     let dom = document.createElement('div')
+    const COMP = type == 'dialog' ? ElDialog : ElDrawer
     let dialogVnode = createVNode(
-      ElDialog,
+      COMP,
       {
         onClosed: () => {
           render(null, dom) //触发内部onUnmounted

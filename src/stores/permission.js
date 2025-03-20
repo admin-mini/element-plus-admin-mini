@@ -6,11 +6,12 @@ import ParentView from '@/layout/parent-view.vue'
 import auth from '@/utils/auth'
 import { defineStore } from 'pinia'
 import { isExternal } from '@/utils/validate'
+import { useTagView } from './tag-view'
 
 // 匹配views里面所有的.vue文件
-const modules = import.meta.glob('./../../views/**/*.vue')
+const modules = import.meta.glob('@/views/**/*.vue')
 
-const usePermissionStore = defineStore('permission', {
+export const usePermissionStore = defineStore('permission', {
   state: () => ({
     routes: [],
     addRoutes: [],
@@ -32,40 +33,64 @@ const usePermissionStore = defineStore('permission', {
     setSidebarRouters(routes) {
       this.sidebarRouters = routes
     },
+    clearAddRoutes() {
+      this.addRoutes = []
+    },
     generateRoutes(roles) {
-      return new Promise((resolve) => {
+      return new Promise((resolve, reject) => {
         // 向后端请求路由数据
-        getRouters().then((res) => {
-          let d = res.data.data
-          const sdata = JSON.parse(JSON.stringify(d))
-          const rdata = JSON.parse(JSON.stringify(d))
-          const defaultData = JSON.parse(JSON.stringify(d))
-          const sidebarRoutes = filterAsyncRouter(sdata)
-          const rewriteRoutes = filterAsyncRouter(rdata, false, true)
-          const defaultRoutes = filterAsyncRouter(defaultData)
-          const asyncRoutes = filterDynamicRoutes(dynamicRoutes)
-          console.log(asyncRoutes)
-          asyncRoutes.forEach((route) => {
-            router.addRoute(route)
-          })
-          rewriteRoutes.forEach((route) => {
-            if (!isExternal(route.path)) {
+        getRouters()
+          .then((res) => {
+            let d = res.data
+            const sdata = JSON.parse(JSON.stringify(d))
+            const rdata = JSON.parse(JSON.stringify(d))
+            const defaultData = JSON.parse(JSON.stringify(d))
+            const sidebarRoutes = filterAsyncRouter(sdata)
+            const rewriteRoutes = filterAsyncRouter(rdata, false, true)
+            const defaultRoutes = filterAsyncRouter(defaultData)
+            const asyncRoutes = filterDynamicRoutes(dynamicRoutes)
+            asyncRoutes.forEach((route) => {
               router.addRoute(route)
-            }
-          })
-          this.setRoutes(rewriteRoutes)
-          this.setSidebarRouters(constantRoutes.concat(sidebarRoutes))
-          this.setDefaultRoutes(sidebarRoutes)
-          this.setTopbarRoutes(defaultRoutes)
-          setTimeout(() => {
+            })
+            rewriteRoutes.forEach((route) => {
+              if (!isExternal(route.path)) {
+                router.addRoute(route)
+              }
+            })
+
+            this.setRoutes(rewriteRoutes)
+            this.setSidebarRouters(constantRoutes.concat(sidebarRoutes))
+            this.setDefaultRoutes(sidebarRoutes)
+            this.setTopbarRoutes(defaultRoutes)
+            const tagView = useTagView()
+            filterAffixTags(this.routes).forEach((_route) => {
+              tagView.addTag(_route)
+            })
+
             resolve(rewriteRoutes)
           })
-        })
+          .catch((err) => {
+            reject(err)
+          })
       })
     }
   }
 })
-
+function filterAffixTags(routes, basePath = '') {
+  let tags = []
+  routes.forEach((route) => {
+    if (route.meta && route.meta.affix) {
+      tags.push(route)
+    }
+    if (route.children) {
+      const tempTags = filterAffixTags(route.children, route.path)
+      if (tempTags.length >= 1) {
+        tags = [...tags, ...tempTags]
+      }
+    }
+  })
+  return tags
+}
 // 遍历后台传来的路由字符串，转换为组件对象
 function filterAsyncRouter(asyncRouterMap, lastRouter = false, type = false) {
   return asyncRouterMap.filter((route) => {
@@ -140,14 +165,10 @@ export function filterDynamicRoutes(routes) {
 }
 
 export const loadView = (view) => {
-  let res
-  for (const path in modules) {
-    const dir = path.split('views/')[1].split('.vue')[0]
-    if (dir === view) {
-      res = () => modules[path]()
-    }
+  let res = modules['/src/views/' + view + '.vue']
+  if (res) {
+    return () => res()
+  } else {
+    console.warn('获取视图失败', view)
   }
-  return res
 }
-
-export default usePermissionStore

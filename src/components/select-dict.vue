@@ -1,7 +1,12 @@
 <template>
-  <el-select v-model="model" collapse-tags collapse-tags-tooltip style="display: block; min-width: 192px">
+  <el-select v-model="model" collapse-tags collapse-tags-tooltip style="display: block; width:100%;">
+    <template #label="current">
+      <slot name="label" :option="options.get(current.value)"></slot>
+    </template>
     <el-option v-for="option in options" :key="option[props.valueKey]" :value="option[props.valueKey]"
-      :label="option[props.labelKey]" :disabled="option.disabled"></el-option>
+      :label="option[props.labelKey]" :disabled="option.disabled">
+      <slot name="label" :option="option"></slot>
+    </el-option>
   </el-select>
 </template>
 
@@ -64,16 +69,19 @@ watch(
 if (props.api) {
   options.value = makeDict([])
   props.api(props.query).then((res) => {
-    if (res.data.code == 0) {
-      options.value = makeDict(
-        [{ [props.labelKey]: '全部', [props.valueKey]: '' }].concat(res.data.data),
-        props.labelKey,
-        props.valueKey
-      )
-      if (props.selectFirst && options.value.length) {
-        model.value = options.value[0][props.valueKey]
-      }
+    var arr = [];
+    if (props.showAll) {
+      arr.push({ [props.labelKey]: '全部', [props.valueKey]: '' })
     }
+    options.value = makeDict(
+      arr.concat(res.data || res.rows),
+      props.labelKey,
+      props.valueKey
+    )
+    if (props.selectFirst && options.value.length) {
+      model.value = options.value[0][props.valueKey]
+    }
+
   })
 }
 

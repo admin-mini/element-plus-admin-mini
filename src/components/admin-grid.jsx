@@ -29,18 +29,29 @@ export default defineComponent({
       //行间距
       type: Number,
       default: 0
+    },
+    minWidth: {
+      type: [Number, String]
     }
   },
   setup(props, { slots }) {
     const showAll = ref(props.showAll)
     const cols = ref(props.cols)
-    function handleResize() {
+    function handleResize({ width, height }) {
       if (props.resp) {
         let resultCols = props.cols
-        let defaultCols = DEFAULT_SCREEN_WIDTH / props.cols
-        let currentCos = document.body.clientWidth / props.cols
-        let sign = currentCos > defaultCols ? 1 : -1
-        resultCols += Math.floor((Math.abs(currentCos - defaultCols) * sign * props.cols) / defaultCols)
+        if (props.minWidth) {
+          if (width / props.cols < props.minWidth) {
+            resultCols = Math.floor(width / props.minWidth)
+          }
+        } else {
+          let defaultCols = DEFAULT_SCREEN_WIDTH / props.cols
+          let currentCos = document.body.clientWidth / props.cols
+          let sign = currentCos > defaultCols ? 1 : -1
+          resultCols += Math.floor(
+            (Math.abs(currentCos - defaultCols) * sign * props.cols) / defaultCols
+          )
+        }
         cols.value = resultCols
       }
     }
@@ -61,10 +72,18 @@ export default defineComponent({
         }
         return true
       })
-      let i = defualtSlots.length % cols.value == 0 ? 1 : 0
+      let gridColumn = cols.value
+      if (
+        defualtSlots.length == cols.value ||
+        (defualtSlots.length > cols.value && !showAll.value)
+      ) {
+        gridColumn = cols.value + 1
+      }
+
       return {
-        gridColumn: `${showAll.value ? cols.value : cols.value + 1} / span 1`,
-        paddingLeft: '18px'
+        gridColumn: `${gridColumn} / span 1`,
+        paddingLeft: '18px',
+        textAlign: 'right'
       }
     })
 

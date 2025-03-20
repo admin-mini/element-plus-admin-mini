@@ -20,7 +20,7 @@
             </template>
 
             <template #btn>
-                <el-button type="primary" icon="Plus" @click="openAdd" v-if="$p(['system:menu:add'])">新增</el-button>
+                <el-button type="primary" icon="Plus" @click="handleAdd" v-if="$p(['system:menu:add'])">新增</el-button>
                 <el-button type="info" plain icon="Sort" @click="toggleExpandAll">展开/折叠</el-button>
             </template>
 
@@ -47,11 +47,11 @@
                     <el-table-column label="操作" align="center" width="200">
                         <template #default="scope">
                             <el-space spacer="|">
-                                <el-link type="primary" @click="openAdd(scope.row)"
+                                <el-link type="primary" @click="handleAdd(scope.row)"
                                     v-if="$p(['system:menu:add'])">新增</el-link>
-                                <el-link type="primary" @click="openEdit(scope.row)"
+                                <el-link type="primary" @click="handleEdit(scope.row)"
                                     v-if="$p(['system:menu:edit'])">修改</el-link>
-                                <el-link type="primary" @click="openDel(scope.row)"
+                                <el-link type="primary" @click="handleDel(scope.row)"
                                     v-if="$p(['system:menu:remove'])">删除</el-link>
                             </el-space>
                         </template>
@@ -78,8 +78,8 @@ const isExpandAll = ref(false)
 
 function onTableInit(table) {
     $table = table;
-    $table.parse = (data) => {
-        return arrToTree(data.data, 'menuId', 'parentId')
+    $table.parse = (res) => {
+        return arrToTree(res.data, 'menuId', 'parentId')
     }
 }
 function toggleExpandAll() {
@@ -90,31 +90,37 @@ function toggleExpandAll() {
     })
 }
 
-async function openAdd(row) {
+function handleAdd(row) {
     adminDialog(
-        h((await import('./post.vue')).default, {
-            parentId: row?.menuId,
-            onSuccess: () => {
-                $table.getTable()
-            }
-        }),
-        { title: '新增菜单', width: "700px" }
+        {
+            component: import('./post.vue'),
+            props: {
+                parentId: row?.menuId,
+                onSuccess: () => {
+                    $table.getTable()
+                }
+            },
+            dialogProps: { title: '新增菜单', width: "700px" }
+        }
     )
 }
 
-async function openEdit(row) {
+function handleEdit(row) {
     adminDialog(
-        h((await import('./post.vue')).default, {
-            row: row,
-            onSuccess: () => {
-                $table.getTable()
-            }
-        }),
-        { title: '修改菜单', width: "700px" }
+        {
+            component: import('./post.vue'),
+            props: {
+                row: row,
+                onSuccess: () => {
+                    $table.getTable()
+                }
+            },
+            dialogProps: { title: '修改菜单', width: "700px" }
+        }
     )
 }
 
-function openDel(row) {
+function handleDel(row) {
     syncConfirm(
         `是否确认删除名称为"${row.menuName}"的数据项?`,
         () => delMenu(row.menuId)

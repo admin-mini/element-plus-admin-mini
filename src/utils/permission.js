@@ -7,7 +7,7 @@ import { useSystemStore } from '@/stores'
  */
 export function checkPermi(value) {
   if (value && value instanceof Array && value.length > 0) {
-    const permissions = useSystemStore().permissions
+    const permissions = useSystemStore().state.permissions
     const permissionDatas = value
     const all_permission = '*:*:*'
 
@@ -32,7 +32,7 @@ export function checkPermi(value) {
  */
 export function checkRole(value) {
   if (value && value instanceof Array && value.length > 0) {
-    const roles = useSystemStore().roles
+    const roles = useSystemStore().state.roles
     const permissionRoles = value
     const super_admin = 'admin'
 

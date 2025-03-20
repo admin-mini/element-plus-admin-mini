@@ -1,6 +1,7 @@
 <template>
     <div>
-       <el-input v-model="home" />
+        <el-button>Default</el-button>
+        <el-button plain>Plain</el-button>
     </div>
 </template>
 

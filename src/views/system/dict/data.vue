@@ -20,11 +20,11 @@
             </template>
 
             <template #btn>
-                <el-button type="primary" icon="Plus" @click="openAdd" v-if="$p(['system:dict:add'])">新增</el-button>
-                <el-button type="primary" plain icon="Edit" :disabled="$table.selection.length != 1" @click="openEdit()"
-                    v-if="$p(['system:dict:edit'])">修改</el-button>
+                <el-button type="primary" icon="Plus" @click="handleAdd" v-if="$p(['system:dict:add'])">新增</el-button>
+                <el-button type="primary" plain icon="Edit" :disabled="$table.selection.length != 1"
+                    @click="handleEdit()" v-if="$p(['system:dict:edit'])">修改</el-button>
                 <el-button type="primary" plain icon="Delete" :disabled="$table.selection.length == 0"
-                    @click="openDel()" v-if="$p(['system:dict:remove'])">删除</el-button>
+                    @click="handleDel()" v-if="$p(['system:dict:remove'])">删除</el-button>
                 <el-button type="warning" plain icon="Download" @click="handleExport"
                     v-if="$p(['system:dict:export'])">导出</el-button>
 
@@ -48,9 +48,9 @@
                     <el-table-column label="操作" align="center" width="200">
                         <template #default="scope">
                             <el-space spacer="|">
-                                <el-link type="primary" @click="openEdit(scope.row)"
+                                <el-link type="primary" @click="handleEdit(scope.row)"
                                     v-if="$p(['system:dict:edit'])">修改</el-link>
-                                <el-link type="primary" @click="openDel(scope.row)"
+                                <el-link type="primary" @click="handleDel(scope.row)"
                                     v-if="$p(['system:dict:remove'])">删除</el-link>
                             </el-space>
                         </template>
@@ -79,33 +79,39 @@ let $table
 getDict(['sys_normal_disable'])
 
 
-async function openAdd() {
+function handleAdd() {
     adminDialog(
-        h((await import('./data-post.vue')).default, {
-            dictId: route.params.dictId,
-            dictType: route.query.dictType,
-            onSuccess: () => {
-                $table.getTable()
-            }
-        }),
-        { title: '新增字典数据', width: "500px" }
+        {
+            component: import('./data-post.vue'),
+            props: {
+                dictId: route.params.dictId,
+                dictType: route.query.dictType,
+                onSuccess: () => {
+                    $table.getTable()
+                }
+            },
+            dialogProps: { title: '新增字典数据', width: "500px" }
+        }
     )
 }
 
-async function openEdit(row) {
+function handleEdit(row) {
     row = row || $table.selection[0]
     adminDialog(
-        h((await import('./data-post.vue')).default, {
-            row: row,
-            onSuccess: () => {
-                $table.getTable()
-            }
-        }),
-        { title: '修改字典数据', width: "500px" }
+        {
+            component: import('./data-post.vue'),
+            props: {
+                row: row,
+                onSuccess: () => {
+                    $table.getTable()
+                }
+            },
+            dialogProps: { title: '修改字典数据', width: "500px" }
+        }
     )
 }
 
-function openDel(row) {
+function handleDel(row) {
     let ids = row ? [row.dictCode] : $table.selection.map(item => item.dictCode)
     syncConfirm(
         `是否确认删除字典编码为"${ids.join(',')}"的数据项?`,

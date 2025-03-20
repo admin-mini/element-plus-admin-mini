@@ -1,4 +1,4 @@
-import request from '@/api/request'
+import request from '../request'
 
 // 查询调度日志列表
 export function listJobLog(query) {

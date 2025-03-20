@@ -27,9 +27,10 @@
             </template>
 
             <template #btn>
-                <el-button type="primary" icon="Plus" @click="openAdd" v-if="$p(['system:role:add'])">新增用户授权</el-button>
+                <el-button type="primary" icon="Plus" @click="handleAdd"
+                    v-if="$p(['system:role:add'])">新增用户授权</el-button>
                 <el-button type="primary" plain icon="Delete" :disabled="$table.selection.length == 0"
-                    @click="openCancel()" v-if="$p(['system:role:remove'])">批量取消授权</el-button>
+                    @click="handleCancel()" v-if="$p(['system:role:remove'])">批量取消授权</el-button>
             </template>
             <template #table>
                 <el-table :data="$table.data" table-layout="auto" style="width: 100%;" :empty-text="$table.emptyText"
@@ -47,7 +48,7 @@
                         <template #default="scope">
                             <el-space spacer="|">
                                 <el-link v-if="$p(['system:role:remove'])" type="primary"
-                                    @click="openCancel(scope.row)">取消授权</el-link>
+                                    @click="handleCancel(scope.row)">取消授权</el-link>
                             </el-space>
                         </template>
                     </el-table-column>
@@ -73,13 +74,12 @@ let $table;
 const route = useRoute();
 const roleId = route.params.roleId;
 
-function openAdd() {
+function handleAdd() {
     adminDialog({
         component: import('./select-user.vue'),
         props: {
             query: { roleId },
-            onSuccess: (ss) => {
-                console.log(ss)
+            onSuccess: () => {
                 $table.getTable()
             }
         },
@@ -87,11 +87,10 @@ function openAdd() {
             title: '新增用户授权',
             width: "900px",
         },
-
     })
 }
 
-function openCancel(row) {
+function handleCancel(row) {
     if (row) {
         syncConfirm(
             `确认要取消${row.userName}角色授权吗?`,

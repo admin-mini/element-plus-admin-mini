@@ -1,18 +1,18 @@
 <template>
-    <span class="el-icon" v-if="isCustom">
-        <customSvg :name="props.name"></customSvg>
-        <!-- <svg aria-hidden="true">
-            <use :xlink:href="symbolId" />
-        </svg> -->
-    </span>
-    <el-icon v-else-if="getIcon()">
+
+    <el-icon v-if="getIcon()">
         <component :is="getIcon()">
         </component>
     </el-icon>
+    <span class="el-icon" v-else>
+        <svg aria-hidden="true">
+            <use :xlink:href="symbolId" />
+        </svg>
+    </span>
 </template>
 
 <script setup>
-import customSvg from '~virtual/svg-component'
+
 import { computed, resolveComponent } from 'vue'
 
 function getIcon() {
@@ -40,6 +40,6 @@ const props = defineProps({
         default: '#333',
     },
 },)
-const isCustom = computed(() => props.name.startsWith('i-'))
-const symbolId = computed(() => props.prefix ? `#${[props.prefix, props.name].join('-')}` : `#${props.name}`)
+
+const symbolId = computed(() => `#icon-${props.name}`)
 </script>

@@ -17,8 +17,10 @@
             <el-input v-model="postData.password" type="password" placeholder="请输入登录密码"></el-input>
           </el-form-item>
           <el-form-item prop="code" style="margin-bottom: 40px">
-            <el-input v-model="postData.code" placeholder="请输入验证码"></el-input>
-            <el-image :src="codeImg" @click="getCode()"></el-image>
+            <div style="display:flex; width:100%;">
+              <el-input v-model="postData.code" placeholder="请输入验证码"></el-input>
+              <el-image :src="codeImg" @click="getCode()" class="code-img"></el-image>
+            </div>
           </el-form-item>
           <el-form-item>
             <el-button native-type="submit" autocomplete="off" :loading="loading" type="primary"
@@ -57,29 +59,21 @@ getCode()
 function getCode() {
 
   getCodeImg().then(res => {
-    if (res.data.code == 200) {
-      captchaEnabled.value = res.data.captchaEnabled;
-      if (captchaEnabled.value) {
-        codeImg.value = "data:image/gif;base64," + res.data.img;
-        postData.value.uuid = res.data.uuid;
-      }
+    captchaEnabled.value = res.captchaEnabled;
+    if (captchaEnabled.value) {
+      codeImg.value = "data:image/gif;base64," + res.img;
+      postData.value.uuid = res.uuid;
     }
   });
 }
-
 function submit() {
   postForm.value.validate((valid) => {
     if (valid) {
       loading.value = true
       login(postData.value)
         .then(async (res) => {
-          if (res.data.code == 200) {
-            await systemStore.login(res.data.token)
-            router.replace('/')
-          } else {
-            getCode()
-            ElMessage.error(res.data.msg)
-          }
+          await systemStore.login(res.token)
+          router.replace('/')
         })
         .catch(() => {
           getCode()

@@ -256,11 +256,11 @@ export function syncConfirm(tip, req) {
           instance.confirmButtonLoading = true
           req()
             .then((res) => {
-              if (res.data.code == 200) {
+              if (res.code == 200) {
                 resolve()
               } else {
                 reject()
-                ElMessage.error(res.data.msg)
+                ElMessage.error(res.msg)
               }
             })
             .finally(() => {
@@ -279,4 +279,24 @@ export function syncConfirm(tip, req) {
       reject()
     })
   })
+}
+
+/**
+ * 验证表单并scrollToField
+ * @param {Object} formRef 表单实例
+ * @returns {Promise} 返回Promise对象
+ */
+export async function checkRules(formRef) {
+  try {
+    await formRef.value.validate()
+    return Promise.resolve()
+  } catch (err) {
+    let firstError = Object.values(err)[0]
+    formRef.value.scrollToField(firstError[0].field)
+    ElMessage.warning(
+      formRef.value.fields.find((item) => item.prop == firstError[0].field).label +
+        firstError[0].message
+    )
+    return Promise.reject()
+  }
 }
