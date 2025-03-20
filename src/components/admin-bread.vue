@@ -11,7 +11,8 @@ const router = useRouter()
                 <HomeFilled />
             </el-icon>
         </el-breadcrumb-item>
-        <el-breadcrumb-item :to="router.getFullPath(route)" v-for="item in route.matched.slice(1)" :key="item.meta.key">
+        <el-breadcrumb-item :to="router.resolve(route).fullPath" v-for="item in route.matched.slice(1)"
+            :key="item.meta.key">
             {{ item.meta.name }}
         </el-breadcrumb-item>
 

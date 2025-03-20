@@ -3,9 +3,6 @@ import { useRouter } from 'vue-router'
 import { icons } from '@element-plus/icons-vue/global'
 const props = defineProps({ route: Object })
 const router = useRouter()
-
-
-
 </script>
 <template>
   <el-menu-item :index="router.getFullPath(props.route)" v-if="!props.route.children">
@@ -13,7 +10,8 @@ const router = useRouter()
       <component :is="icons[props.route.meta.icon]">
       </component>
     </el-icon>
-    {{ props.route.meta.name }}</el-menu-item>
+    {{ props.route.meta.name }}
+  </el-menu-item>
   <el-sub-menu v-else popper-class="admin-sub-menu" :index="router.getFullPath(props.route)" :show-timeout="0"
     :hide-timeout="0" :popper-offset="0">
     <template #title>

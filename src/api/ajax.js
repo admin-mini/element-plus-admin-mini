@@ -26,9 +26,17 @@ ajax.interceptors.response.use(
     if (response.headers.authorization) {
       systemStore.setToken(response.headers.authorization)
     }
+    // 二进制数据则直接返回
+    if (
+      response.request.responseType === 'blob' ||
+      response.request.responseType === 'arraybuffer'
+    ) {
+      return response.data
+    }
     if (response.data.code == 2) {
       ElMessage.info('登陆超时')
       systemStore.logout()
+      return Promise.reject('登陆超时')
     }
     if (response.data.code == 3) {
       ElMessage({
@@ -36,8 +44,13 @@ ajax.interceptors.response.use(
         type: 'warning',
         duration: 5 * 1000
       })
+      return Promise.reject('无权限')
     }
-    return response
+    if (response.data.code != 0) {
+      ElMessage.error(response.data.msg)
+      return Promise.reject('error')
+    }
+    return response.data
   },
   function (error) {
     console.warn('请求错误', error) // for debug

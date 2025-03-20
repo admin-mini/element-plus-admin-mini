@@ -1,17 +1,13 @@
 <template>
   <div class="admin-login-container">
-    <div class="header" @click="systemStore.increment">
-      <el-icon size="40px">
-        <Notification />
-      </el-icon>
-      {{ $env.VITE_APP_NAME }}
-    </div>
     <div class="admin-login">
-      <div class="admin-login-banner">
-        <img src="/static/login-banner.png" />
-      </div>
       <div class="admin-login-form">
-        <h3 class="title">管理员登录</h3>
+        <h3 class="title">
+          <el-icon size="40px">
+            <Notification />
+          </el-icon>
+          {{ $env.VITE_APP_NAME }}
+        </h3>
 
         <el-form :model="postData" :rules="rules" @submit.prevent="submit" ref="postForm">
           <el-form-item label="" prop="userName" style="margin-bottom: 40px">
@@ -21,8 +17,13 @@
             <el-input v-model="postData.passWord" type="password" placeholder="请输入登录密码"></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button native-type="submit" autocomplete="off" :loading="loading" type="primary"
-              class="admin-block-button login-btn">
+            <el-button
+              native-type="submit"
+              autocomplete="off"
+              :loading="loading"
+              type="primary"
+              class="admin-block-button login-btn"
+            >
               登录
             </el-button>
           </el-form-item>
@@ -40,6 +41,7 @@ import { userLogin } from '@/api/index'
 import { useSystemStore } from '@/stores/index'
 import $rules from '@/utils/rules'
 import { useRouter } from 'vue-router'
+import { useTagView } from '@/stores/tag-view'
 const router = useRouter()
 const postForm = ref()
 const systemStore = useSystemStore()
@@ -47,7 +49,7 @@ const postData = reactive({
   userName: 'admin',
   passWord: "123456"
 })
-
+useTagView().clearAll();
 const rules = reactive({
   userName: [$rules.required]
 })
@@ -61,12 +63,8 @@ function submit() {
       loading.value = true
       userLogin(_postData)
         .then((res) => {
-          if (res.data.code == 0) {
-            systemStore.login(res.data.data)
-            router.replace('/')
-          } else {
-            ElMessage.error(res.data.msg)
-          }
+          systemStore.login(res.data)
+          router.replace('/')
         })
         .finally(() => {
           loading.value = false
@@ -82,75 +80,56 @@ function submit() {
 .admin-login-container {
   width: 100%;
   height: 100%;
-  background: url('/static/login-bg.png') no-repeat;
+  background-color: #ecf3ff;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25' viewBox='0 0 800 400'%3E%3Cdefs%3E%3CradialGradient id='a' cx='396' cy='281' r='514' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0' stop-color='%23C7DAED'/%3E%3Cstop offset='1' stop-color='%23ECF3FF'/%3E%3C/radialGradient%3E%3ClinearGradient id='b' gradientUnits='userSpaceOnUse' x1='400' y1='148' x2='400' y2='333'%3E%3Cstop offset='0' stop-color='%23FFFFFF' stop-opacity='0'/%3E%3Cstop offset='1' stop-color='%23FFFFFF' stop-opacity='0.5'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect fill='url(%23a)' width='800' height='400'/%3E%3Cg fill-opacity='0.4'%3E%3Ccircle fill='url(%23b)' cx='267.5' cy='61' r='300'/%3E%3Ccircle fill='url(%23b)' cx='532.5' cy='61' r='300'/%3E%3Ccircle fill='url(%23b)' cx='400' cy='30' r='300'/%3E%3C/g%3E%3C/svg%3E");
   background-attachment: fixed;
   background-size: cover;
-  overflow: auto;
-
-  .login-download {
-    display: flex;
-    justify-content: space-between;
-    padding: 0 20px;
-  }
-
-  .header {
-    display: flex;
-    align-items: center;
-    font-size: 36px;
-    color: #fff;
-    padding: 50px;
-
-    img {
-      margin-right: 24px;
-    }
-  }
+  display: flex;
+  align-items: center;
+  justify-self: center;
 
   .admin-login {
-    background: #ffffff;
-    border-radius: 10px;
-    padding: 30px;
+    width: 500px;
     margin: 0 auto;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    width: 1260px;
-    height: 700px;
     box-sizing: border-box;
-  }
-
-  .admin-login-banner {
-    overflow: hidden;
-    height: 100%;
-    display: flex;
-    align-items: center;
-
-    img {
-      height: 100%;
-    }
+    /* 渐变背景 */
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    /* 透明白色背景 */
+    border-radius: 15px;
+    // backdrop-filter: blur(10px);
+    /* 毛玻璃效果 */
+    // box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    // background: linear-gradient(135deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 1));
+    /* 渐变背景 */
   }
 
   .login-btn {
-    height: 54px;
-    line-height: 54px;
+    height: 45px;
+    line-height: 45px;
     font-size: 20px;
     padding: 0;
   }
 
   .admin-login-form {
-    width: 378px;
-    flex-shrink: 0;
-    padding: 0 90px;
+    width: 100%;
+    padding: 15px 30px;
 
     .title {
-      text-align: center;
-      font-size: 30px;
-      color: $color-primary;
+      display: flex;
+      align-items: center;
+      // justify-content: center;
+      font-size: 35px;
+      font-weight: normal;
+      color: var(--el-color-primary);
+      font-weight: 300;
     }
 
     .el-input__inner {
-      border-color: #9dc0fc;
-      height: 54px;
-      line-height: 54px;
+      height: 45px;
+      line-height: 45px;
       font-size: 18px;
     }
   }

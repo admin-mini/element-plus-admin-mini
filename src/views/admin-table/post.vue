@@ -1,28 +1,30 @@
 <template>
-  <el-form ref="postForm" label-position="right" label-width="100px" :model="postData" :rules="rules">
-    <div style="height:1px;padding-top:10px;overflow:hidden; ">
-      <input type="text" name="userName" style="color:#FFF;border:none;outline:none;">
-      <input type="password" name="password" style="color:#FFF;border:none;outline:none;">
-    </div>
-    <el-form-item label="账号" prop="username" :rules="[$rules.required]">
-      <el-input v-model="postData.username"></el-input>
-    </el-form-item>
-    <el-form-item label="用户姓名" prop="nickName" :rules="[$rules.required]">
-      <el-input v-model="postData.nickName"></el-input>
-    </el-form-item>
-    <el-form-item label="密码" prop="passWord" v-if="!props.row"
-      :rules="[$rules.required, $rules.checkPassword(postData, 'rePassWord', postForm)]">
-      <el-input v-model="postData.passWord" type="password"></el-input>
-    </el-form-item>
-    <el-form-item label="重复密码" prop="rePassWord" v-if="!props.row"
-      :rules="[$rules.required, $rules.checkPassword(postData, 'passWord', postForm)]">
-      <el-input v-model="postData.rePassWord" type="password"></el-input>
-    </el-form-item>
-    <el-form-item class="admin-dialog-btns">
+  <admin-dialog-content v-loading="loading">
+    <el-form ref="postForm" label-position="right" label-width="100px" :model="postData" :rules="rules">
+      <div style="height:1px;padding-top:10px;overflow:hidden; ">
+        <input type="text" name="userName" style="color:#FFF;border:none;outline:none;">
+        <input type="password" name="password" style="color:#FFF;border:none;outline:none;">
+      </div>
+      <el-form-item label="账号" prop="username" :rules="[$rules.required]">
+        <el-input v-model="postData.username"></el-input>
+      </el-form-item>
+      <el-form-item label="用户姓名" prop="nickName" :rules="[$rules.required]">
+        <el-input v-model="postData.nickName"></el-input>
+      </el-form-item>
+      <el-form-item label="密码" prop="passWord" v-if="!props.row"
+        :rules="[$rules.required, $rules.checkPassword(postData, 'rePassWord', postForm)]">
+        <el-input v-model="postData.passWord" type="password"></el-input>
+      </el-form-item>
+      <el-form-item label="重复密码" prop="rePassWord" v-if="!props.row"
+        :rules="[$rules.required, $rules.checkPassword(postData, 'passWord', postForm)]">
+        <el-input v-model="postData.rePassWord" type="password"></el-input>
+      </el-form-item>
+    </el-form>
+    <template #footer>
       <el-button type="primary" @click="submitForm(postForm)" :loading="loading">确定</el-button>
       <el-button @click="emits('end')">取消</el-button>
-    </el-form-item>
-  </el-form>
+    </template>
+  </admin-dialog-content>
 </template>
 
 <script setup>

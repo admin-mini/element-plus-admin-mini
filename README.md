@@ -1,6 +1,17 @@
  ![logo](./logo.jpg)
 
  # 更新日志：
+  ### 0.0.3 20250320
+- 更新adminDialog 以及应用方式
+- 更新adminTable 以及应用方式
+- 新增admin-grid
+- 新增admin-space
+- 新增filter-table
+- 新增dict-input组件
+- 新增标签页功能
+- 更新登陆页样式
+- 更新整体布局
+- 更新$formatter.dict (可自动渲染成el-tag)
   ### 0.0.2 20240725
  - 大面积升级依赖
  - 调整全局布局样式

@@ -13,6 +13,8 @@ import '@/style/admin.scss'
 import adminComponent from './components/index'
 import adminUtils from './utils/index'
 import directive from './directive/index.js'
+import { useTagView } from './stores/tag-view'
+
 const app = createApp(App)
 app.config.globalProperties.$env = import.meta.env
 app.use(createPinia())
@@ -29,6 +31,7 @@ app.use(adminComponent)
 
 app.use(router)
 app.mount('#app')
+useTagView()
 if (import.meta.env.DEV) {
   import('./Debug.vue').then((res) => {
     let p = document.createElement('div')

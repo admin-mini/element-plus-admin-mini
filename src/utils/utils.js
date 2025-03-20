@@ -1,4 +1,4 @@
-import { dayjs} from "element-plus"
+import { dayjs, ElMessageBox } from 'element-plus'
 /**
  *
  * @param {string} url 要下载的地址
@@ -149,25 +149,48 @@ export function formatDateFull(timestamp) {
  * 一维数组转tree结构
  * @param {array} data 一维数组对象
  */
-export function arrToTree(data, idKey = 'id', pidKey = 'pid', topId = 0) {
-  // 递归
+export function arrToTree(data, id, parentId, children) {
+  let config = {
+    id: id || 'id',
+    parentId: parentId || 'parentId',
+    childrenList: children || 'children'
+  }
 
-  function getNode(id) {
-    let node = []
-    for (let i = 0; i < data.length; i++) {
-      if (data[i][pidKey] == id) {
-        data[i].children = getNode(data[i][idKey])
-        node.push(data[i])
-      }
+  var childrenListMap = {}
+  var nodeIds = {}
+  var tree = []
+
+  for (let d of data) {
+    let parentId = d[config.parentId]
+    if (childrenListMap[parentId] == null) {
+      childrenListMap[parentId] = []
     }
-    if (node.length == 0) {
-      return
-    } else {
-      return node
+    nodeIds[d[config.id]] = d
+    childrenListMap[parentId].push(d)
+  }
+
+  for (let d of data) {
+    let parentId = d[config.parentId]
+    if (nodeIds[parentId] == null) {
+      tree.push(d)
     }
   }
-  // 根节点
-  return getNode(topId)
+
+  for (let t of tree) {
+    adaptToChildrenList(t)
+  }
+
+  function adaptToChildrenList(o) {
+    if (childrenListMap[o[config.id]] !== null) {
+      o[config.childrenList] = childrenListMap[o[config.id]]
+    }
+    if (o[config.childrenList]) {
+      for (let c of o[config.childrenList]) {
+        adaptToChildrenList(c)
+      }
+    }
+  }
+  return tree
 }
 
 /**
@@ -191,4 +214,98 @@ export function tree2arr(tree, chilField = 'children') {
   }
   tree2arr(tree)
   return treeRes
+}
+
+/**
+ * 参数处理
+ * @param {*} params  参数
+ */
+export function tansParams(params) {
+  let result = ''
+  for (const propName of Object.keys(params)) {
+    const value = params[propName]
+    var part = encodeURIComponent(propName) + '='
+    if (value !== null && value !== '' && typeof value !== 'undefined') {
+      if (typeof value === 'object') {
+        for (const key of Object.keys(value)) {
+          if (value[key] !== null && value[key] !== '' && typeof value[key] !== 'undefined') {
+            let params = propName + '[' + key + ']'
+            var subPart = encodeURIComponent(params) + '='
+            result += subPart + encodeURIComponent(value[key]) + '&'
+          }
+        }
+      } else {
+        result += part + encodeURIComponent(value) + '&'
+      }
+    }
+  }
+  return result
+}
+
+// 验证是否为blob格式
+export function blobValidate(data) {
+  return data.type !== 'application/json'
+}
+
+export function syncConfirm(tip, req) {
+  return new Promise((resolve, reject) => {
+    ElMessageBox.confirm(tip, '提示', {
+      type: 'warning',
+      beforeClose: (action, instance, done) => {
+        if (action === 'confirm') {
+          instance.confirmButtonLoading = true
+          req()
+            .then((res) => {
+              if (res.code == 200) {
+                resolve()
+              } else {
+                reject()
+                ElMessage.error(res.msg)
+              }
+            })
+            .finally(() => {
+              instance.confirmButtonLoading = false
+              done()
+            })
+            .catch(() => {
+              reject()
+            })
+        } else {
+          done()
+          reject()
+        }
+      }
+    }).catch(() => {
+      reject()
+    })
+  })
+}
+
+/**
+ * 验证表单并scrollToField
+ * @param {Object} formRef 表单实例
+ * @returns {Promise} 返回Promise对象
+ */
+export async function checkRules(formRef) {
+  try {
+    await formRef.value.validate()
+    return Promise.resolve()
+  } catch (err) {
+    let firstError = Object.values(err)[0]
+    formRef.value.scrollToField(firstError[0].field)
+    ElMessage.warning(
+      formRef.value.fields.find((item) => item.prop == firstError[0].field).label +
+        firstError[0].message
+    )
+    return Promise.reject()
+  }
+}
+
+/**
+ * 判断path是否为外链
+ * @param {string} path
+ * @returns {Boolean}
+ */
+export function isExternal(path) {
+  return /^(https?:|mailto:|tel:)/.test(path)
 }

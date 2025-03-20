@@ -1,13 +1,20 @@
 <template>
-  <el-select v-model="model" collapse-tags collapse-tags-tooltip style="display: block; width:100%;">
-    <template #label="current">
-      <slot name="label" :option="options.get(current.value)"></slot>
-    </template>
+  <el-select v-model="model" collapse-tags collapse-tags-tooltip style="display: block; width:100%;"
+    v-if="props.type == 'select'">
     <el-option v-for="option in options" :key="option[props.valueKey]" :value="option[props.valueKey]"
-      :label="option[props.labelKey]" :disabled="option.disabled">
-      <slot name="label" :option="option"></slot>
-    </el-option>
+      :label="option[props.labelKey]" :disabled="option.disabled"></el-option>
   </el-select>
+  <el-radio-group v-model="model" v-else-if="props.type == 'radio'">
+    <el-radio v-for="option in options" :key="option[props.valueKey]" :value="option[props.valueKey]">
+      {{ option[props.labelKey] }}
+    </el-radio>
+  </el-radio-group>
+  <el-checkbox-group v-model="model" v-else-if="props.type == 'checkbox'">
+    <el-checkbox v-for="option in options" :key="option[props.valueKey]" :value="option[props.valueKey]">
+      {{ option[props.labelKey] }}
+    </el-checkbox>
+  </el-checkbox-group>
+
 </template>
 
 <script setup>
@@ -18,6 +25,11 @@ const model = defineModel({
 })
 
 const props = defineProps({
+  type: {
+    //select,radio,checkbox
+    type: String,
+    default: 'select'
+  },
   dict: {
     type: Array,
     default: () => []
