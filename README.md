@@ -31,6 +31,74 @@
  
  提炼了大量项目使用频率最高的功能；
 
+ **核心亮点： adminDialog**
+
+ 解决一个模块增删改查都在一个vue文件问题
+  
+ ```html
+ <!-- 使用前 -->
+ <template>
+  ...搜索DOM
+  ...列表dom
+  <el-dialog>...新增DOM</el-dialog>
+  <el-dialog>...修改DOM</el-dialog>
+ </template>
+ <script>
+ ...列表页逻辑
+ ...新增逻辑
+ ...修改逻辑
+ </script>
+
+ <!-- 使用后 -->
+  | index.vue
+  | add.vue
+  | edit.vue
+
+<!-- index.vue -->
+<template>
+...搜索DOM
+...列表dom
+</template>
+<script>
+...列表逻辑
+</script>
+
+<!-- add.vue -->
+<template>
+...新增dom
+</template>
+<script>
+...新增逻辑
+</script>
+
+<!-- edit.vue -->
+<template>
+...修改dom
+</template>
+<script>
+...修改逻辑
+</script>
+ ```
+
+ 仅需要调用
+
+ ```javascript 
+ //其他代码
+ function openAdd() {
+  adminDialog({
+    component: import('./add.vue'),
+    props: {
+      onSuccess: () => {
+        $table.getTable()
+      }
+    },
+    dialogType:"drawer",//可以指定抽屉，默认为dialog
+    dialogProps: { title: '新增' }
+  })
+}
+//其他代码
+ ```
+
 [中文文档](http://admin-mini.gitee.io/element-plus-admin-mini-docs/)
 
 [预览](http://admin-mini.gitee.io/element-plus-admin-mini/)
@@ -58,11 +126,11 @@ nodejs16+
 ## 下载
 
 ```bash
-  git clone https://github.com/zjpzjp/element-plus-admin-mini.git
+  git clone https://github.com/admin-mini/element-plus-admin-mini.git
 ```
 gitee镜像
 ```bash
-  git clone https://github.com/zjpzjp/element-plus-admin-mini.git
+  git clone https://gitee.com/admin-mini/element-plus-admin-mini.git
 ```
 
 ## 安装

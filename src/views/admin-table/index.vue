@@ -50,7 +50,7 @@
           </template>
         </el-table-column>
       </template>
-      <template #table>
+      <!-- <template #table>
         <el-table border :data="$table.data" :empty-text="$table.emptyText" v-loading="$table.loading"
           table-layout="auto">
           <el-table-column prop="username" label="帐号" />
@@ -77,7 +77,7 @@
           </el-table-column>
         </el-table>
 
-      </template>
+      </template> -->
 
     </admin-table>
   </div>
