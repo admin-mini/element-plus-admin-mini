@@ -8,7 +8,8 @@
     "types": ["element-plus/global"],
     "lib": ["ESNext", "DOM"],
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "element-plus/*": ["node_modules/element-plus/dist/types/*"]
     }
   },
   "exclude": ["node_modules", "dist"],

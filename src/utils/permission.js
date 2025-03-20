@@ -1,19 +1,51 @@
 import { useSystemStore } from '@/stores'
-import dict from '@/utils/dict'
 
-export default function hasPermission(userPermission) {
-  const systemStore = useSystemStore()
-  if (!systemStore.isLogin) {
+/**
+ * 字符权限校验
+ * @param {Array} value 校验值
+ * @returns {Boolean}
+ */
+export function checkPermi(value) {
+  if (value && value instanceof Array && value.length > 0) {
+    const permissions = useSystemStore().state.permissions
+    const permissionDatas = value
+    const all_permission = '*:*:*'
+
+    const hasPermission = permissions.some((permission) => {
+      return all_permission === permission || permissionDatas.includes(permission)
+    })
+
+    if (!hasPermission) {
+      return false
+    }
+    return true
+  } else {
+    console.error(`need roles! Like checkPermi="['system:user:add','system:user:edit']"`)
     return false
   }
-  if (!dict.SETTING.OPEN_PERMISSION) {
-    //是否开启权限
-    return true
-  }
-  if (systemStore.isSuperAdmin) {
-    return true
-  }
+}
 
-  userPermission = userPermission.map((item) => item.toString())
-  return userPermission.includes(systemStore.state.utype.toString())
+/**
+ * 角色权限校验
+ * @param {Array} value 校验值
+ * @returns {Boolean}
+ */
+export function checkRole(value) {
+  if (value && value instanceof Array && value.length > 0) {
+    const roles = useSystemStore().state.roles
+    const permissionRoles = value
+    const super_admin = 'admin'
+
+    const hasRole = roles.some((role) => {
+      return super_admin === role || permissionRoles.includes(role)
+    })
+
+    if (!hasRole) {
+      return false
+    }
+    return true
+  } else {
+    console.error(`need roles! Like checkRole="['admin','editor']"`)
+    return false
+  }
 }

@@ -24,7 +24,7 @@ export default function (options) {
 
         let u = new URL(req.url, 'http://localhost')
         if (options.path.test(u.pathname)) {
-          let urlObj = new URL(req.headers.referer)
+          let urlObj = new URL(req.headers.referer || 'http://localhost')
           var debug = urlObj.search.slice(1).match(new RegExp('(^|&)debug=([^&]*)(&|$)', 'i'))
           debug = debug ? debug[2] : options.default
           req.url = req.url.replace(options.path, '')

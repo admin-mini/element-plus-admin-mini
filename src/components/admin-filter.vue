@@ -4,22 +4,10 @@
       {{ props.title }}
     </div>
     <el-space wrap class="admin-search-filter-body">
-      <el-check-tag
-        size="small"
-        class="admin-search-filter-item"
-        :checked="current == ''"
-        @click="choose()"
-        >全部</el-check-tag
-      >
-      <el-check-tag
-        size="small"
-        class="admin-search-filter-item"
-        :checked="current == item.value"
-        v-for="item in items"
-        @click="choose(item)"
-        :key="item.value"
-        >{{ item.label }}</el-check-tag
-      >
+      <el-check-tag size="small" class="admin-search-filter-item" :checked="current == ''"
+        @click="choose()">全部</el-check-tag>
+      <el-check-tag size="small" class="admin-search-filter-item" :checked="current == item.value" v-for="item in items"
+        @click="choose(item)" :key="item.value">{{ item.label }}</el-check-tag>
     </el-space>
   </div>
 </template>
@@ -58,6 +46,7 @@ function choose(item) {
   align-items: flex-start;
   padding: 8px;
 }
+
 .admin-search-filter-header {
   height: 24px;
   line-height: 24px;
@@ -65,6 +54,7 @@ function choose(item) {
   flex-shrink: 0;
   min-width: 5em;
 }
+
 .admin-search-filter-body {
   .el-check-tag:not(.is-checked) {
     font-weight: normal;

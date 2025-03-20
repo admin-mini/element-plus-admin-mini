@@ -2,9 +2,9 @@
   <el-date-picker v-bind="$attrs" style="width: 100%" v-model="dateRange"
     :start-placeholder="arrts['start-placeholder'] || '开始日期'" :end-placeholder="arrts['end-placeholder'] || '结束日期'"
     :default-time="defaultTime" :type="arrts['type'] || 'datetimerange'"
-    :value-format="arrts['value-format'] || 'YYYY-MM-DD HH:mm:ss'" :shortcuts="shortcuts"></el-date-picker>
+    :value-format="arrts['value-format'] || 'YYYY-MM-DD'" :shortcuts="shortcuts"></el-date-picker>
 </template>
-  
+
 <script setup>
 import { computed, ref, useAttrs, watch, watchEffect } from 'vue'
 const emits = defineEmits(['update:begin', 'update:end', 'update:modelValue'])
@@ -75,6 +75,5 @@ watch(dateRange, function () {
   emits('update:modelValue', newVal)
 })
 </script>
-  
+
 <style></style>
-  

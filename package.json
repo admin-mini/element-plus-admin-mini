@@ -1,6 +1,6 @@
 {
   "name": "element-plus-admin-mini",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "private": true,
   "type": "module",
   "scripts": {
@@ -9,33 +9,39 @@
     "preview": "vite preview",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
     "format": "prettier --write src/",
-    "i": "yarn --legacy-peer-deps",
     "apifox": "node ./makeapi/apifox/make.js"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
-    "axios": "^1.4.0",
-    "element-plus": "^2.5.1",
+    "@vueup/vue-quill": "^1.2.0",
+    "axios": "^1.7.9",
+    "element-plus": "^2.9.3",
+    "file-saver": "^2.0.5",
+    "js-cookie": "^3.0.5",
     "normalize.css": "^8.0.1",
     "nprogress": "^0.2.0",
-    "pinia": "^2.1.7",
-    "unplugin-icons": "^0.18.2",
-    "vue": "^3.3.11",
-    "vue-router": "^4.2.5"
+    "pinia": "^2.3.0",
+    "sortablejs": "^1.15.6",
+    "unplugin-icons": "^22.0.0",
+    "unplugin-svg-component": "^0.12.1",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0"
   },
   "devDependencies": {
-    "@iconify-json/ep": "^1.1.10",
-    "@vitejs/plugin-vue": "^4.5.2",
-    "@vitejs/plugin-vue-jsx": "^3.1.0",
-    "@vue/eslint-config-prettier": "^8.0.0",
-    "@vueuse/core": "^10.1.2",
-    "eslint": "^8.49.0",
-    "eslint-plugin-vue": "^9.17.0",
+    "@iconify-json/ep": "^1.2.2",
+    "@vitejs/plugin-vue": "^5.2.1",
+    "@vitejs/plugin-vue-jsx": "^4.1.1",
+    "@vue/eslint-config-prettier": "^10.1.0",
+    "@vueuse/core": "^12.4.0",
+    "eslint": "^9.18.0",
+    "eslint-plugin-vue": "^9.32.0",
     "http-proxy": "^1.18.1",
-    "prettier": "^3.0.3",
-    "sass": "^1.70.0",
-    "unplugin-auto-import": "^0.15.2",
-    "unplugin-vue-components": "^0.24.1",
-    "vite": "^5.0.10"
+    "prettier": "^3.4.2",
+    "sass": "^1.83.1",
+    "unocss": "^65.4.3",
+    "unplugin-auto-import": "^19.0.0",
+    "unplugin-vue-components": "^28.0.0",
+    "vite": "^6.0.7",
+    "vite-plugin-svg-icons": "^2.0.1"
   }
 }
