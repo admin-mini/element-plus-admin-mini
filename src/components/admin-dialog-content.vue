@@ -6,7 +6,7 @@
         <div class="admin-dialog-body">
             <slot name="default"></slot>
         </div>
-        <div class="admin-dialog-footer">
+        <div class="admin-dialog-footer" v-if="$slots.footer">
             <slot name="footer"></slot>
         </div>
     </div>

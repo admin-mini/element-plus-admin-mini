@@ -1,15 +1,16 @@
 <template>
-    <div>
+    <admin-dialog-content>
         <el-form>
             <el-form-item label="账号" prop="username">
                 <el-input v-model="postData.username"></el-input>
             </el-form-item>
-            <el-form-item>
-                <el-button type="primary" @click="submitForm(postForm)">确定</el-button>
-                <el-button @click="emits('end')">取消</el-button>
-            </el-form-item>
+
         </el-form>
-    </div>
+        <template #footer>
+            <el-button type="primary" @click="submitForm(postForm)">确定</el-button>
+            <el-button @click="emits('end')">取消</el-button>
+        </template>
+    </admin-dialog-content>
 </template>
 
 <script setup>

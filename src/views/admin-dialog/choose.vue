@@ -1,5 +1,5 @@
 <template>
-    <div class="admin-table-list">
+    <admin-dialog-content>
         <el-table border :data="$table.data" :empty-text="$table.emptyText" v-loading="$table.loading" height="400">
             <el-table-column prop="username" label="帐号" />
             <el-table-column prop="nickName" label="用户姓名" />
@@ -16,9 +16,9 @@
                 :page-size="$table.query.size" :total="$table.total" @size-change="$table.handleSizeChange"
                 @current-change="$table.handleCurrentChange" />
         </div>
-    </div>
+    </admin-dialog-content>
 </template>
-<script  setup>
+<script setup>
 import { userList } from '@/api'
 import useAdminTable from '@/plugins/use-admin-table'
 const emits = defineEmits(["success"])
@@ -31,4 +31,3 @@ function choose(row) {
 
 </script>
 <style></style>
-  
