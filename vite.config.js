@@ -67,8 +67,8 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        index: path.resolve(__dirname, 'index.html')
-        // print: path.resolve(__dirname, 'print.html')
+        index: path.resolve(__dirname, 'index.html'),
+        notice: path.resolve(__dirname, 'notice.html')
       }
     }
   }

@@ -52,6 +52,7 @@
                     <el-table-column label="操作" align="center" width="200">
                         <template #default="scope">
                             <el-space spacer="|">
+                                <el-link type="primary" @click="handlePrev(scope.row)">预览</el-link>
                                 <el-link type="primary" @click="handleEdit(scope.row)"
                                     v-if="$p(['system:notice:edit'])">修改</el-link>
                                 <el-link type="primary" @click="handleDel(scope.row)"
@@ -77,6 +78,13 @@ getDict(['sys_notice_type', 'sys_normal_disable'])
 const adminDialog = useAdminDialog()
 let $table
 
+function handlePrev(row) {
+    let url = new URL(location.href)
+    url.searchParams.set('noticeId', row.noticeId)
+    url.pathname = import.meta.env.BASE_URL + '/notice'
+    url.hash = ''
+    window.open(url.href)
+}
 function handleAdd() {
     adminDialog(
         {
