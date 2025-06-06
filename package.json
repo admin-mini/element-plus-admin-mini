@@ -15,7 +15,7 @@
     "@vueuse/core": "^12.0.0",
     "@element-plus/icons-vue": "^2.3.1",
     "axios": "^1.8.4",
-    "element-plus": "^2.9.7",
+    "element-plus": "^2.9.11",
     "normalize.css": "^8.0.1",
     "nprogress": "^0.2.0",
     "pinia": "^3.0.1",
