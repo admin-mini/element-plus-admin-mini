@@ -1,25 +1,10 @@
 //import并覆盖对应变量 然后通过forward  export出去 对应vite.config.js中的additionalData
-@forward 'element-plus/theme-chalk/src/common/var.scss' with (
-  $colors: (
-    'primary': (
-      'base': #165dff
-    ),
-    'success': (
-      'base': #67c23a
-    ),
-    'warning': (
-      'base': #e6a23c
-    ),
-    'danger': (
-      'base': #e23a25
-    ),
-    'error': (
-      'base': #e23a25
-    ),
-    'info': (
-      'base': #909399
-    )
-  ),
+@forward 'element-plus/theme-chalk/src/common/var.scss' with ($colors: ('primary': ('base': #4b54f8),
+    'success': ('base': #67c23a),
+    'warning': ('base': #e6a23c),
+    'danger': ('base': #e23a25),
+    'error': ('base': #e23a25),
+    'info': ('base': #909399)),
   // $button: (
   //   'text-color': green
   // )

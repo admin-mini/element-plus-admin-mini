@@ -6,11 +6,11 @@ const router = useRouter()
 </script>
 <template>
     <el-breadcrumb separator="/" class="admin-bread">
-        <el-breadcrumb-item :to="{ path: '/' }">
+        <!-- <el-breadcrumb-item :to="{ path: '/' }">
             <el-icon size="24px">
                 <HomeFilled />
             </el-icon>
-        </el-breadcrumb-item>
+        </el-breadcrumb-item> -->
         <el-breadcrumb-item :to="router.resolve(route).fullPath" v-for="item in route.matched.slice(1)"
             :key="item.meta.key">
             {{ item.meta.name }}

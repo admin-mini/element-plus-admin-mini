@@ -1,7 +1,7 @@
 export default {
   weight: -10,
   meta: {
-    name: 'admin-dialog',
+    name: 'adminDialog',
     icon: 'Comment'
   }
 }

@@ -1,5 +1,6 @@
 import ajax from './ajax.js'
 
+
 //用户列表
 export const userList = (query) => {
   return ajax.get('/user/list', { params: query })

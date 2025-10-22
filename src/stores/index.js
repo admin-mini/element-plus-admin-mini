@@ -4,6 +4,7 @@ import { createPinia } from 'pinia'
 export const pinia = createPinia()
 import packageJson from '../../package.json'
 import router from '@/router/index'
+import { useMediaQuery } from '@vueuse/core'
 const LOCALSTORAGEKEY = packageJson.name
 var localState = {}
 try {
@@ -13,6 +14,17 @@ try {
 }
 export const useSystemStore = defineStore('user', () => {
   const state = ref(localState)
+  const isSmallScreen = useMediaQuery('(max-width: 1024px)',)
+  const menuCollapse = computed(() => {
+    if (isSmallScreen.value) {
+      //小尺寸不允许折叠
+      return false;
+    }
+    return state.value.menuCollapse
+  })
+  if (isSmallScreen.value) {
+    state.value.menuCollapse = false
+  }
   watch(
     state,
     () => {
@@ -20,11 +32,16 @@ export const useSystemStore = defineStore('user', () => {
     },
     { deep: true }
   )
+
+  function setMenuCollapse(collapse) {
+    state.value.menuCollapse = collapse === undefined ? !state.value.menuCollapse : collapse
+  }
   function login(data) {
     state.value = data
   }
-  function setToken(token) {
-    state.value.token = token
+  function setToken(assessToken, refreshToken) {
+    state.value.assessToken = assessToken
+    state.value.refreshToken = refreshToken
   }
   function logout() {
     state.value = {}
@@ -32,9 +49,9 @@ export const useSystemStore = defineStore('user', () => {
     router.replace({ name: 'login' })
   }
   const isLogin = computed(() => {
-    return !!state.value.token
+    return !!state.value.assessToken
   })
 
-  return { state, login, setToken, logout, isLogin }
+  return { state, login, setToken, logout, isLogin, setMenuCollapse, menuCollapse, isSmallScreen }
 })
 // pinia.use(useSystemStore)

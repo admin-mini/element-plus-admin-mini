@@ -1,0 +1,25 @@
+{
+    "appName": "管理平台",
+    "system": {
+        "login": "登录",
+        "logout": "退出",
+        "username": "用户名",
+        "password": "密码",
+        "expand": "展开",
+        "fold": "收起",
+        "search": "搜索"
+    },
+    "tagView": {
+        "close": "关闭",
+        "closeOthers": "关闭其他",
+        "closeRight": "关闭右侧",
+        "refresh": "刷新"
+    },
+    "route": {
+        "home": "首页",
+        "adminTable": "admin表格",
+        "selectDict": "admin字典",
+        "adminDialog": "admin对话框",
+        "autoRoute": "自动路由"
+    }
+}

@@ -39,6 +39,7 @@ export default function useAdminDialog() {
     }, vm)
 
     let dom = document.createElement('div')
+    dom.className = 'admin-dialog-container'
     const COMP = type == 'dialog' ? ElDialog : ElDrawer
     let dialogVnode = createVNode(
       COMP,
@@ -49,7 +50,7 @@ export default function useAdminDialog() {
         },
         modelValue: true,
         closeOnClickModal: false,
-        closeOnPressEscape: false,
+        // closeOnPressEscape: false,
         alignCenter: true,
         ...opts
       },
@@ -58,8 +59,8 @@ export default function useAdminDialog() {
     const wrapperVnode = createVNode(Dialog, null, { default: () => dialogVnode })
     wrapperVnode.appContext = useAdminDialog._context
     vnode.props = vnode.props || []
-    let _success = vnode.props.onSuccess || function () {}
-    let _end = vnode.props.onEnd || function () {}
+    let _success = vnode.props.onSuccess || function () { }
+    let _end = vnode.props.onEnd || function () { }
     vnode.props.onSuccess = function (...arr) {
       _success && _success(...arr)
       close()

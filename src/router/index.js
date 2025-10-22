@@ -3,7 +3,8 @@ import { useSystemStore } from '@/stores/index'
 import staticRoutes from './routes'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
-import dict from '@/utils/dict'
+import SETTING from '@/utils/setting'
+
 NProgress.configure({ showSpinner: false })
 
 export const routes = staticRoutes
@@ -39,7 +40,7 @@ router.beforeEach((to) => {
     !systemStore.isLogin &&
     // ❗️ 避免无限重定向
     to.name !== 'login' &&
-    dict.SETTING.OPEN_PERMISSION
+    SETTING.openPermission
   ) {
     // 将用户重定向到登录页面
     return { name: 'login' }

@@ -11,10 +11,7 @@ let dict = {
     { value: '3', label: '录入员', color: 'warning', disabled: true }
   ]
 }
-//生产环境使用/index.html引用的setting.js
-if (!import.meta.env.DEV && window.ADMIN_SETTING) {
-  Object.assign(dict.SETTING, window.ADMIN_SETTING)
-}
+
 for (let key in dict) {
   if (key != 'SETTING') {
     makeDict(dict[key])

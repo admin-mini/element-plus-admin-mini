@@ -37,7 +37,7 @@ for (let path in autoImportPageInfo) {
 autoImportRotes.push({
   path: '',
   weight: 100,
-  meta: { name: '首页', icon: 'House', affix: true },
+  meta: { name: 'home', icon: 'House', affix: true },
   component: () => import('@/views/home.vue')
 })
 

@@ -6,25 +6,20 @@
           <el-icon size="40px">
             <Notification />
           </el-icon>
-          {{ $env.VITE_APP_NAME }}
+          {{ $t('appName') }}
         </h3>
 
         <el-form :model="postData" :rules="rules" @submit.prevent="submit" ref="postForm">
           <el-form-item label="" prop="userName" style="margin-bottom: 40px">
-            <el-input autocomplete="off" v-model="postData.userName" placeholder="请输入登录账号"></el-input>
+            <el-input autocomplete="off" v-model="postData.userName" :placeholder="$t('system.username')"></el-input>
           </el-form-item>
           <el-form-item label="" prop="passWord" style="margin-bottom: 40px">
-            <el-input v-model="postData.passWord" type="password" placeholder="请输入登录密码"></el-input>
+            <el-input v-model="postData.passWord" type="password" :placeholder="$t('system.password')"></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button
-              native-type="submit"
-              autocomplete="off"
-              :loading="loading"
-              type="primary"
-              class="admin-block-button login-btn"
-            >
-              登录
+            <el-button native-type="submit" autocomplete="off" :loading="loading" type="primary"
+              class="admin-block-button login-btn">
+              {{ $t('system.login') }}
             </el-button>
           </el-form-item>
         </el-form>

@@ -8,18 +8,18 @@
         <el-collapse-transition>
             <div class="debugger-inner" v-show="show">
                 <a :href="'?debug=http://api.websir.top:5500/mock/201/'">yapi</a>
-                <a :href="'?debug=https://mock.apifox.cn/m1/3332315-0-default'">apiFox</a>
+                <a :href="'?debug=https://m1.apifoxmock.com/m1/3332315-2870133-default'">apiFox</a>
             </div>
         </el-collapse-transition>
     </div>
 </template>
-  
+
 <script setup>
 import { ref } from 'vue';
 const show = ref(false);
 
 </script>
-  
+
 <style lang="scss" scoped>
 .debugger {
     position: fixed;
@@ -50,4 +50,3 @@ const show = ref(false);
     }
 }
 </style>
-  

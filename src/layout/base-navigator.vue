@@ -4,6 +4,9 @@ import { computed, reactive } from 'vue'
 import { routes } from '@/router/index.js'
 import { useRoute } from 'vue-router'
 import hasPermission from '@/utils/permission'
+import { useSystemStore } from '@/stores'
+
+const systemStore = useSystemStore()
 const route = useRoute()
 const rootRoutes = reactive(routes[0])
 const computedRoutes = computed(() => {
@@ -28,10 +31,14 @@ const activeMenu = computed(() => {
   }
   return fullPath;
 })
+function selectMenu() {
+  systemStore.setMenuCollapse(false)
+}
 
 </script>
 <template>
-  <el-menu router :default-active="activeMenu" mode="horizontal">
+  <el-menu router :default-active="activeMenu" mode="horizontal" :collapse="systemStore.menuCollapse"
+    :collapse-transition="false" @select="selectMenu">
     <base-navigator-item :show-timeout="0" :hide-timeout="0" :popper-offset="0" v-for="route in computedRoutes"
       :key="route.path" :route="route"></base-navigator-item>
   </el-menu>

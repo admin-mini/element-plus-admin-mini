@@ -9,16 +9,15 @@
         <template #label>
           <el-dropdown trigger="contextmenu" style="color:inherit">
             <div>
-              {{
-                item.meta.name }}
+              {{ $t("route." + item.meta.name) }}
             </div>
             <!-- <el-button @click="tagView.refresh()">刷</el-button> -->
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item @click="tagView.remove(item)">关闭</el-dropdown-item>
-                <el-dropdown-item @click="tagView.removeOther(item)">关闭其他</el-dropdown-item>
-                <el-dropdown-item @click="tagView.removeRight(item)">关闭右侧</el-dropdown-item>
-                <el-dropdown-item @click="tagView.refresh(item)">刷新</el-dropdown-item>
+                <el-dropdown-item @click="tagView.remove(item)">{{ $t('tagView.close') }}</el-dropdown-item>
+                <el-dropdown-item @click="tagView.removeOther(item)">{{ $t('tagView.closeOthers') }}</el-dropdown-item>
+                <el-dropdown-item @click="tagView.removeRight(item)">{{ $t('tagView.closeRight') }}</el-dropdown-item>
+                <el-dropdown-item @click="tagView.refresh(item)">{{ $t('tagView.refresh') }}</el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
@@ -62,12 +61,11 @@ function handleTabRemove(fullPath) {
 .admin-tag-list {
   width: 100%;
   flex-shrink: 0;
-  border-top: 1px solid var(--el-border-color);
   // border-bottom: 1px solid var(--el-border-color);
   background: var(--el-bg-color);
   box-sizing: border-box;
   padding: 8px 10px;
-  box-shadow: 0 1px 4px rgba(113, 128, 166, .1);
+  box-shadow: 10px 1px 4px rgba(113, 128, 166, .1);
   z-index: 2;
 
   .el-tabs__nav-next,

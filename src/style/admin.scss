@@ -3,12 +3,14 @@ body,
 .admin-container,
 #app {
   height: 100%;
+  overflow: hidden;
 }
 
 html {
   --el-bg-color-page: #f0f2f5;
   --el-border-color: #dcdfe6;
-  --slide-bg: #282c34;
+  --slide-bg: var(--el-bg-color);
+  --menu-collapse-width: 60px;
 
   .el-text {
     --el-text-color: inherit;
@@ -115,6 +117,7 @@ input:-internal-autofill-selected {
     .admin-header {
       background: var(--slide-bg);
       color: var(--el-menu-text-color);
+
     }
   }
 }
@@ -126,6 +129,78 @@ input:-internal-autofill-selected {
 .admin-bread {
   margin-left: 10px;
 }
+
+.admin-menu-collapse {
+  margin-left: 10px;
+  margin-right: auto;
+}
+
+.admin-container-phone {
+  .admin-header .admin-header-left {
+    padding: 0 10px;
+    width: auto;
+    border: none;
+  }
+
+  .admin-menu-collapse {
+    margin-left: auto;
+    margin-right: 10px;
+  }
+
+  .admin-slide {
+    position: fixed;
+    height: 100%;
+    left: 0;
+    top: 0;
+    width: var(--slide-width);
+    background: var(--slide-bg);
+    z-index: 99;
+  }
+
+  .admin-view {
+    padding: 10px;
+  }
+
+  .admin-view-search {
+    padding: 15px;
+
+    .el-auto-resizer>div {
+      grid-template-columns: 1fr !important
+    }
+
+  }
+
+
+}
+
+@media (max-width: 1024px) {
+  .admin-dialog-container .el-dialog {
+    // --el-dialog-width: 100% !important;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
+    .el-dialog__header {
+      flex-shrink: 0;
+    }
+
+    .el-dialog__body {
+      flex: 1;
+    }
+
+    .admin-dialog-body {
+      flex: 1;
+      height: 100%;
+      max-height: 100% !important;
+    }
+
+    .admin-dialog-footer {
+      flex-shrink: 0;
+    }
+  }
+}
+
 
 .admin-header {
   background: var(--el-bg-color);
@@ -141,6 +216,7 @@ input:-internal-autofill-selected {
   position: relative;
   z-index: 2;
   padding-right: 30px;
+  border-bottom: 1px solid var(--el-border-color-lighter);
   // box-shadow: 0 3px 4px var(--el-color-info-light-8);
 
   .el-badge {
@@ -148,18 +224,29 @@ input:-internal-autofill-selected {
   }
 
   .admin-header-left {
-    width: var(--slide-width);
+    width: calc(var(--slide-width) + 1px);
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
     padding-right: 10px; //修复视觉偏右
     padding-top: 5px; //修复视觉偏上
-    border-right: 1px solid var(--el-border-color);
+    border-right: 1px solid var(--el-border-color-lighter);
+
+    // box-shadow: 1px 0 2px var(--el-color-info-light-8);
     box-sizing: border-box;
-    color: rgba(255, 255, 255, 0.9);
+    color: var(--el-color-primary);
     background: var(--slide-bg);
     height: 100%;
+  }
+
+  .admin-header-collapse {
+    width: calc(var(--menu-collapse-width) + 1px);
+    padding: 0;
+
+    .brand-text {
+      display: none;
+    }
   }
 
   .admin-header-right {
@@ -195,7 +282,7 @@ input:-internal-autofill-selected {
   .admin-menu {
     width: 100%;
     padding: 0 100px;
-    height: 60px;
+    height: var(--menu-collapse-width);
   }
 }
 
@@ -217,17 +304,38 @@ input:-internal-autofill-selected {
     --el-menu-item-height: 45px;
     --el-menu-active-color: #ffffff;
     --el-menu-bg-color: none;
-    --el-menu-text-color: rgba(255, 255, 255, 0.9);
-    --el-menu-hover-bg-color: var(--el-color-primary);
-    width: var(--slide-width);
+    // --el-menu-text-color: rgba(255, 255, 255, 0.9);
+    --el-menu-hover-bg-color: var(--el-color-primary-light-9);
     flex-shrink: 0;
-    border-right: 1px solid var(--el-border-color);
+    border-right: 1px solid var(--el-border-color-lighter);
     box-sizing: border-box;
     background: var(--slide-bg);
+
+
 
     .el-menu {
       height: 100%;
       border: none;
+      width: var(--slide-width);
+
+      &.el-menu--collapse {
+        width: 60px;
+        padding: 0 5px;
+
+        .el-menu-item,
+        .el-sub-menu {
+          margin: 0;
+          margin-bottom: 5px;
+          --el-menu-base-level-padding: 0;
+
+          .el-tooltip__trigger {
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+        }
+      }
 
       .el-icon {
         color: inherit;
@@ -237,8 +345,8 @@ input:-internal-autofill-selected {
       .el-menu-item {
         border: none;
         margin: 5px;
-        margin-bottom: 0;
         border-radius: var(--el-border-radius-base);
+
       }
 
       .el-sub-menu__title {
@@ -247,8 +355,8 @@ input:-internal-autofill-selected {
       }
 
       .el-menu-item.is-active {
-        color: var(--el-color-primary-light-9);
-        background: var(--el-color-primary);
+        background: var(--el-color-primary-light-9);
+        color: var(--el-color-primary);
         position: relative;
       }
     }

@@ -29,7 +29,7 @@ async function openEdit(row) {
                 editData.value = eventData
             }
         }),
-        { title: '编辑' }
+        { title: '编辑', width: "400px" }
     )
 }
 async function openChoose() {

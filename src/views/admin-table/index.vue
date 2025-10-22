@@ -23,7 +23,8 @@
               <el-input v-model="$table.query.username"></el-input>
             </el-form-item>
             <template #last>
-              <el-button native-type="submit" type="primary" icon="Search" :loading="$table.loading">搜索</el-button>
+              <el-button native-type="submit" type="primary" icon="Search"
+                :loading="$table.loading">{{ $t("system.search") }}</el-button>
             </template>
           </admin-grid>
         </el-form>

@@ -1,0 +1,25 @@
+{
+    "appName": "Manage",
+    "system": {
+        "login": "login",
+        "logout": "logout",
+        "username": "Username",
+        "password": "Password",
+        "expand": "expand",
+        "fold": "fold",
+        "search": "search"
+    },
+    "tagView": {
+        "close": "close",
+        "closeOthers": "close others",
+        "closeRight": "close right",
+        "refresh": "refresh"
+    },
+    "route": {
+        "home": "home",
+        "adminTable": "admin-table",
+        "selectDict": "admin-dict",
+        "adminDialog": "admin-dialog",
+        "autoRoute": "auto-route"
+    }
+}

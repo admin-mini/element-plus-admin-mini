@@ -10,7 +10,7 @@ const router = useRouter()
       <component :is="icons[props.route.meta.icon]">
       </component>
     </el-icon>
-    {{ props.route.meta.name }}
+    <template #title>{{ $t("route." + props.route.meta.name) }}</template>
   </el-menu-item>
   <el-sub-menu v-else popper-class="admin-sub-menu" :index="router.getFullPath(props.route)" :show-timeout="0"
     :hide-timeout="0" :popper-offset="0">
@@ -18,7 +18,9 @@ const router = useRouter()
       <el-icon v-if="props.route.meta.icon && icons[props.route.meta.icon]">
         <component :is="icons[props.route.meta.icon]">
         </component>
-      </el-icon> {{ props.route.meta.name }}</template>
+      </el-icon>
+      <span> {{ $t("route." + props.route.meta.name) }}</span>
+    </template>
     <base-navigator-item :route="routeChild" v-for="routeChild in props.route.children"
       :key="routeChild.meta.key"></base-navigator-item>
   </el-sub-menu>

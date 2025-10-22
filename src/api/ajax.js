@@ -1,18 +1,15 @@
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
-import dict from '@/utils/dict'
+import SETTING from '@/utils/setting'
 import { useSystemStore } from '@/stores/index'
-
-let systemStore
-
 const ajax = axios.create({
-  baseURL: dict.SETTING.API_URL
+  baseURL: SETTING.apiUrl
 })
 // 添加请求拦截器
 ajax.interceptors.request.use(
   function (config) {
-    systemStore = useSystemStore()
-    config.headers['Authorization'] = systemStore.state.token
+    let systemStore = useSystemStore()
+    config.headers['Authorization'] = 'Bearer ' + systemStore.state.assessToken
     return config
   },
   function (error) {
@@ -22,10 +19,11 @@ ajax.interceptors.request.use(
 )
 // 添加响应拦截器
 ajax.interceptors.response.use(
-  function (response) {
-    if (response.headers.authorization) {
-      systemStore.setToken(response.headers.authorization)
-    }
+  async function (response) {
+    let systemStore = useSystemStore()
+    // if (response.headers.authorization) {
+    //   systemStore.setToken(response.headers.authorization)
+    // }
     // 二进制数据则直接返回
     if (
       response.request.responseType === 'blob' ||
@@ -33,12 +31,24 @@ ajax.interceptors.response.use(
     ) {
       return response.data
     }
-    if (response.data.code == 2) {
-      ElMessage.info('登陆超时')
-      systemStore.logout()
-      return Promise.reject('登陆超时')
+
+    if (response.data.code == SETTING.timeoutCode) {
+      if (SETTING.useOauth2 && !response.config.isRefreshToken) {
+        try {
+          await refreshToken()
+          //重发请求
+          return ajax(response.config)
+        } catch (err) {
+
+        }
+      }
+      if (response.config.isRefreshToken) {
+        ElMessage.info('登陆超时')
+        systemStore.logout()
+        return Promise.reject('登陆超时')
+      }
     }
-    if (response.data.code == 3) {
+    if (response.data.code == SETTING.noAuthCode) {
       ElMessage({
         message: '无权限！',
         type: 'warning',
@@ -46,11 +56,11 @@ ajax.interceptors.response.use(
       })
       return Promise.reject('无权限')
     }
-    if (response.data.code != 0) {
+    if (response.data.code != SETTING.successCode) {
       ElMessage.error(response.data.msg)
       return Promise.reject('error')
     }
-    return response.data
+    return Promise.resolve(response.data)
   },
   function (error) {
     console.warn('请求错误', error) // for debug
@@ -63,4 +73,14 @@ ajax.interceptors.response.use(
   }
 )
 
+function refreshToken() {
+  let systemStore = useSystemStore()
+  return ajax.post('/system/refreshToken', {
+    refreshToken: systemStore.state.refreshToken
+  }, {
+    isRefreshToken: true
+  }).then(res => {
+    systemStore.setToken(res.data.accessToken, res.data.refreshToken)
+  })
+}
 export default ajax

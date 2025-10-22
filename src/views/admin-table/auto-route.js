@@ -1,6 +1,6 @@
 export default {
   meta: {
-    name: 'admin-table',
+    name: 'adminTable',
     icon: 'Grid'
   }
 }
