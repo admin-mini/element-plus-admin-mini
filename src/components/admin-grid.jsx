@@ -1,6 +1,5 @@
 import { ElAutoResizer, ElLink, ElIcon } from 'element-plus'
 import { computed, ref, defineComponent } from 'vue'
-import { t } from "@/i18n"
 const DEFAULT_SCREEN_WIDTH = 1919 //默认按照1920分辨率计算 360浏览器某些行为会导致宽度为1919
 export default defineComponent({
   props: {
@@ -98,14 +97,14 @@ export default defineComponent({
           <ElIcon>
             <ArrowUp />
           </ElIcon>
-          {t("system.fold")}
+          收起
         </ElLink>
       ) : (
         <ElLink onClick={() => (showAll.value = true)} style="margin-left:10px;">
           <ElIcon>
             <ArrowDown />
           </ElIcon>
-          {t("system.expand")}
+          展开
         </ElLink>
       )
       const defualtSlots = slots.default().filter((slot) => {

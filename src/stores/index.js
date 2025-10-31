@@ -39,9 +39,8 @@ export const useSystemStore = defineStore('user', () => {
   function login(data) {
     state.value = data
   }
-  function setToken(assessToken, refreshToken) {
-    state.value.assessToken = assessToken
-    state.value.refreshToken = refreshToken
+  function setToken(token) {
+    state.value.token = token
   }
   function logout() {
     state.value = {}
@@ -49,7 +48,7 @@ export const useSystemStore = defineStore('user', () => {
     router.replace({ name: 'login' })
   }
   const isLogin = computed(() => {
-    return !!state.value.assessToken
+    return !!state.value.token
   })
 
   return { state, login, setToken, logout, isLogin, setMenuCollapse, menuCollapse, isSmallScreen }

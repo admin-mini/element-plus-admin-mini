@@ -9,15 +9,15 @@
         <template #label>
           <el-dropdown trigger="contextmenu" style="color:inherit">
             <div>
-              {{ $t("route." + item.meta.name) }}
+              {{ item.meta.name }}
             </div>
             <!-- <el-button @click="tagView.refresh()">刷</el-button> -->
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item @click="tagView.remove(item)">{{ $t('tagView.close') }}</el-dropdown-item>
-                <el-dropdown-item @click="tagView.removeOther(item)">{{ $t('tagView.closeOthers') }}</el-dropdown-item>
-                <el-dropdown-item @click="tagView.removeRight(item)">{{ $t('tagView.closeRight') }}</el-dropdown-item>
-                <el-dropdown-item @click="tagView.refresh(item)">{{ $t('tagView.refresh') }}</el-dropdown-item>
+                <el-dropdown-item @click="tagView.remove(item)">关闭</el-dropdown-item>
+                <el-dropdown-item @click="tagView.removeOther(item)">关闭其他</el-dropdown-item>
+                <el-dropdown-item @click="tagView.removeRight(item)">关闭右侧</el-dropdown-item>
+                <el-dropdown-item @click="tagView.refresh(item)">刷新</el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>

@@ -21,9 +21,9 @@ ajax.interceptors.request.use(
 ajax.interceptors.response.use(
   async function (response) {
     let systemStore = useSystemStore()
-    // if (response.headers.authorization) {
-    //   systemStore.setToken(response.headers.authorization)
-    // }
+    if (response.headers.authorization) {
+      systemStore.setToken(response.headers.authorization)
+    }
     // 二进制数据则直接返回
     if (
       response.request.responseType === 'blob' ||
@@ -33,20 +33,9 @@ ajax.interceptors.response.use(
     }
 
     if (response.data.code == SETTING.timeoutCode) {
-      if (SETTING.useOauth2 && !response.config.isRefreshToken) {
-        try {
-          await refreshToken()
-          //重发请求
-          return ajax(response.config)
-        } catch (err) {
-
-        }
-      }
-      if (response.config.isRefreshToken) {
-        ElMessage.info('登陆超时')
-        systemStore.logout()
-        return Promise.reject('登陆超时')
-      }
+      ElMessage.info('登陆超时')
+      systemStore.logout()
+      return Promise.reject('登陆超时')
     }
     if (response.data.code == SETTING.noAuthCode) {
       ElMessage({
@@ -73,14 +62,4 @@ ajax.interceptors.response.use(
   }
 )
 
-function refreshToken() {
-  let systemStore = useSystemStore()
-  return ajax.post('/system/refreshToken', {
-    refreshToken: systemStore.state.refreshToken
-  }, {
-    isRefreshToken: true
-  }).then(res => {
-    systemStore.setToken(res.data.accessToken, res.data.refreshToken)
-  })
-}
 export default ajax

@@ -6,20 +6,20 @@
           <el-icon size="40px">
             <Notification />
           </el-icon>
-          {{ $t('appName') }}
+          管理平台
         </h3>
 
         <el-form :model="postData" :rules="rules" @submit.prevent="submit" ref="postForm">
           <el-form-item label="" prop="userName" style="margin-bottom: 40px">
-            <el-input autocomplete="off" v-model="postData.userName" :placeholder="$t('system.username')"></el-input>
+            <el-input autocomplete="off" v-model="postData.userName" placeholder="用户名"></el-input>
           </el-form-item>
           <el-form-item label="" prop="passWord" style="margin-bottom: 40px">
-            <el-input v-model="postData.passWord" type="password" :placeholder="$t('system.password')"></el-input>
+            <el-input v-model="postData.passWord" type="password" placeholder="密码"></el-input>
           </el-form-item>
           <el-form-item>
             <el-button native-type="submit" autocomplete="off" :loading="loading" type="primary"
               class="admin-block-button login-btn">
-              {{ $t('system.login') }}
+              登录
             </el-button>
           </el-form-item>
         </el-form>

@@ -10,8 +10,7 @@
                         </el-icon>
 
                     </div>
-                    <!-- <div class="brand-text">{{ $env.VITE_APP_NAME }}</div> -->
-                    <div class="brand-text">{{ $t('appName') }}</div>
+                    <div class="brand-text">{{ $env.VITE_APP_NAME }}</div>
                 </div>
 
                 <div class="admin-menu-collapse">
@@ -36,24 +35,7 @@
                         <BottomLeft v-else />
                     </el-icon>
                 </el-button> -->
-                    <el-dropdown @command="changelang">
-                        <el-link :underline="false" class="el-dropdown-link">
-                            {{ lang == 'zh' ? '中文' : 'English' }}
-                            <el-icon class="el-icon--right">
-                                <arrow-down />
-                            </el-icon>
-                        </el-link>
-                        <template #dropdown>
-                            <el-dropdown-menu>
-                                <el-dropdown-item command="zh">
-                                    中文
-                                </el-dropdown-item>
-                                <el-dropdown-item command="en">
-                                    English
-                                </el-dropdown-item>
-                            </el-dropdown-menu>
-                        </template>
-                    </el-dropdown>
+
                     <el-dropdown>
                         <span class="el-dropdown-link">
                             <el-avatar :size="26" :src="systemStore.state?.user?.avatar" style="margin-right: 5px" />
@@ -69,7 +51,7 @@
                                 <!-- <router-link to="/user/profile">
                                 <el-dropdown-item>个人中心</el-dropdown-item>
                             </router-link> -->
-                                <el-dropdown-item @click="logout">{{ $t('system.logout') }}</el-dropdown-item>
+                                <el-dropdown-item @click="logout">退出</el-dropdown-item>
                             </el-dropdown-menu>
                         </template>
                     </el-dropdown>
@@ -111,23 +93,10 @@ import adminRouterView from "./admin-router-view.vue"
 import { computed, h, ref } from 'vue'
 import tagList from './tag-list.vue'
 import SETTING from '@/utils/setting'
-import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
-import en from 'element-plus/dist/locale/en.mjs'
-import { useI18n } from 'vue-i18n'
+
 
 
 const systemStore = useSystemStore()
-
-const lang = useStorage('lang', 'zh', sessionStorage);
-const i18n = useI18n()
-const locale = computed(() => {
-    return lang.value == 'en' ? en : zhCn;
-})
-function changelang(command) {
-    lang.value = command;
-    i18n.locale.value = lang.value;
-}
-window.changelang = changelang;
 
 function logout() {
     systemStore.logout()

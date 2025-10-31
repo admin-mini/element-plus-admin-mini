@@ -14,11 +14,9 @@ import adminComponent from './components/index'
 import adminUtils from './utils/index'
 import directive from './directive/index.js'
 import { useTagView } from './stores/tag-view'
-import i18n from './i18n/index'
 const app = createApp(App)
 app.config.globalProperties.$env = import.meta.env
 app.use(createPinia())
-app.use(i18n)
 app.use(directive)
 app.use(plugins)
 app.use(ElementPlus, {
