@@ -23,7 +23,7 @@
                     <base-navigator :mode="menuPositionStorge"></base-navigator>
                 </div>
                 <div class="admin-header-right">
-                    <el-button @click="toggleDark()" size="small">
+                    <el-button type="default" link @click="toggleDark()">
                         <el-icon>
                             <Sunny v-if="isDark" />
                             <Moon v-else />
