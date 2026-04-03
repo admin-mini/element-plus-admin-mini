@@ -18,7 +18,7 @@ importers:
         specifier: ^1.8.4
         version: 1.12.2
       element-plus:
-        specifier: ^2.9.11
+        specifier: ^2.11.5
         version: 2.11.5(vue@3.5.22)
       normalize.css:
         specifier: ^8.0.1

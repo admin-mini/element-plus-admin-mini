@@ -36,25 +36,8 @@
                     </el-icon>
                 </el-button> -->
 
-                    <el-dropdown>
-                        <span class="el-dropdown-link">
-                            <el-avatar :size="26" :src="systemStore.state?.user?.avatar" style="margin-right: 5px" />
-                            <div>
-                                {{ systemStore.state?.user?.nickName }}
-                                <el-icon>
-                                    <arrow-down />
-                                </el-icon>
-                            </div>
-                        </span>
-                        <template #dropdown>
-                            <el-dropdown-menu>
-                                <!-- <router-link to="/user/profile">
-                                <el-dropdown-item>个人中心</el-dropdown-item>
-                            </router-link> -->
-                                <el-dropdown-item @click="logout">退出</el-dropdown-item>
-                            </el-dropdown-menu>
-                        </template>
-                    </el-dropdown>
+                    <message />
+                    <user-bar />
                 </div>
             </div>
 
@@ -93,6 +76,8 @@ import adminRouterView from "./admin-router-view.vue"
 import { computed, h, ref } from 'vue'
 import tagList from './tag-list.vue'
 import SETTING from '@/utils/setting'
+import UserBar from './components/user-bar.vue'
+import Message from './components/message/index.vue'
 
 
 
