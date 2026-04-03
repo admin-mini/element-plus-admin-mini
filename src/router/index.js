@@ -13,7 +13,7 @@ const router = createRouter({
   routes: [
     ...routes,
     { path: '/login', name: 'login', component: () => import('@/views/login.vue') },
-    { path: '/:pathMatch(.*)*', component: () => import('@/views/page-404.vue') }
+    { path: '/:pathMatch(.*)*', component: () => import('@/layout/other/page-404.vue') }
   ]
 })
 export const routeMap = new Map() // key<Symbol>:permission<array>
