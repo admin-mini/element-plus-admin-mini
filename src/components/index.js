@@ -1,4 +1,7 @@
-const modules = import.meta.glob('./*.vue', { eager: true })
+const modules = import.meta.glob([
+  './*.vue', 
+  './**/index.vue'
+], { eager: true })
 const jsxModules = import.meta.glob('./*.jsx', { eager: true })
 
 export default {
