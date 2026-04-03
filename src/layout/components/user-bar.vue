@@ -13,20 +13,32 @@
         </span>
         <template #dropdown>
             <el-dropdown-menu>
-                    <router-link to="/user/profile">
-                <el-dropdown-item>个人中心</el-dropdown-item>
-            </router-link> 
+                <router-link to="/user/profile">
+                    <el-dropdown-item>个人中心</el-dropdown-item>
+                </router-link> 
+                <el-dropdown-item @click="handleOpen">
+                    <el-dropdown-item>弹窗</el-dropdown-item>
+                </el-dropdown-item> 
                 <el-dropdown-item @click="logout">退出</el-dropdown-item>
             </el-dropdown-menu>
         </template>
     </el-dropdown>
+    <el-dialog v-model="dialogVisable">
+sdfsdf
+    </el-dialog>
 </template>
 
 <script setup>
 import { useSystemStore } from '@/stores'
-import { computed } from 'vue';
+import { computed,ref } from 'vue';
 
 const systemStore = useSystemStore()
+
+const dialogVisable=ref(false)
+
+const handleOpen=()=>{
+    dialogVisable.value=true
+}
 
 const nickName = computed(()=>{
    return  systemStore.state?.user?.nickName || 'admin'
