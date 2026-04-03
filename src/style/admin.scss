@@ -374,6 +374,7 @@ input:-internal-autofill-selected {
   display: flex;
   align-items: center;
   font-size: 18px;
+  gap:10px;
   color: var(--el-text-color-secondary);
 
   .header-item {
