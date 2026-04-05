@@ -8,7 +8,7 @@
             <el-divider></el-divider>
             <el-button @click="openChoose()">选择</el-button>
             {{ chooseList }}
-
+          
             <code
                 style="display:block;white-space: pre-wrap;background: var(--el-color-black);color:var(--el-color-white);margin-top:30px;padding:20px;">{{ code }}</code>
         </div>
@@ -21,6 +21,10 @@ import { h, ref } from 'vue';
 const adminDialog = useAdminDialog()
 const chooseList = ref([])
 const editData = ref({ username: 'websir' })
+
+const userId=ref();
+const userIds=ref([]);
+
 function openEdit(row, isDrawer) {
     adminDialog(
         {
