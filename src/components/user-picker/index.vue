@@ -34,6 +34,7 @@
       :width="isMobile ? '98%' : '950px'"
       append-to-body
       destroy-on-close
+      :close-on-click-modal="false"
     >
       <div class="selector-container" :class="{ 'is-mobile': isMobile }">
         <div v-if="!isMobile" class="aside-tree">
@@ -128,8 +129,10 @@
       </div>
 
       <template #footer>
+        <div class="admin-dialog-footer">
         <el-button @click="visible = false">取消</el-button>
         <el-button type="primary" @click="handleConfirm">确定选择 ({{ tempSelected.length }})</el-button>
+        </div>
       </template>
     </el-dialog>
   </div>
