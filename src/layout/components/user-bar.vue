@@ -41,7 +41,8 @@ const handleOpen=()=>{
 }
 
 const nickName = computed(()=>{
-   return  systemStore.state?.user?.nickName || 'admin'
+    console.log("yonghuy",systemStore.state?.user);
+   return  systemStore.state?.user?.name || 'admin'
 })
 
 function logout() {

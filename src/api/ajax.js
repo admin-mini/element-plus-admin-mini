@@ -2,6 +2,7 @@ import axios from 'axios'
 import { ElMessage } from 'element-plus'
 import SETTING from '@/utils/setting'
 import { useSystemStore } from '@/stores/index'
+console.log("SETTING.apiUrl",SETTING.apiUrl)
 const ajax = axios.create({
   baseURL: SETTING.apiUrl
 })
@@ -9,7 +10,9 @@ const ajax = axios.create({
 ajax.interceptors.request.use(
   function (config) {
     let systemStore = useSystemStore()
-    config.headers['Authorization'] = 'Bearer ' + systemStore.state.assessToken
+    console.log("systemStore",systemStore);
+    config.headers['Token'] =  systemStore.state.token
+    config.headers['Tenant-Id'] =  systemStore.state.tenantId
     return config
   },
   function (error) {

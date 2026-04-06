@@ -14,7 +14,7 @@
             <el-input autocomplete="off" v-model="postData.username" placeholder="用户名"></el-input>
           </el-form-item>
           <el-form-item label="" prop="passWord" style="margin-bottom: 40px">
-            <el-input v-model="postData.passWord" type="password" placeholder="密码"></el-input>
+            <el-input v-model="postData.password" type="password" placeholder="密码"></el-input>
           </el-form-item>
           <el-form-item>
             <el-button native-type="submit" autocomplete="off" :loading="loading" type="primary"
@@ -32,17 +32,18 @@
 import md5 from '@/utils/md5.js'
 import { ElMessage } from 'element-plus'
 import { reactive, ref } from 'vue'
-import * as loginApi  from '@/api/auth/auth-login-api'
+import  * as loginApi  from '@/api/auth/auth-login-api'
 import { useSystemStore } from '@/stores/index'
 import $rules from '@/utils/rules'
 import { useRouter } from 'vue-router'
 import { useTagView } from '@/stores/tag-view'
+import smCrypto from '@/utils/smCrypto'
 const router = useRouter()
 const postForm = ref()
 const systemStore = useSystemStore()
 const postData = reactive({
   username: import.meta.env.DEV?'superAdmin':'',
-  passWord: import.meta.env.DEV?"123456":""
+  password: import.meta.env.DEV?"123456":""
 })
 useTagView().clearAll();
 const rules = reactive({
@@ -55,7 +56,7 @@ function submit() {
   postForm.value.validate((valid) => {
     if (valid) {
       let _postData = Object.assign({}, postData)
-      _postData.passWord = md5(_postData.passWord, 32)
+      _postData.password = smCrypto.doEncrypt(_postData.password, 32)
       loading.value = true
       loginApi.login(_postData)
         .then((res) => {

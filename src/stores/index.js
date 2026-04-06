@@ -4,7 +4,11 @@ import { createPinia } from 'pinia'
 export const pinia = createPinia()
 import packageJson from '../../package.json'
 import router from '@/router/index'
+import { getLoginUser } from '@/api/auth/auth-login-api'
 import { useMediaQuery } from '@vueuse/core'
+import { ElMessage } from 'element-plus'
+import { id } from 'element-plus/es/locales.mjs'
+
 const LOCALSTORAGEKEY = packageJson.name
 var localState = {}
 try {
@@ -20,6 +24,7 @@ export const useSystemStore = defineStore('user', () => {
       //小尺寸不允许折叠
       return false;
     }
+    console.log("state",state.value);
     return state.value.menuCollapse
   })
   if (isSmallScreen.value) {
@@ -36,11 +41,36 @@ export const useSystemStore = defineStore('user', () => {
   function setMenuCollapse(collapse) {
     state.value.menuCollapse = collapse === undefined ? !state.value.menuCollapse : collapse
   }
+  /**
+   * 
+   * @param {登录成功返回信息} data
+   * {token,tenantId,username,nam} 
+   */
   function login(data) {
-    state.value = data
+    setToken(data.token);
+    setTenantId(data.tenantId);
+    return getUserInfo();
+  }
+  //获取登录用户信息
+  function getUserInfo() {
+    return getLoginUser().then((res) => {
+      state.value.permissions = res.data.permissions
+      state.value.roles = res.data.roles
+      const user={
+            id:res.data.id,
+            avatar: res.data.avatar,
+            name:res.data.name || res.data.nickname
+      }
+      state.value.user=user;
+    }).catch(ex=>{
+      ElMessage.warning('获取登录用户信息失败：',ex)
+    })
   }
   function setToken(token) {
     state.value.token = token
+  }
+  function setTenantId(tenantId) {
+    state.value.tenantId = tenantId
   }
   function logout() {
     state.value = {}

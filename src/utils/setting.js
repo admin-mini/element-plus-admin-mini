@@ -6,11 +6,12 @@ const SETTING = reactive({
   apiUrl: '/api/', //API具体路径
   useTag: true,//是否开启标签
   useBreadcrumb: true,//是否开启面包屑
-  successCode: 0,//成功状态码
-  errorCode: 1,//失败状态码
-  timeoutCode: 2,//超时状态码
-  noAuthCode: 3,//未授权状态码
+  successCode: 200,//成功状态码
+  errorCode: 500,//失败状态码
+  timeoutCode: 401,//超时状态码
+  noAuthCode: 403,//未授权状态码
   useOauth2: true,//是否启用双token校验
+  sm2PublicKey:"0401d4a6ef9c904b04b0722330d479bc5905143a85de0048167c398b6571f2b1281a59633cd10937781413b4cd35a64235896ce5d6f0231b06d11d7bf868c1c93d"
 })
 const isSmallScreen = useMediaQuery('(max-width: 1024px)')
 //记录手动配置的SETTING.useTag/useBreadcrumb数据

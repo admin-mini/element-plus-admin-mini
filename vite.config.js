@@ -11,7 +11,7 @@ export default defineConfig({
     vueJsx(),
     dynamicProxy({
       path: new RegExp('^/api'),
-      default: 'https://mock.apifox.cn/m1/3332315-0-default/'
+      default: 'http://localhost:8098'
     }),
     Components({
       // allow auto load markdown components under `./src/components/`
