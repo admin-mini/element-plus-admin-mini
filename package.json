@@ -1,36 +1,36 @@
 {
-  "name": "element-plus-admin-mini",
-  "version": "0.0.3",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
-    "format": "prettier --write src/",
-    "apifox": "node ./makeapi/apifox/make.js"
-  },
-  "dependencies": {
-    "@element-plus/icons-vue": "^2.3.1",
-    "@vueuse/core": "^12.0.0",
-    "axios": "^1.8.4",
-    "element-plus": "^2.11.5",
-    "normalize.css": "^8.0.1",
-    "nprogress": "^0.2.0",
-    "pinia": "^3.0.1",
-    "sortablejs": "^1.15.6",
-    "vue": "^3.5.13",
-    "vue-router": "^4.5.0"
-  },
-  "devDependencies": {
-    "@iconify-json/ep": "^1.2.2",
-    "@vitejs/plugin-vue": "^5.2.1",
-    "@vitejs/plugin-vue-jsx": "^4.1.2",
-    "eslint": "^9.23.0",
-    "http-proxy": "^1.18.1",
-    "sass": "^1.86.0",
-    "unplugin-vue-components": "^0.27.5",
-    "vite": "^6.0.3"
-  }
+    "name": "element-plus-admin-mini",
+    "version": "0.0.5",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "preview": "vite preview",
+        "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
+        "format": "prettier --write src/",
+        "apifox": "node ./makeapi/apifox/make.js"
+    },
+    "dependencies": {
+        "@element-plus/icons-vue": "^2.3.1",
+        "@vueuse/core": "^12.0.0",
+        "axios": "^1.8.4",
+        "element-plus": "^2.11.5",
+        "normalize.css": "^8.0.1",
+        "nprogress": "^0.2.0",
+        "pinia": "^3.0.1",
+        "sortablejs": "^1.15.6",
+        "vue": "^3.5.13",
+        "vue-router": "^4.5.0"
+    },
+    "devDependencies": {
+        "@iconify-json/ep": "^1.2.2",
+        "@vitejs/plugin-vue": "^5.2.1",
+        "@vitejs/plugin-vue-jsx": "^4.1.2",
+        "eslint": "^9.23.0",
+        "http-proxy": "^1.18.1",
+        "sass": "^1.86.0",
+        "unplugin-vue-components": "^0.27.5",
+        "vite": "^6.0.3"
+    }
 }

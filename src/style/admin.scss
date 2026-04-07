@@ -174,7 +174,7 @@ input:-internal-autofill-selected {
 }
 
 @media (max-width: 1024px) {
-  .admin-dialog-container .el-dialog {
+  .admin-dialog-wrapper .el-dialog {
     // --el-dialog-width: 100% !important;
     width: 100%;
     height: 100%;
