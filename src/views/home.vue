@@ -6,9 +6,11 @@
             <el-row>
                 <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
                     <div class="user-profile">
-                        <el-avatar :size="80" src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" />
+                       <el-avatar :size="80" :src="userInfo?.avatar" >
+                          {{ nickName.substring(0,1) }}
+                          </el-avatar>
                         <div class="user-detail">
-                            <div class="name">Websir</div>
+                            <div class="name">{{nickName}}</div>
                             <div class="org">研发部 | 负责人</div>
                         </div>
                     </div>
@@ -127,8 +129,19 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted,computed } from 'vue'
 import * as echarts from 'echarts'
+import { useSystemStore } from '@/stores/index'
+const systemStore = useSystemStore()
+
+
+const userInfo = computed(()=>{
+  return systemStore?.state?.user;
+})
+const nickName = computed(()=>{
+  return systemStore?.state?.user?.name || systemStore?.state?.user?.nickName;
+})
+
 
 const themeColor = '#6366f1' // 对齐图2的蓝紫色
 const currentTime = ref('2026年04月02日 16时34分01秒')
