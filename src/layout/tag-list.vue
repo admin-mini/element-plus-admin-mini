@@ -1,5 +1,5 @@
 <template>
-  <div class="admin-tag-list" v-if="tagView.tagList.length">
+  <div class="admin-tag-list">
 
     <el-tabs v-model="tagView.active" type="card" @tab-click="({ paneName }) => tagView.setActive(paneName)"
       @tab-remove="handleTabRemove" id="js-tag-list">
@@ -9,9 +9,9 @@
         <template #label>
           <el-dropdown trigger="contextmenu" style="color:inherit">
             <div>
-              {{ item.meta.name }}
+              <svg-icon class="_icon" :name="item.meta.icon" v-if="item.meta.icon && item.meta.icon != '#'"></svg-icon>
+              {{ item.meta.title }}
             </div>
-            <!-- <el-button @click="tagView.refresh()">刷</el-button> -->
             <template #dropdown>
               <el-dropdown-menu>
                 <el-dropdown-item @click="tagView.remove(item)">关闭</el-dropdown-item>
@@ -61,11 +61,12 @@ function handleTabRemove(fullPath) {
 .admin-tag-list {
   width: 100%;
   flex-shrink: 0;
+  border-top: 1px solid var(--el-border-color);
   // border-bottom: 1px solid var(--el-border-color);
   background: var(--el-bg-color);
   box-sizing: border-box;
   padding: 8px 10px;
-  box-shadow: 10px 1px 4px rgba(113, 128, 166, .1);
+  box-shadow: 0 1px 4px rgba(113, 128, 166, .1);
   z-index: 2;
 
   .el-tabs__nav-next,

@@ -4,7 +4,6 @@ const baseRequest=(url,method="get",data)=>{
    const fn = method=="post"?ajax.post:ajax.get;
    const params = {};
  
-   
    return fn("/auth/account/"+url,data);
 }
 

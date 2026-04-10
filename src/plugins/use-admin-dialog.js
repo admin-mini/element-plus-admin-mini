@@ -39,7 +39,7 @@ export default function useAdminDialog() {
     }, vm)
 
     let dom = document.createElement('div')
-    dom.className = 'admin-dialog-container'
+    //dom.className = 'admin-dialog-container'
     const COMP = type == 'dialog' ? ElDialog : ElDrawer
     let dialogVnode = createVNode(
       COMP,

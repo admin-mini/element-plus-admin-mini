@@ -81,6 +81,6 @@ export const useSystemStore = defineStore('user', () => {
     return !!state.value.token
   })
 
-  return { state, login, setToken, logout, isLogin, setMenuCollapse, menuCollapse, isSmallScreen }
+  return { state, login, setToken, logout, isLogin,getUserInfo, setMenuCollapse, menuCollapse, isSmallScreen }
 })
 // pinia.use(useSystemStore)
