@@ -138,7 +138,7 @@ function transformRoute(route) {
     return {
         path: parentPath,   // /
         component: Layout,
-        meta: transformMeta(meta),
+        meta: { ...transformMeta(meta), affix: false }, //转后强制不进入affix状态
         redirect: path,     // /home
         children: [
         {
@@ -238,8 +238,8 @@ function transformMeta(meta = {}) {
     order: meta.order ?? 0,
     query: meta.query || [],
     href: meta.href || '',
-    affix: meta.fixedIndexInTab != null,
-    fixedIndexInTab: meta.fixedIndexInTab ?? null
+    affix: !!meta.fixedIndexInTab  ,
+    fixedIndexInTab: meta.fixedIndexInTab
   }
 }
 
