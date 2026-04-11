@@ -81,6 +81,8 @@ import  * as dictApi from '@/api/dev/dict-api'
 import useAdminDialog from '@/plugins/use-admin-dialog'
 import { ElMessage } from 'element-plus'
 import { getDict } from '@/utils/dict'
+import { syncConfirm } from "@/utils/utils"
+
 getDict(["common_enabel_status"])
 const adminDialog = useAdminDialog()
 
@@ -141,6 +143,7 @@ function handleAdd(record) {
                 parentId: record?.id,
                 onSuccess: () => {
                     $table.getTable()
+                    initData();
                 }
             },
             dialogProps: { title: '新增菜单', width: "600px" }
@@ -156,6 +159,7 @@ function handleEdit(record) {
                 record: record,
                 onSuccess: () => {
                     $table.getTable()
+                    initData();
                 }
             },
             dialogProps: { title: '修改菜单', width: "600px" }
@@ -163,13 +167,14 @@ function handleEdit(record) {
     )
 }
 
-function handleDel(row) {
+function handleDel(record) {
     syncConfirm(
-        `是否确认删除名称为"${row.title}"的数据项?`,
-        () => menuApi.deleteById(row.id)
+        `是否确认删除名称为"${record.dictLabel}"的数据项及其子项吗?`,
+        () => dictApi.dictDelete([{id:record.id}])
     ).then(() => {
         ElMessage.success("删除成功")
         $table.getTable()
+        initData();
     }).catch(() => { })
 }
 </script>
