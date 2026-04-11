@@ -3,8 +3,7 @@
 
     <el-tabs v-model="tagView.active" type="card" @tab-click="({ paneName }) => tagView.setActive(paneName)"
       @tab-remove="handleTabRemove" id="js-tag-list">
-
-      <el-tab-pane v-for="item in tagView.tagList" :key="item.fullPath" :closable="!item.meta.affix"
+      <el-tab-pane v-for="item in sortedTagList" :key="item.fullPath" :closable="!item.meta.affix"
         :name="item.fullPath">
         <template #label>
           <el-dropdown trigger="contextmenu" style="color:inherit">
@@ -38,6 +37,23 @@ const tagView = useTagView()
 function command() {
   console.log(arguments)
 }
+
+//使用fixedIndexInTab排序后的，固定位置
+const sortedTagList = computed(() => {
+  return [...tagView.tagList].sort((a, b) => {
+    // 1. 如果 a 是固定项，b 不是，则 a 排在前面
+    if (a.meta?.fixedIndexInTab && !b.meta?.fixedIndexInTab) {
+      return -1;
+    }
+    // 2. 如果 b 是固定项，a 不是，则 b 排在前面
+    if (!a.meta?.fixedIndexInTab && b.meta?.fixedIndexInTab) {
+      return 1;
+    }
+    // 3. 如果都是固定项或都不是，保持原有顺序（或根据时间戳/索引排序）
+    return 0;
+  });
+});
+
 onMounted(() => {
   try {
     const el = document.querySelector('#js-tag-list .el-tabs__nav')
