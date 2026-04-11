@@ -22,7 +22,7 @@ export default function useAdminTable(options) {
     search: search,
     rules: rules,
     ref: null, //如果指定会自动执行validate校验表单
-    parse: (data) => data.rows, //格式化返回数据
+    parse: (res) => res.data.records, //格式化返回数据
     parseQuery: (query) => query, //格式化请求数据
     beforeShowData: () => Promise.resolve(), //显示数据前回调
     onShowData: () => {}, //显示数据后回调
@@ -49,7 +49,7 @@ export default function useAdminTable(options) {
     search()
   }
   function handleCurrentChange(p) {
-    $table.query.page = p
+    $table.query.current = p
     getTable()
   }
   function getTable() {
