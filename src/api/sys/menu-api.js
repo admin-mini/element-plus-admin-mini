@@ -37,7 +37,7 @@ export function editMenu( data) {
  * 删除菜单
  */
 export function deleteById( id) {
-  return request("delete",{params:{id:id}})
+  return request("delete",{id},"post")
 }
 /**
  * 批量删除菜单

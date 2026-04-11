@@ -37,7 +37,7 @@
             <slot name="table" v-else></slot>
             <div class="admin-pager-container" v-if="props.noPage === undefined">
                 <slot name="pager" v-if="slots.pager"></slot>
-                <el-pagination v-else :layout="$table.pageLayout" background v-model:current-page="$table.query.page"
+                <el-pagination v-else :layout="$table.pageLayout" background v-model:current-page="$table.query.current"
                     :page-size="$table.query.size" :total="$table.total" @size-change="$table.handleSizeChange"
                     @current-change="$table.handleCurrentChange" />
             </div>
@@ -72,7 +72,7 @@ const queryFrom = ref()
 $table.ref = queryFrom
 if (props.noPage) {
     delete $table.query.size
-    delete $table.query.page
+    delete $table.query.current
 }
 
 if (props.query) {
