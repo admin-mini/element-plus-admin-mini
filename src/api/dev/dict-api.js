@@ -8,7 +8,7 @@ const request=(url,data,method="get")=>{
 
 // 获取字典分页
 export const getDictPage=(data)=> {
-    return request('page', data)
+    return request('page', {params:data})
 };
 // 获取字典列表
 export const getDictList=(data)=> {
@@ -31,7 +31,7 @@ export const dictDelete=(data)=> {
 		return request('delete', data,"post")
 	};
 // 获取字典详情
-const dictDetail=(data)=> {
-    return request('detail', data)
+export const getDictDetail=(id)=> {
+    return request('detail', {params:{id}})
 }
 
