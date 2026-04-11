@@ -1,6 +1,6 @@
 <template>
   <admin-dialog-content v-loading="loading">
-    <el-form ref="formRef" :model="postData" label-width="100px">
+    <el-form ref="formRef" :model="postData" label-width="140px">
       <admin-space cols="2">
         <el-form-item label="菜单类型">
           <el-radio-group v-model="postData.type" :disabled="postData.id">
@@ -122,7 +122,19 @@
         <el-form-item label="显示排序" prop="sortCode" :rules="[$rules.required]">
           <el-input-number v-model="postData.sortCode" controls-position="right" :min="0" />
         </el-form-item>
-
+        <el-form-item label="固定页标签位置" prop="fixedIndexInTab"   v-if="showPage">
+           <template #label>
+            <span>
+              <el-tooltip content="只有大于0时生效，越小越靠前" placement="top">
+                <el-icon>
+                  <QuestionFilled />
+                </el-icon>
+              </el-tooltip>
+              固定标签位置
+            </span>
+          </template>
+          <el-input-number v-model="postData.fixedIndexInTab" controls-position="right" :min="0" />
+        </el-form-item>
         <el-form-item v-if="showPage">
           <template #label>
             <span>
@@ -269,7 +281,7 @@ import {
 getDict(['sys_show_hide', 'sys_normal_disable'])
 
 const props = defineProps({
-  row: Object,
+  record: Object,
   parentId: [String, Number]
 })
 const emits = defineEmits(['end', 'success'])
@@ -306,6 +318,7 @@ const postData = ref({
   path:'',
   code: "",
   component: undefined,
+  fixedIndexInTab:undefined,
   path: undefined,
   layout:'', //仅做组件路径逻辑使用，最终会合并到component
   query:[],
@@ -410,8 +423,8 @@ const initData = async(id)=>{
 
 onMounted(() => {
   getTreeselect()
-  if (props.row) {
-    initData(props.row.id);
+  if (props.record) {
+    initData(props.record.id);
   }
 })
 </script>

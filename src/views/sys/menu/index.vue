@@ -92,32 +92,32 @@ function toggleExpandAll() {
     })
 }
 
-function handleAdd(row) {
+function handleAdd(record) {
     adminDialog(
         {
             component: import('./modules/form.vue'),
             props: {
-                parentId: row?.id,
+                parentId: record?.id,
                 onSuccess: () => {
                     $table.getTable()
                 }
             },
-            dialogProps: { title: '新增菜单', width: "800px" }
+            dialogProps: { title: '新增菜单', width: "900px" }
         }
     )
 }
 
-function handleEdit(row) {
+function handleEdit(record) {
     adminDialog(
         {
             component: import('./modules/form.vue'),
             props: {
-                row: row,
+                record: record,
                 onSuccess: () => {
                     $table.getTable()
                 }
             },
-            dialogProps: { title: '修改菜单', width: "800px" }
+            dialogProps: { title: '修改菜单', width: "900px" }
         }
     )
 }
