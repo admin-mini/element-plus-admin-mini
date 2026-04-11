@@ -31,22 +31,21 @@
                 <el-table v-if="refreshTable" :default-expand-all="isExpandAll" :data="$table.data"
                     v-loading="$table.loading" row-key="id"
                     :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
-                    <el-table-column prop="title" label="菜单标题" :show-overflow-tooltip="true">
+                    <el-table-column prop="title" label="菜单标题" :show-overflow-tooltip="true" width="200">
                     </el-table-column>
-                    <el-table-column prop="icon" label="图标">
+                    <el-table-column prop="icon" label="图标" width="50">
                         <template #default="scope">
                             <svg-icon :name="scope.row.icon" />
                         </template>
                     </el-table-column>
                     <el-table-column prop="sortCode" label="排序" width="60" align="center" />
-                    <el-table-column prop="code" label="权限标识" :show-overflow-tooltip="true" />
+                    <el-table-column prop="path" label="访问路径" :show-overflow-tooltip="true" />
                     <el-table-column prop="component" label="组件路径" :show-overflow-tooltip="true" />
                     <el-table-column prop="enable" label="状态" width="100" align="center">
                         <template #default="scope">
                             <dict-tag :options="$dict.sys_normal_disable" :value="scope.row.enable" />
                         </template>
                     </el-table-column>
-                    <el-table-column label="创建时间" align="center" prop="createTime" width="180" />
                     <el-table-column label="操作" align="center" width="200">
                         <template #default="scope">
                             <el-space spacer="|">
@@ -96,14 +95,14 @@ function toggleExpandAll() {
 function handleAdd(row) {
     adminDialog(
         {
-            component: import('./form.vue'),
+            component: import('./modules/form.vue'),
             props: {
-                parentId: row?.menuId,
+                parentId: row?.id,
                 onSuccess: () => {
                     $table.getTable()
                 }
             },
-            dialogProps: { title: '新增菜单', width: "700px" }
+            dialogProps: { title: '新增菜单', width: "800px" }
         }
     )
 }
@@ -111,14 +110,14 @@ function handleAdd(row) {
 function handleEdit(row) {
     adminDialog(
         {
-            component: import('./form.vue'),
+            component: import('./modules/form.vue'),
             props: {
                 row: row,
                 onSuccess: () => {
                     $table.getTable()
                 }
             },
-            dialogProps: { title: '修改菜单', width: "700px" }
+            dialogProps: { title: '修改菜单', width: "800px" }
         }
     )
 }

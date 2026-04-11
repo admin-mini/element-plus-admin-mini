@@ -17,7 +17,7 @@ export function getMenuTree() {
  * 新增菜单
  */
 export function getMenu(id) {
-  return request("detail",{id})
+  return request("detail",{params:{id:id}})
 }
 
 /**
@@ -37,7 +37,7 @@ export function editMenu( data) {
  * 删除菜单
  */
 export function deleteById( id) {
-  return request("detail",{id})
+  return request("delete",{params:{id:id}})
 }
 /**
  * 批量删除菜单
@@ -49,6 +49,6 @@ export function batchDeleteByIds( ids) {
 /**
  * 获取tree选择菜单
  */
-export async function getTreeSelector() {
+export function getTreeSelector() {
   return request("selector")
 }
