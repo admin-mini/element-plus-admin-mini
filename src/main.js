@@ -13,6 +13,8 @@ import '@/style/admin.scss'
 import adminComponent from './components/index'
 import adminUtils from './utils/index'
 import directive from './directive/index.js'
+import 'virtual:svg-icons-register'
+import 'virtual:uno.css'
 import { useTagView } from './stores/tag-view'
 const app = createApp(App)
 app.config.globalProperties.$env = import.meta.env

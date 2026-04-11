@@ -1,6 +1,6 @@
 import ajax from '../ajax.js'
 
-const baseRequest=(url,method="get",data)=>{
+const request=(url,data,method="get")=>{
    const fn = method=="post"?ajax.post:ajax.get;
    const params = {};
  
@@ -10,8 +10,8 @@ const baseRequest=(url,method="get",data)=>{
 /**
  * 获取登录验证码
  */
-export function getLoginPicCaptcha() {
-   return baseRequest("getPicCaptcha")
+export const getLoginPicCaptcha=()=> {
+   return request("getPicCaptcha")
 }
 
 /**
@@ -19,11 +19,11 @@ export function getLoginPicCaptcha() {
  *
  * @loginParams 登录信息{username,passowrd,validCode,validCodeReqId,device,deviceId}
  */
-export function login( loginParams) {
-  return baseRequest("login","post",loginParams)
+export const login=( loginParams)=> {
+  return request("login",loginParams,"post")
 }
 
 /** 获取登录用户信息（获取的为当前租户的，每个租户的登录状态单独存储，只是用统一的account登录 */
-export function getLoginUser() {
+export const getLoginUser=()=> {
      return ajax.get("/auth/user/getLoginUser")
 }

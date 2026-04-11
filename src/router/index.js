@@ -78,7 +78,7 @@ export const constantRoutes = [
     children: [
       {
         path: 'profile',
-        component: () => import('@/views/system/user/profile/index.vue'),
+        component: () => import('@/views/sys/menu/index.vue'),
         name: 'Profile',
         meta: { title: '个人中心', icon: 'user' }
       }
