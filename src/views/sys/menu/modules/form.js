@@ -104,11 +104,11 @@ export function getAllComponentOptions() {
     const name = key
       .replace('/src/views/', '') // 去除基础路径
       .replace('.vue', '')        // 去除后缀
-      .replace(/\//g, '_');       // 将 / 替换为 _ 以符合 view.xxx 的命名习惯
+      ;       // 将 / 替换为 _ 以符合 view.xxx 的命名习惯
 
     return {
       label: name,
-      value: name
+      value: name.replace(/\//g, '_')
     };
   });
 

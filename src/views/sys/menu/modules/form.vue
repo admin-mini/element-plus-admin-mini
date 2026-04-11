@@ -98,7 +98,7 @@
                 :value="item.value"
               >
                 <div style="display: flex; justify-content: space-between; align-items: center">
-                  <span>{{ item.value }}</span>
+                  <span>{{ item.label }}</span>
                   
                   <el-tag 
                     v-if="item.value.startsWith('layout.')" 
