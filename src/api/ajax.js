@@ -65,4 +65,7 @@ ajax.interceptors.response.use(
   }
 )
 
+
+
+
 export default ajax
