@@ -27,7 +27,7 @@ const props = defineProps({
     default:false
   },
   // 方式2：传入字典类型，组件内部自动获取
-  dictType: {
+  type: {
     type: String,
     default: ''
   },
@@ -90,11 +90,11 @@ const displayValues = computed(() => {
  * 加载字典数据
  */
 async function loadDictData() {
-  if (props.dictType && !props.options) {
+  if (props.type && !props.options) {
     try {
     
-      const res = await getDict([props.dictType])
-      internalOptions.value = res[props.dictType] || []
+      const res = await getDict([props.type])
+      internalOptions.value = res[props.type] || []
       console.log("load",internalOptions.value);
 
     } catch (error) {
@@ -114,14 +114,29 @@ watch(() => props.dictType, () => {
 })
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .dict-labels {
   display: inline-flex;
   gap: 8px;
 }
 .label-item {
   font-size: 14px;
-  
+    &::after {
+        content: " |";
+        font-size: 12px;
+        margin-left: 4px;
+        margin-right: 4px;
+        color: var(--el-border-color);
+        font-weight: normal;
+    }
+    
+    &:last-child {
+        &::after {
+            content: "";
+            margin: 0; 
+        }
+    }
+
 }
 .label-item.tag {
   padding: 0px 8px;
@@ -130,5 +145,9 @@ watch(() => props.dictType, () => {
   font-weight: 500;
   display: inline-block;
   white-space: nowrap;
+   &::after {
+        content: "";
+        margin: 0; 
+    }
 }
 </style>
