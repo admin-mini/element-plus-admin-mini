@@ -73,7 +73,6 @@ export default function useAdminTable(options) {
     $table
       .api(query)
       .then(async (res) => {
-        res.rows = res.rows || res.data
         let rows = $table.parse(res)
         if ($table.beforeShowData) {
           await $table.beforeShowData(rows)
