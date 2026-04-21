@@ -14,7 +14,7 @@
         </el-form>
       </template>
       <template #btn>
-        <el-button @click="openAdd" type="primary" icon="plus">新增角色</el-button>
+        <el-button @click="handleAdd" type="primary" icon="plus">新增角色</el-button>
       </template>
       <template #filterTable>
         <el-table-column prop="name" label="角色名" />
@@ -22,10 +22,10 @@
         <el-table-column prop="weight" label="角色权重" />
         <el-table-column prop="sortCode" label="角色排序" />
         <el-table-column label="操作" width="200px">
-          <template #default="scope">
-            <el-space spacer="|">
-              <el-link :disabled="scope.row.loading" type="primary" @click="openEdit(scope.row)">编辑</el-link>
-              <el-link :disabled="scope.row.loading" type="primary" @click="openDel(scope.row)">删除</el-link>
+          <template #default="scope" >
+            <el-space spacer="|" v-if="scope.row.code!='superAdmin'">
+              <el-link :disabled="scope.row.loading" type="primary" @click="handleEdit(scope.row)">编辑</el-link>
+              <el-link :disabled="scope.row.loading" type="primary" @click="handleDel(scope.row)">删除</el-link>
               <el-dropdown>
                 <span class="el-dropdown-link">
                 权限
@@ -55,6 +55,7 @@ import useAdminDialog from '@/plugins/use-admin-dialog'
 import message from "@/utils/message"
 
 import * as roleApi from "@/api/sys/role-api"
+import { scrollbarProps } from 'element-plus'
 
 
 const adminDialog = useAdminDialog()
@@ -66,7 +67,7 @@ function tableInit(table) {
 
 
 
-function openAdd() {
+function handleAdd() {
   adminDialog({
     component: import('./modules/form.vue'),
     props: {
@@ -79,7 +80,7 @@ function openAdd() {
 }
 
 
-async function openEdit(row) {
+async function handleEdit(row) {
   adminDialog({
     component: import('./modules/form.vue'),
     props: {
@@ -88,12 +89,11 @@ async function openEdit(row) {
         $table.getTable()
       }
     },
-    dialogType: "drawer",
     dialogProps: { title: '编辑' }
   })
 }
 
-function openDel(row) {
+function handleDel(row) {
   message.syncConfirm(`确定删除“${row.name}”？`, () => roleApi.deleteByIds([row.id]))
     .then(function (res) {
 

@@ -7,8 +7,19 @@
       <el-form-item label="角色编码" prop="code" :rules="[$rules.required]">
         <el-input v-model="postData.code"></el-input>
       </el-form-item>
-      <el-form-item label="权重值" prop="weigth" :rules="[$rules.required]">
-        <el-input-number v-model="postData.weigth" :precision="0" />
+      <el-form-item  prop="weight"  :rules="[$rules.required]">
+        <template #label>
+          角色权重
+           <el-tooltip
+        class="box-item"
+        effect="dark"
+        content="分配角色时，权重高的角色可以分配权重低的"
+        placement="top-start"
+      >
+                  <el-icon><QuestionFilled /></el-icon>
+      </el-tooltip>
+        </template>
+        <el-input-number v-model="postData.weight" :min="0" :max="99" :precision="0" />
       </el-form-item>
       <el-form-item label="角色排序" prop="sortCode" :rules="[$rules.required]">
         <el-input-number v-model="postData.sortCode" :precision="0" />
@@ -24,7 +35,8 @@
 <script setup>
 import { userAdd, userEdit } from '@/api';
 import { ref, reactive,onMounted } from 'vue'
-import messsage from "@/utils/message"
+import message from "@/utils/message"
+import tool from "@/utils/tool"
 import * as roleApi from "@/api/sys/role-api"
 
 
@@ -33,7 +45,7 @@ const emits = defineEmits(['end', 'success'])
 const props = defineProps(["row"]);
 const postForm = ref()
 const loading = ref(false);
-const postData = reactive({
+const postData = ref({
   name: '',
   code: '',
   weight: 0,
@@ -46,7 +58,8 @@ const rules = {}
 onMounted(()=>{
     if (props.row && props.row.id) {
         roleApi.getRoleDetail(props.row.id).then(resp=>{
-             Object.assign(postData, resp.data)
+          console.log("aaa",tool);
+             postData.value = tool.cloneDeep(resp.data);
         })
     }
 })
@@ -54,9 +67,10 @@ onMounted(()=>{
 const submitForm = (formEl) => {
   formEl.validate((valid) => {
     if (valid) {
-      let fn = !postData.id ? roleApi.addRole : roleApi.editRole;
+      let _postData = tool.cloneDeep(postData.value);
+
+      let fn = !_postData.id ? roleApi.addRole : roleApi.editRole;
       loading.value = true
-      let _postData = JSON.parse(JSON.stringify(postData))
 
       fn(_postData).then(res => {
           message.success('保存成功')
