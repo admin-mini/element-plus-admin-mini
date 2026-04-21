@@ -1,10 +1,9 @@
-import ajax from '../ajax.js'
+import baseRequest from '../base-request.js'
 
-const request=(url,data,method="get")=>{
-   const fn = method=="post"?ajax.post:ajax.get;
-   return fn("/sys/menu/"+url,data);
+
+const request=(url,data,method)=>{
+   return baseRequest("/sys/menu/"+url,data,method);
 }
-
 
 /**
  * 获取菜单列表
@@ -17,7 +16,7 @@ export function getMenuTree() {
  * 新增菜单
  */
 export function getMenu(id) {
-  return request("detail",{params:{id:id}})
+  return request("detail",{id:id})
 }
 
 /**

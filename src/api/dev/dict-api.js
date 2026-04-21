@@ -1,10 +1,8 @@
-import ajax from '../ajax.js'
+import baseRequest from '../base-request.js'
 
-const request=(url,data,method="get")=>{
-   const fn = method=="post"?ajax.post:ajax.get;
-   return fn("/dev/dict/"+url,data);
+const request=(url,data,method)=>{
+   return baseRequest("/dev/dict/"+url,data,method);
 }
-
 
 // 获取字典分页
 export const getDictPage=(data)=> {

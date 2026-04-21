@@ -1,21 +1,20 @@
-import ajax from '../ajax.js'
+import baseRequest from '../base-request.js'
 
-const request=(url,data,method="get")=>{
-   const fn = method=="post"?ajax.post:ajax.get;
-   return fn("/sys/role/"+url,data);
+const request=(url,data,method)=>{
+   return baseRequest("/sys/role/"+url,data,method);
 }
 /**
  * 角色管理 分页
  */
 export function getRolePage(data) {
-  return request("page",{params:data})
+  return request("page",data)
 }
 
 /**
  * 获取角色详情
  */
 export function getRoleDetail(id) {
-  return request("detail",{params:{id:id}})
+  return request("detail",{id:id})
 }
 
 /**

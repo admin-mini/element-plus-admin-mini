@@ -1,10 +1,7 @@
-import ajax from '../ajax.js'
+import baseRequest from '../base-request.js'
 
-const request=(url,data,method="get")=>{
-   const fn = method=="post"?ajax.post:ajax.get;
-   const params = {};
- 
-   return fn("/auth/account/"+url,data);
+const request=(url,data,method)=>{
+   return baseRequest("/auth/account/"+url,data,method);
 }
 
 /**
@@ -25,5 +22,5 @@ export const login=( loginParams)=> {
 
 /** 获取登录用户信息（获取的为当前租户的，每个租户的登录状态单独存储，只是用统一的account登录 */
 export const getLoginUser=()=> {
-     return ajax.get("/auth/user/getLoginUser")
+     return baseRequest("/auth/user/getLoginUser")
 }
