@@ -2,7 +2,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 
 //构建消息提示试题
 const message={};
-const messageBase = (msg, type = 'info',showClose=flase) => {
+const messageBase = (msg, type = 'info',showClose=false) => {
   ElMessage({ message: msg, type, showClose })
 }
 
