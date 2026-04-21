@@ -60,7 +60,7 @@
 
         <div class="main-content">
           <div class="search-header">
-            <el-input v-model="queryParams.name" placeholder="姓名/手机号" @keyup.enter="handleSearch">
+            <el-input v-model="queryParams.searchKey" placeholder="姓名" @keyup.enter="handleSearch">
               <template #append>
                 <el-button :icon="Search" @click="handleSearch" />
               </template>
@@ -77,11 +77,11 @@
             @select-all="handleSelectAll"
           >
             <el-table-column v-if="multiple" type="selection" width="45" />
-            <el-table-column label="人员" min-width="120">
+            <el-table-column label="姓名" min-width="120">
               <template #default="{ row }">
                 <div class="u-cell">
-                  <el-avatar :size="24">{{ row.name[0] }}</el-avatar>
-                  <span class="u-name">{{ row.name }}</span>
+                  <el-avatar :size="24" :src="row.avatar">{{ (row.name || row.nickName)[0] }}</el-avatar>
+                  <span class="u-name">{{ (row.name || row.nickName) }}</span>
                 </div>
               </template>
             </el-table-column>
@@ -95,7 +95,7 @@
 
           <div class="pager-box">
             <el-pagination
-              v-model:current-page="queryParams.page"
+              v-model:current-page="queryParams.current"
               :total="total"
               :page-size="queryParams.pageSize"
               layout="prev, pager, next"
@@ -142,6 +142,8 @@
 import { ref, reactive, computed, nextTick, watch } from 'vue'
 import { User, Search, CollectionTag, Close } from '@element-plus/icons-vue'
 import { useWindowSize } from '@vueuse/core'
+import {getSelectorPage,getSelectedUsers} from '@/api/sys/user-api'
+import { getOrgTree } from '@/api/sys/org-api'
 
 const props = defineProps({
   modelValue: [String, Number, Array],
@@ -166,7 +168,7 @@ const tableRef = ref(null)
 const orgTree = ref([])
 const userList = ref([])
 const total = ref(0)
-const queryParams = reactive({ page: 1, pageSize: 10, name: '', orgId: '' })
+const queryParams = reactive({ current: 1, pageSize: 10, name: '', orgId: '' })
 
 const selectedUsers = ref([]) // 确认值
 const tempSelected = ref([])   // 弹窗缓存值。临时值，不点确定不回传
@@ -174,23 +176,24 @@ const tempSelected = ref([])   // 弹窗缓存值。临时值，不点确定不�
 //模拟数据
 const mockUserData = [
       { id: 1, name: '张三',nickName:'', orgName: '前端团队', phone: '131...',avatar:'' },
-      { id: 2, name: '李四',nickName:'', orgName: '后端团队', phone: '132...' ,avatar:''},
-      { id: 3, name: '王五',nickName:'', orgName: '前端团队', phone: '133...',avatar:'' },
-      { id: 4, name: '赵六',nickName:'', orgName: '工业IoT部', phone: '134...',avatar:'' }
+      // { id: 2, name: '李四',nickName:'', orgName: '后端团队', phone: '132...' ,avatar:''},
+      // { id: 3, name: '王五',nickName:'', orgName: '前端团队', phone: '133...',avatar:'' },
+      // { id: 4, name: '赵六',nickName:'', orgName: '工业IoT部', phone: '134...',avatar:'' }
     ]
 
 // --- 默认接口方法，可以将自己的接口方法写到这里
 // 同时支持从props中传入自定义方法，同名即可比如api.getOrgTree，api.getUserList等--
 //使用组件式只需要修改defaultApi即可，其他如id，name等属性没改变可不用动
 const defaultApi = {
-  getOrgTree: async () => [
-    { id: 'd1', orgName: '糯草开发组', children: [{ id: 'd11', orgName: '前端团队' }, { id: 'd12', orgName: '后端团队' }] },
-    { id: 'd2', orgName: '工业IoT部' }
-  ],
+  getOrgTree: async () => {
+    //  { id: 'd1', orgName: '糯草开发组', children: [{ id: 'd11', orgName: '前端团队' }, { id: 'd12', orgName: '后端团队' }] },
+    // { id: 'd2', orgName: '工业IoT部' }
+    const res = await getOrgTree();
+    return res?.data || [];
+  },
   getUserList: async (params) => {
-    console.log('正在执行查询...', params)
-    
-    return { list: mockUserData.slice((params.page - 1) * 2, params.page * 2), total: 50 }
+    const resp = await getSelectorPage(params);
+    return { records: resp.data.records, total: resp.data.total }
   },
   getUserListByIds:async(userIds)=>{
      
@@ -198,11 +201,9 @@ const defaultApi = {
       const ids = Array.isArray(userIds) ? userIds : [userIds]
       loadingValueUsers.value=true;
 
-      //模拟异步请求情况
-      setTimeout(()=>{
-        loadingValueUsers.value=false;
-      },1000)
-      return mockUserData.filter(item=>ids.includes(item.id));
+      const resp = await getSelectedUsers(ids);
+      loadingValueUsers.value=false;
+      return resp.data;
   }
 }
 
@@ -223,9 +224,9 @@ const handleSearch = async () => {
   loading.value = true
   const fetchFn = props.api.getUserList || defaultApi.getUserList
   try {
-    const res = await fetchFn(queryParams)
-    userList.value = res.list
-    total.value = res.total
+    const data = await fetchFn(queryParams)
+    userList.value = data.records
+    total.value = data.total
     syncTableCheckbox()
   } finally {
     loading.value = false
@@ -262,8 +263,9 @@ const handleSelectAll = (selection) => {
 
 // 侧边栏/移动端部门点击
 const handleOrgClick = (node) => {
+  console.log("node",node)
   queryParams.orgId = node.id
-  queryParams.page = 1
+  queryParams.current = 1
   handleSearch()
 }
 
