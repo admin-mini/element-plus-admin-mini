@@ -43,7 +43,7 @@
                     <el-table-column prop="component" label="组件路径" :show-overflow-tooltip="true" />
                     <el-table-column prop="enable" label="状态" width="100" align="center">
                         <template #default="scope">
-                            <dict-label type="common_enabel_status" :value="scope.row.enable" />
+                            <dict-label type="common_enable_status" :value="scope.row.enable" />
                         </template>
                     </el-table-column>
                     <el-table-column label="操作" align="center" width="200">

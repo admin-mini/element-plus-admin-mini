@@ -16,7 +16,7 @@
                     <el-table-column prop="sortCode" label="排序" width="60" align="center" />
                     <el-table-column prop="enable" label="状态" width="100" align="center">
                         <template #default="scope">
-                            <dict-label tag type="common_enabel_status" :value="scope.row.status" />
+                            <dict-label tag type="common_enable_status" :value="scope.row.status" />
                         </template>
                     </el-table-column>
                     <el-table-column label="操作" align="center" >

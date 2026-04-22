@@ -83,7 +83,7 @@ import { ElMessage } from 'element-plus'
 import { getDict } from '@/utils/dict'
 import { syncConfirm } from "@/utils/utils"
 
-getDict(["common_enabel_status"])
+getDict(["common_enable_status"])
 const adminDialog = useAdminDialog()
 
 

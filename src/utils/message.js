@@ -42,6 +42,19 @@ message.syncConfirm = (content = '确认执行此操作吗？', req, title = '�
     })
   })
 }
-
+/**
+ * 弹出提示对话框
+ * @param {*} content 
+ * @param {*} title 
+ * @param {*} fun 
+ */
+message.alert=(content='',title='提示',fun)=>{
+  ElMessageBox.alert(content, title, {
+    confirmButtonText: '确定',
+    callback: (action) => {
+      fun(action);
+    },
+  })
+}
 
 export default message;

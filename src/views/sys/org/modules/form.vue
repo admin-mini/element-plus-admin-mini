@@ -17,7 +17,7 @@
             <user-picker v-model="postData.directorUserId" style="width:100%"></user-picker>
         </el-form-item>
          <el-form-item label="状态" prop="status" :rules="[$rules.required]">
-            <select-dict :dict="$dict.common_enabel_status" v-model="postData.status"
+            <select-dict :dict="$dict.common_enable_status" v-model="postData.status"
                                 ></select-dict>
         </el-form-item>
         <el-form-item label="显示排序" prop="sortCode" :rules="[$rules.required]">
@@ -41,7 +41,7 @@ import { getDict } from '@/utils/dict'
 
 import * as orgApi from '@/api/sys/org-api'
 
-getDict(['common_enabel_status'])
+getDict(['common_enable_status'])
 
 const props = defineProps({
   row: Object,

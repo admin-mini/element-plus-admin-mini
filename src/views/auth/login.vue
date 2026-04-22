@@ -56,7 +56,7 @@ function submit() {
   postForm.value.validate((valid) => {
     if (valid) {
       let _postData = Object.assign({}, postData)
-      _postData.password = smCrypto.doEncrypt(_postData.password, 32)
+      _postData.password = smCrypto.doEncrypt(_postData.password)
       loading.value = true
       loginApi.login(_postData)
         .then((res) => {

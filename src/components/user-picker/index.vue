@@ -16,7 +16,7 @@
               size="small"
               @close.stop="handleRemove(user)"
             >
-              {{ user.name }}
+              {{ user.name || user.nackname}}
             </el-tag>
           </div>
         </template>
@@ -80,8 +80,8 @@
             <el-table-column label="姓名" min-width="120">
               <template #default="{ row }">
                 <div class="u-cell">
-                  <el-avatar :size="24" :src="row.avatar">{{ (row.name || row.nickName)[0] }}</el-avatar>
-                  <span class="u-name">{{ (row.name || row.nickName) }}</span>
+                  <el-avatar :size="24" :src="row.avatar">{{ (row.name || row.nickname)[0] }}</el-avatar>
+                  <span class="u-name">{{ (row.name || row.nickname) }}</span>
                 </div>
               </template>
             </el-table-column>
@@ -119,7 +119,7 @@
               </div>
               <el-scrollbar max-height="300px">
                 <div v-for="u in tempSelected" :key="u.id" class="pop-user-item">
-                  <span>{{ u.name }} - <small>{{ u.orgName }}</small></span>
+                  <span>{{ u.name || u.nickname }} - <small>{{ u.orgName }}</small></span>
                   <el-icon @click="doRemoveTemp(u)"><Close /></el-icon>
                 </div>
               </el-scrollbar>
@@ -175,7 +175,7 @@ const tempSelected = ref([])   // 弹窗缓存值。临时值，不点确定不�
 
 //模拟数据
 const mockUserData = [
-      { id: 1, name: '张三',nickName:'', orgName: '前端团队', phone: '131...',avatar:'' },
+      { id: 1, name: '张三',nickname:'', orgName: '前端团队', phone: '131...',avatar:'' },
       // { id: 2, name: '李四',nickName:'', orgName: '后端团队', phone: '132...' ,avatar:''},
       // { id: 3, name: '王五',nickName:'', orgName: '前端团队', phone: '133...',avatar:'' },
       // { id: 4, name: '赵六',nickName:'', orgName: '工业IoT部', phone: '134...',avatar:'' }

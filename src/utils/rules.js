@@ -4,6 +4,21 @@ export default {
     required: true,
     message: '必填项，必须填写/选择该项！'
   },
+  phone: {
+    pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,
+    message: '请输入正确的手机号码',
+    trigger: 'blur'
+  },
+  email: {
+    pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+    message: '请输入正确的EMAIL',
+    trigger: 'blur'
+  },
+  username: {
+    pattern: /^[a-zA-Z][a-zA-Z0-9_]*$/,
+    message: '用户名必须以字母开头，且仅包含字母、数字或下划线',
+    trigger: 'blur'
+  },
   checkPassword(postData, key, postForm) {
     return {
       validator: function (rule, value, callback) {

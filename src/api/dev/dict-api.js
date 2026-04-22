@@ -6,7 +6,7 @@ const request=(url,data,method)=>{
 
 // 获取字典分页
 export const getDictPage=(data)=> {
-    return request('page', {params:data})
+    return request('page', data)
 };
 // 获取字典列表
 export const getDictList=(data)=> {
@@ -30,6 +30,6 @@ export const dictDelete=(data)=> {
 	};
 // 获取字典详情
 export const getDictDetail=(id)=> {
-    return request('detail', {params:{id}})
+    return request('detail', {id})
 }
 
