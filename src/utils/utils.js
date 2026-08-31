@@ -1,4 +1,5 @@
-import { dayjs, ElMessageBox } from 'element-plus'
+import { ElMessageBox } from 'element-plus'
+import dayjs from 'dayjs'
 /**
  *
  * @param {string} url 要下载的地址
@@ -295,7 +296,7 @@ export async function checkRules(formRef) {
     formRef.value.scrollToField(firstError[0].field)
     ElMessage.warning(
       formRef.value.fields.find((item) => item.prop == firstError[0].field).label +
-        firstError[0].message
+      firstError[0].message
     )
     return Promise.reject()
   }
