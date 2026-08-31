@@ -5,6 +5,7 @@ import vueJsx from '@vitejs/plugin-vue-jsx'
 import dynamicProxy from './vite.dynamic.proxy'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+import AutoImport from 'unplugin-auto-import/vite'
 export default defineConfig({
   plugins: [
     vue(),
@@ -12,6 +13,9 @@ export default defineConfig({
     dynamicProxy({
       path: new RegExp('^/api'),
       default: 'https://mock.apifox.cn/m1/3332315-0-default/'
+    }),
+    AutoImport({
+      resolvers: [ElementPlusResolver()]
     }),
     Components({
       // allow auto load markdown components under `./src/components/`
