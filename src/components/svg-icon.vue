@@ -1,41 +1,49 @@
 <template>
-    <el-icon v-if="getIcon()">
-        <component :is="getIcon()">
-        </component>
-    </el-icon>
-    <span class="el-icon" v-else>
-        <svg aria-hidden="true">
-            <use :xlink:href="symbolId" />
-        </svg>
-    </span>
+  <el-icon v-if="iconComponent">
+    <component :is="iconComponent" />
+  </el-icon>
+
+  <span v-else class="el-icon">
+    <svg aria-hidden="true" :style="{ color }">
+      <use :href="symbolId" />
+    </svg>
+  </span>
 </template>
 
 <script setup>
-import { computed, resolveComponent } from 'vue'
-function getIcon() {
-    //先判断是否有这个组件
-    if (props.name == '#') {
-        return null
-    }
-    let comp = resolveComponent(props.name)
-    if (typeof comp === 'string') {
-        return null
-    }
-    return comp
-}
+import { computed, getCurrentInstance } from 'vue'
+
 const props = defineProps({
-    prefix: {
-        type: String,
-        default: '',
-    },
-    name: {
-        type: String,
-        required: true,
-    },
-    color: {
-        type: String,
-        default: '#333',
-    },
-},)
-const symbolId = computed(() => `#icon-${props.name}`)
+  prefix: {
+    type: String,
+    default: '',
+  },
+  name: {
+    type: String,
+    required: true,
+  },
+  color: {
+    type: String,
+    default: '#333',
+  },
+})
+
+const instance = getCurrentInstance()
+
+const iconComponent = computed(() => {
+  const name = props.name
+
+  if (!name || name === '#') {
+    return null
+  }
+
+  const components = instance?.appContext.components || {}
+
+  // 只从已注册组件中查找，不使用 resolveComponent
+  return components[name] || null
+})
+
+const symbolId = computed(() => {
+  return `${props.prefix ? `#${props.prefix}-` : '#icon-'}${props.name}`
+})
 </script>
