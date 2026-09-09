@@ -41,7 +41,7 @@ export function deleteByIds( ids) {
  * 获取角色权限
  */
 export function getRolePermission(id) {
-  return request("getPermission",{params:{id}});
+  return request("getPermission",{id});
 }
 
 /**
@@ -56,7 +56,7 @@ export function setRolePermission(data) {
  * 获取角色数据权限
  */
 export function getRoleDataScope(id) {
-  return request("getDataScope",{params:{id}});
+  return request("getDataScope",{id});
 }
 
 
