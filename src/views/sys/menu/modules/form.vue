@@ -3,7 +3,7 @@
     <el-form ref="formRef" :model="postData" label-width="140px">
       <admin-space cols="2">
         <el-form-item label="菜单类型">
-          <el-radio-group v-model="postData.type" :disabled="postData.id">
+          <el-radio-group v-model="postData.type" :disabled="!!postData.id">
             <el-radio value="dir">目录</el-radio>
             <el-radio value="menu">菜单</el-radio>
           </el-radio-group>
@@ -278,7 +278,7 @@ import {
 } from './form';
 
 
-getDict(['sys_show_hide', 'sys_normal_disable'])
+//getDict(['sys_show_hide', 'sys_normal_disable'])
 
 const props = defineProps({
   record: Object,
