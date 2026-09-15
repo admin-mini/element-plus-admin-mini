@@ -1,0 +1,10 @@
+import baseRequest from '../base-request.js'
+const request = (url, data, method) => baseRequest(`/dev/sms/${url}`, data, method)
+export const getLogPage = data => request('log/page', data)
+export const getLogDetail = id => request('log/detail', { id })
+export const deleteLog = data => request('log/delete', data, 'post')
+export const getTemplatePage = data => request('template/page', data)
+export const getTemplateDetail = id => request('template/detail', { templateId: id }, 'post')
+export const addTemplate = data => request('template/add', data, 'post')
+export const editTemplate = data => request('template/edit', data, 'post')
+export const deleteTemplate = data => request('template/delete', data, 'post')

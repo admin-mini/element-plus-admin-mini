@@ -78,7 +78,7 @@ export default function useAdminTable(options) {
           await $table.beforeShowData(rows)
         }
         $table.data = rows
-        $table.total = parseInt(res.total) || 0
+        $table.total = parseInt(res.data.total) || 0
         if ($table.onShowData) {
           nextTick(() => {
             $table.onShowData(rows)
