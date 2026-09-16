@@ -109,8 +109,8 @@ function findRouteByName(routes, name) {
 /**
  * 转换路由数组
  */
-function transformRoutes(routeList) {
-  return routeList.map((route) => transformRoute(route)).filter(Boolean)
+function transformRoutes(routeList, isRoot = true) {
+  return routeList.map((route) => transformRoute(route, isRoot)).filter(Boolean)
 }
 
 /**
@@ -123,7 +123,7 @@ function transformRoutes(routeList) {
  *   ParentView            → 保留占位，待后续完善
  *   InnerLink             → 保留占位，待后续完善
  */
-function transformRoute(route) {
+function transformRoute(route, isRoot = false) {
   const { name, path, component: componentStr, meta, children } = route
 
   const hasChildren = children && children.length > 0
@@ -156,11 +156,11 @@ function transformRoute(route) {
     const vueRoute = {
       name,
       path,
-      component: Layout,
+      component: isRoot ? Layout : ParentView,
       meta: transformMeta(meta)
     }
     if (hasChildren) {
-      vueRoute.children = transformRoutes(children)
+      vueRoute.children = transformRoutes(children, false)
       vueRoute.redirect = vueRoute.children[0]?.path
     }
     return vueRoute
