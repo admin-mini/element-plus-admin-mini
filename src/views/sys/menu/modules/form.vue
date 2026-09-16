@@ -328,7 +328,7 @@ const postData = ref({
 
 //是否显示页面相关项
 const showPage = computed(() => postData.value.type === 'menu');
-const showLayout = computed(() => postData.value.parentId === "0");
+const showLayout = computed(() => postData.value.type === 'dir');
 const componentOptions = getAllComponentOptions();
 /** 查询菜单下拉树结构 */
 function getTreeselect() {
