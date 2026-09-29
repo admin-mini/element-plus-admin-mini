@@ -23,13 +23,13 @@
         </el-form>
       </template>
       <template #btn>
-        <el-button @click="handleAdd" v-if="$p('sys:user:add') && $env.TENANT_ENABLE"  type="primary" icon="plus">邀请加入</el-button>
-        <el-button @click="handleJoin" v-if="$p('sys:user:add') && !$env.TENANT_ENABLE"  type="primary" icon="plus">新增用户</el-button>
+        <el-button @click="handleAdd" v-if="$p('sys:user:add') && TENANT_ENABLE"  type="primary" icon="plus">邀请加入</el-button>
+        <el-button @click="handleJoin" v-if="$p('sys:user:add') && !TENANT_ENABLE"  type="primary" icon="plus">新增用户</el-button>
         <el-button @click="handleDelBatch" v-if="$p('sys:user:delete')"  type="danger" icon="delete">批量删除用户</el-button>
       </template>
       <template #filterTable>
         <el-table-column type="selection" width="55" />
-        <el-table-column prop="name" label="用户名" />
+        <el-table-column prop="name" label="姓名" />
         <el-table-column prop="username" label="用户账号" />
         <el-table-column prop="orgName" label="所在部门" />
         <el-table-column prop="roleNames" label="用户角色" />
@@ -38,7 +38,7 @@
             <dict-label type="common_enable_status" :value="scope.row.status" v-if="!$p('sys:user:enable')"></dict-label>
             <div v-else>
               <el-switch
-                v-model="scope.row.status"
+                :model-value="scope.row.status"
                 size="small"
                 :active-value="1"
                 :inactive-value="0"
@@ -53,7 +53,7 @@
             <el-space spacer="|" v-if="!scope.row.isTenantAdmin">
               <el-link :disabled="scope.row.loading" type="primary" v-if="$p('sys:user:edit')" @click="handleEdit(scope.row)">编辑</el-link>
               <el-link :disabled="scope.row.loading" type="primary" v-if="$p('sys:user:delete')" @click="handleDel(scope.row)">删除</el-link>
-              <el-dropdown @command="(command)=>handleCommand(row,command)">
+              <el-dropdown @command="(command)=>handleCommand(command,scope.row)">
                 <span class="el-dropdown-link">
                 更多
                 <el-icon class="el-icon--right">
@@ -61,10 +61,10 @@
                 </el-icon>
                 </span>
                 <template #dropdown>
-                <el-dropdown-menu>
-                    <el-dropdown-item command="dataScope" v-if="$('sys:user:resetPwd')">部门权限</el-dropdown-item>
-                    <el-dropdown-item command="resetPwd" v-if="$('sys:user:resetPwd')">重置密码</el-dropdown-item>
-                </el-dropdown-menu>
+                  <el-dropdown-menu>
+                      <el-dropdown-item command="setRoles" v-if="$p('sys:user:roleSet')">分配角色</el-dropdown-item>
+                      <el-dropdown-item command="resetPwd" v-if="!$env.VITE_TENANT_ENABLE && $p('sys:user:resetPwd')">重置密码</el-dropdown-item>
+                  </el-dropdown-menu>
                 </template>
             </el-dropdown>
             </el-space>
@@ -87,6 +87,7 @@ import * as userApi from "@/api/sys/user-api"
 
 const adminDialog = useAdminDialog()
 let $table;
+const TENANT_ENABLE = import.meta.env.VITE_TENANT_ENABLE === 'true'
 
 function tableInit(table) {
   $table = table
@@ -98,11 +99,12 @@ function handleAdd() {
   adminDialog({
     component: import('./modules/form.vue'),
     props: {
+      isTenant: true,
       onSuccess: () => {
         $table.getTable()
       }
     },
-    dialogProps: { title: '新增' }
+    dialogProps: { title: '邀请加入' }
   })
 }
 
@@ -110,11 +112,12 @@ function handleJoin() {
   adminDialog({
     component: import('./modules/form.vue'),
     props: {
+      isTenant: false,
       onSuccess: () => {
         $table.getTable()
       }
     },
-    dialogProps: { title: '新增' }
+    dialogProps: { title: '新增用户' }
   })
 }
 
@@ -123,6 +126,7 @@ async function handleEdit(row) {
     component: import('./modules/form.vue'),
     props: {
         row, 
+        isTenant: TENANT_ENABLE,
       onSuccess: () => {
         $table.getTable()
       }
@@ -132,17 +136,20 @@ async function handleEdit(row) {
 }
 
 const switchEnable=(row,newValue)=>{
-  console.log("change",row)
+  // 刷新重新赋值导致程序性跳变（row.status 已被更新为服务器值），非用户操作，忽略
+  if(row.status===newValue)return
+  const prev=row.status
+  row.status=newValue // 乐观更新，保持 switch 显示
   const fn = newValue==1?userApi.enableUser:userApi.disableUser;
   fn({id:row.id}).then(resp=>{
 
   }).catch(er=>{
-    row.status=!newValue;
+    row.status=prev; // 失败回滚
   })
 }
 
 const handleDel=(row)=>{
-  message.syncConfirm(`确定删除“${row.name || row.nickname}”？`, () => roleApi.deleteByIds([row.id]))
+  message.syncConfirm(`确定删除“${row.name || row.nickname}”？`, () => userApi.deleteByIds([row.id]))
     .then(function (res) {
       $table.getTable() 
     })
@@ -165,8 +172,20 @@ const handleDelBatch = ()=> {
 
 
 const handleCommand = (command,row) => {
+  console.log(command);
   if(command=='dataScope'){
     
+  }else if(command=='setRoles'){
+    adminDialog({
+      component: import('./modules/role.vue'),
+      props: {
+        row,
+        onSuccess: () => {
+          $table.getTable()
+        }
+      },
+      dialogProps: { title: '分配角色' }
+    })
   }else if(command=='resetPwd'){
       userApi.resetUserPassword({id:row.id}).then(resp=>{
         message.alert(`新密码${smCrypto.doEncrypt(resp.data)}`,'密码重置成功')

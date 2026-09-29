@@ -59,6 +59,13 @@ export function getRoleDataScope(id) {
   return request("getDataScope",{id});
 }
 
+/**
+ * 用户可授权角色列表
+ */
+export function getAssignableRoles() {
+  return request("userChildrenRole", {}, "post");
+}
+
 
 /**
  * 设置角色数据权限

@@ -22,10 +22,12 @@
               <el-link :disabled="row.loading" type="primary" @click="handleDel(row)">删除</el-link>
               <el-dropdown>
                 <el-link class="el-dropdown-link">权限<el-icon class="el-icon--right"><arrow-down /></el-icon></el-link>
-                <template #dropdown><el-dropdown-menu>
+                <template #dropdown>
+                  <el-dropdown-menu>
                   <el-dropdown-item v-if="$p(['sys:role:permission'])" @click="openPermission(row)">功能权限</el-dropdown-item>
                   <el-dropdown-item v-if="$p(['sys:role:data-space'])" @click="openDataScope(row)">数据权限</el-dropdown-item>
-                </el-dropdown-menu></template>
+                </el-dropdown-menu>
+              </template>
               </el-dropdown>
             </el-space>
           </template>

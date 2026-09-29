@@ -80,3 +80,17 @@ export function getSelectorPage(data) {
 export function getSelectedUsers(userIds) {
   return request("getSelectedUsers",{userIds:userIds});
 }
+
+/**
+ * 获取用户已分配角色
+ */
+export function getUserRoles(data) {
+  return request("getRoleIds", data, "post");
+}
+
+/**
+ * 设置用户角色
+ */
+export function setUserRoles(data) {
+  return request("setRoles", data, "post");
+}
