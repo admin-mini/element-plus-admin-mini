@@ -9,7 +9,11 @@
           <el-input v-model="postData.nickname" placeholder="请输入昵称" />
         </el-form-item>
         <el-form-item v-if="!props.row?.id" label="密码" prop="password">
-          <el-input v-model="postData.password" type="password" show-password placeholder="请输入密码" />
+          <el-input v-model="postData.password" type="password" show-password placeholder="请输入密码">
+            <template #append>
+              <el-button @click="randomPassword">随机</el-button>
+            </template>
+          </el-input>
         </el-form-item>
         <el-form-item label="手机号" prop="phone" :rules="[$rules.phone]">
           <el-input v-model="postData.phone" placeholder="请输入手机号" />
@@ -32,6 +36,7 @@ import message from '@/utils/message'
 import tool from '@/utils/tool'
 import * as accountApi from '@/api/sys/account-api'
 import smCrypto from '@/utils/smCrypto'
+import password from '@/utils/password'
 
 const props = defineProps({ row: Object })
 const emits = defineEmits(['end', 'success'])
@@ -49,6 +54,10 @@ const postData = ref({
 const rules = {}
 
 const isEditing = () => !!props.row?.id
+
+function randomPassword() {
+  postData.value.password = password.generateRandomPassword()
+}
 
 function submitForm() {
   formRef.value?.validate((valid) => {

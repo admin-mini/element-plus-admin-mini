@@ -27,6 +27,10 @@ export default {
 
 	// SM2解密
 	doDecrypt(str) {
+    console.log(str,publicKey,cipherMode);
+    var r =  sm2.doDecrypt(str, publicKey, cipherMode);
+    console.log("rrrr",r);
+
     //// 支持使用 asn1 对密文进行解码再解密，在 options 参数中传入 { asn1: true } 即可，默认不开启
 		return sm2.doDecrypt(str, publicKey, cipherMode)
 	},

@@ -64,9 +64,10 @@
   </div>
 </template>
 <script setup>
+import { ElMessageBox } from 'element-plus'
 import useAdminDialog from '@/plugins/use-admin-dialog'
 import message from '@/utils/message'
-import smCrypto from '@/utils/smCrypto'
+import password from '@/utils/password'
 import * as accountApi from '@/api/sys/account-api'
 
 const adminDialog = useAdminDialog()
@@ -113,8 +114,41 @@ function switchEnable(row, newValue) {
 }
 
 function resetPwd(row) {
-  accountApi.resetAccountPassword(row.id).then((resp) => {
-    message.alert(`新密码${smCrypto.doEncrypt(resp.data)}`, '密码重置成功')
-  }).catch(() => {})
+  const newPassword = password.generateRandomPassword()
+  accountApi.resetAccountPassword({ id: row.id, newPassword })
+    .then((resp) => {
+      ElMessageBox.alert(`新密码：<b>${newPassword}</b>`, '密码重置成功', {
+        confirmButtonText: '复制并关闭',
+        dangerouslyUseHTMLString: true,
+        callback: (action) => {
+          if (action === 'confirm') {
+            copyText(newPassword)
+          }
+        }
+      })
+    })
+    .catch(() => {})
+}
+
+function copyText(text) {
+  if (navigator.clipboard?.writeText) {
+    navigator.clipboard.writeText(text)
+      .then(() => message.success('已复制到剪切板'))
+      .catch(() => message.error('复制失败，请手动复制'))
+  } else {
+    // 兼容非安全上下文（非 https / localhost）的兜底方案
+    const textarea = document.createElement('textarea')
+    textarea.value = text
+    document.body.appendChild(textarea)
+    textarea.select()
+    try {
+      document.execCommand('copy')
+      message.success('已复制到剪切板')
+    } catch (e) {
+      message.error('复制失败，请手动复制')
+    } finally {
+      document.body.removeChild(textarea)
+    }
+  }
 }
 </script>

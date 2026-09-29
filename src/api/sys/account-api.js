@@ -61,8 +61,8 @@ export function disableAccount(id) {
 }
 
 /**
- * 重置账户密码
+ * 重置账户密码（前端生成新密码后提交）
  */
-export function resetAccountPassword(id) {
-  return request('resetPassword', { id }, 'post')
+export function resetAccountPassword(data) {
+  return request('resetPassword', data, 'post')
 }
