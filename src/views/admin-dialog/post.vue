@@ -1,31 +1,121 @@
 <template>
-    <admin-dialog-content>
-        <el-form>
-            <el-form-item label="账号" prop="username">
-                <el-input v-model="postData.username"></el-input>
-            </el-form-item>
+  <admin-dialog-content>
+    <el-form label-width="130px">
+      <el-form-item label="账号">
+        <el-input v-model="postData.username" />
+      </el-form-item>
 
-        </el-form>
-        <template #footer>
-            <el-button type="primary" @click="submitForm(postForm)">确定</el-button>
-            <el-button @click="emits('end')">取消</el-button>
-        </template>
-    </admin-dialog-content>
+      <el-divider content-position="left">上传组件：图片模式</el-divider>
+      <el-form-item label="单图(返回url)">
+        <upload v-model="postData.singleImage" mode="image" />
+      </el-form-item>
+      <el-form-item label="单图(返回id)">
+        <!-- 编辑回显：将已上传的文件 id 赋给 v-model 即可，id 模式下组件自动通过下载接口生成预览 -->
+        <upload v-model="postData.imageId" mode="image" result-type="id" />
+      </el-form-item>
+      <el-form-item label="单图(手动上传)">
+        <!-- auto-upload=false：选择图片后不会自动上传，由页面调用组件 submit() 手动触发 -->
+        <div class="manual-row">
+          <upload
+            ref="manualUploadRef"
+            v-model="postData.manualImage"
+            mode="image"
+            :auto-upload="false"
+          />
+          <el-button type="primary" plain @click="manualUploadRef?.submit()">开始上传</el-button>
+        </div>
+      </el-form-item>
+
+      <el-divider content-position="left">上传组件：文件列表 / 拖拽模式</el-divider>
+      <el-form-item label="多文件(逗号url)">
+        <upload v-model="postData.multiFiles" mode="file" :limit="3" tip="最多上传 3 个文件" />
+      </el-form-item>
+      <el-form-item label="多文件(id数组)">
+        <upload
+          v-model="postData.fileIds"
+          mode="file"
+          result-type="id"
+          result-category="array"
+          :limit="3"
+          tip="返回 id 数组，配合后端展示"
+        />
+      </el-form-item>
+      <el-form-item label="拖拽上传">
+        <upload v-model="postData.dragUrl" mode="drag" />
+      </el-form-item>
+
+      <el-divider content-position="left">裁剪组件 + 上传</el-divider>
+      <el-form-item label="头像(裁剪后上传)">
+        <div class="avatar-row">
+          <el-avatar v-if="postData.avatar" :size="80" :src="postData.avatar" />
+          <el-button type="primary" plain @click="cropRef?.show()">选择并裁剪头像</el-button>
+        </div>
+      </el-form-item>
+    </el-form>
+
+    <!-- 裁剪弹窗：裁剪完成回调里将裁剪后的文件直接上传；shape 可传 circle/rounded/square -->
+    <crop-upload ref="cropRef" shape="circle" @successful="handleCrop" />
+
+    <template #footer>
+      <el-button type="primary" @click="submitForm">确定</el-button>
+      <el-button @click="emits('end')">取消</el-button>
+    </template>
+  </admin-dialog-content>
 </template>
 
 <script setup>
-import { reactive } from 'vue';
+import { reactive, ref } from 'vue'
+import message from '@/utils/message'
+import * as fileApi from '@/api/dev/file-api'
+
 const emits = defineEmits(['end', 'success'])
-const props = defineProps(["row"]);
+const props = defineProps(['row'])
+
 const postData = reactive({
-    username: '',
+  username: '',
+  // 上传组件 v-model 回显：编辑时由 props.row 自动填充
+  singleImage: '',
+  imageId: '',
+  manualImage: '',
+  multiFiles: '',
+  fileIds: [],
+  dragUrl: '',
+  // 裁剪上传后的头像地址
+  avatar: ''
 })
 if (props.row) {
-    Object.assign(postData, props.row)
+  Object.assign(postData, props.row)
 }
+
+const cropRef = ref()
+const manualUploadRef = ref()
+
+/** 裁剪完成 → 上传裁剪后的文件 → 回显头像 */
+async function handleCrop({ file }) {
+  try {
+    const response = await fileApi.uploadReturnUrl(file)
+    postData.avatar = response.data
+    message.success('裁剪上传成功')
+  } catch {
+    // 失败提示已由请求拦截器统一处理
+  }
+}
+
 function submitForm() {
-    emits("success", postData)
+  emits('success', postData)
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.avatar-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.manual-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+</style>
