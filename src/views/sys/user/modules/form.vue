@@ -1,31 +1,10 @@
 <template>
   <admin-dialog-content v-loading="loading">
-    <!-- 多租户邀请：新增用户时先按账号查询平台用户 -->
+    <!-- 多租户邀请：新增用户时先按账号查询并确认平台用户 -->
     <div v-if="showInviteStep" class="invite-block">
       <h3 class="invite-title">邀请会员加入</h3>
-      <p class="invite-subtitle">请输入要邀请的平台账号进行查询</p>
-      <div class="invite-query-row">
-        <el-input
-          v-model="account"
-          placeholder="请输入完整账号"
-          :disabled="inviteLoading"
-          clearable
-          @keyup.enter="queryAccount"
-        >
-          <template #prefix><el-icon><User /></el-icon></template>
-        </el-input>
-        <el-button type="primary" icon="Search" :loading="inviteLoading" :disabled="!account.trim()" @click="queryAccount">查询</el-button>
-      </div>
-
-      <div v-if="inviteUser" class="invite-user-card">
-        <div class="invite-user-line">账号：<b>{{ inviteUser.username }}</b></div>
-        <div v-if="inviteUser.nickname" class="invite-user-line">昵称：{{ inviteUser.nickname }}</div>
-        <div v-if="inviteUser.phone" class="invite-user-line">手机：{{ inviteUser.phone }}</div>
-        <el-button type="primary" class="invite-confirm-btn" :loading="inviteLoading" @click="confirmInvite">确认邀请该会员</el-button>
-      </div>
-      <el-alert v-else-if="inviteNotFound" type="warning" :closable="false" show-icon title="未找到该账号，请核对后重试" />
-      <el-alert v-else-if="inviteError" type="error" :closable="false" show-icon :title="inviteError" />
-      <div v-else class="invite-tip">请输入正确的登录账号，确认后可邀请加入当前组织</div>
+      <p class="invite-subtitle">请查询并确认要邀请的平台账号</p>
+      <admin-account-picker v-model="inviteUser" />
     </div>
 
     <!-- 正式表单 -->
@@ -95,14 +74,13 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import message from '@/utils/message'
 import tool from '@/utils/tool'
 import { getDict } from '@/utils/dict'
 import * as orgApi from '@/api/sys/org-api'
 import * as roleApi from '@/api/sys/role-api'
 import * as userApi from '@/api/sys/user-api'
-import * as accountApi from '@/api/sys/account-api'
 
 const props = defineProps({
   row: Object,
@@ -118,13 +96,9 @@ const loading = ref(false)
 const orgTree = ref([])
 const roleOptions = ref([])
 
-// 邀请查询状态
-const account = ref('')
-const inviteLoading = ref(false)
+// 邀请查询状态（查询/反馈/确认由 admin-account-picker 组件完成）
 const inviteUser = ref(null)
 const inviteConfirmed = ref(false)
-const inviteNotFound = ref(false)
-const inviteError = ref('')
 const isEditing = computed(() => !!props.row?.id)
 const showInviteStep = computed(() => props.isTenant && !isEditing.value && !inviteConfirmed.value)
 
@@ -164,37 +138,15 @@ function flattenRoles(list, result = []) {
   return result
 }
 
-/** 多租户邀请：按账号查询平台用户 */
-function queryAccount() {
-  if (!account.value.trim()) return
-  inviteLoading.value = true
-  inviteNotFound.value = false
-  inviteError.value = ''
-  inviteUser.value = null
-  accountApi.queryUserByAccount(account.value.trim())
-    .then((resp) => {
-      if (resp.data && (resp.data.username || resp.data.id)) {
-        inviteUser.value = resp.data
-      } else {
-        inviteNotFound.value = true
-      }
-    })
-    .catch((err) => {
-      inviteError.value = err?.msg || err?.message || '查询失败'
-    })
-    .finally(() => {
-      inviteLoading.value = false
-    })
-}
-
-/** 确认邀请，将账号信息预填到表单 */
-function confirmInvite() {
-  if (!inviteUser.value) return
-  inviteConfirmed.value = true
-  postData.value.username = inviteUser.value.username || ''
-  postData.value.name = inviteUser.value.nickname || inviteUser.value.username || ''
-  postData.value.phone = inviteUser.value.phone || ''
-}
+/** 组件确认账号后，将账号信息预填到表单并进入正式表单 */
+watch(inviteUser, (val) => {
+  if (val && (val.username || val.id)) {
+    postData.value.username = val.username || ''
+    postData.value.name = val.nickname || val.username || ''
+    postData.value.phone = val.phone || ''
+    inviteConfirmed.value = true
+  }
+})
 
 /** 编辑时回显用户详情 */
 function loadDetail(id) {

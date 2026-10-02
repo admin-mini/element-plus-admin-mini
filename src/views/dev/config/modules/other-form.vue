@@ -36,7 +36,7 @@ const formRef = ref()
 
 const postData = ref({
   // 分页/列表接口返回的是实体字段 id，编辑接口接收的是 configId
-  configId: props.record?.id,
+  id: props.record?.id,
   configKey: props.record?.configKey,
   configValue: props.record?.configValue ?? '',
   remark: props.record?.remark,
@@ -47,7 +47,7 @@ function submitForm() {
   formRef.value?.validate(valid => {
     if (!valid) return
     loading.value = true
-    const fn = postData.value.configId ? configApi.editConfig : configApi.addConfig
+    const fn = postData.value.id ? configApi.editConfig : configApi.addConfig
     fn(postData.value)
       .then(res => {
         message.success(res.msg || '保存成功')

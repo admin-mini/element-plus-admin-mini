@@ -27,7 +27,18 @@
 
       <template #table>
         <el-table :data="$table.data" v-loading="$table.loading">
-          <el-table-column prop="name" label="文件名称" min-width="220" show-overflow-tooltip />
+          <el-table-column prop="name" label="文件名称" min-width="220" show-overflow-tooltip>
+            <template #default="{ row }">
+              <div class="img-name">
+                <div class="img" v-if="isImage(row)">
+                  <el-image :src="row.thumbnail" fit="cover" />
+                </div>
+                <div class="name">{{ row.name }}</div>
+
+              </div>
+
+            </template>
+            </el-table-column>
           <el-table-column prop="suffix" label="后缀" width="90" />
           <el-table-column prop="engine" label="存储引擎" width="110">
             <template #default="{ row }">{{ engineLabel(row.engine) }}</template>
@@ -49,9 +60,12 @@
     </admin-table>
 
     <el-dialog v-model="detailVisible" title="文件详情" width="720px">
-      <el-descriptions :column="2" border>
+      <el-descriptions :column="1" border>
         <el-descriptions-item v-for="key in detailKeys" :key="key" :label="detailLabels[key]">
           {{ current[key] ?? '-' }}
+        </el-descriptions-item>
+        <el-descriptions-item label="图片预览" v-if="isCurrentImg">
+          <el-image :src="current.fileUrl" style="width:200px"/>
         </el-descriptions-item>
       </el-descriptions>
     </el-dialog>
@@ -59,7 +73,7 @@
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue'
+import { reactive, ref,computed } from 'vue'
 import * as api from '@/api/dev/file-api'
 import useAdminDialog from '@/plugins/use-admin-dialog'
 import message from '@/utils/message'
@@ -71,6 +85,11 @@ const engineOptions = [
   { label: '腾讯云', value: 'tencent' },
   { label: 'MinIO', value: 'minio' }
 ]
+
+const isCurrentImg = computed(()=>{
+  return isImage(current || {});
+})
+
 
 const imageSuffixes = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp']
 const detailKeys = [
@@ -153,3 +172,10 @@ function handleDelete(row) {
     .catch(() => {})
 }
 </script>
+<style scoped lang="scss">
+.img-name{
+  .img{ width:40px;height:40px;}
+  display: flex; flex-direction: row;
+  align-items: center;
+}
+</style>
