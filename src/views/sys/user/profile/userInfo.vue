@@ -33,7 +33,6 @@
 <script setup>
 import { updateUserInfo } from '@/api/sys/user-center-api'
 import { getDict } from '@/utils/dict'
-import { useSystemStore } from '@/stores'
 import message from '@/utils/message'
 
 const props = defineProps({
@@ -41,8 +40,8 @@ const props = defineProps({
     type: Object
   }
 })
+const emit = defineEmits(['success'])
 
-const systemStore = useSystemStore()
 const userRef = useTemplateRef('userRef')
 const loading = ref(false)
 
@@ -80,10 +79,7 @@ function submit() {
     updateUserInfo(payload)
       .then(() => {
         message.success("修改成功")
-        // 同步姓名到全局用户信息，供顶部头像/昵称展示
-        if (props.user && form.value.name) {
-          systemStore.state.user.name = form.value.name
-        }
+        emit('success')
       })
       .finally(() => {
         loading.value = false

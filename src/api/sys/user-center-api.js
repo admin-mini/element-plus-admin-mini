@@ -4,6 +4,14 @@ import ajax from '../ajax.js'
 const postQuery = (url, data = {}) => ajax.post(`/sys/userCenter/${url}`, null, { params: data })
 
 /**
+ * 获取当前登录用户个人资料
+ * @returns {Promise<{code,msg,data}>} data 含 id、name、nickname、phone、gender、birthday、email、avatar 等
+ */
+export function getProfile() {
+  return ajax.get('/sys/userCenter/getProfile')
+}
+
+/**
  * 编辑个人信息
  * @param {Object} data { id, name, phone, nickname, gender, birthday, email, signature }
  * id 必填，name 必填，其余可选
