@@ -54,7 +54,7 @@
     </el-form>
 
     <!-- 裁剪弹窗：shape 可传 circle/rounded/square；upload-request 传入上传方法后，裁剪确定即自动上传 -->
-    <crop-upload ref="cropRef" shape="circle" :upload-request="cropUpload" @successful="handleCrop" />
+    <crop-upload ref="cropRef" shape="circle" :upload-request="uploadCroppedImage" @successful="handleCrop" />
 
     <template #footer>
       <el-button type="primary" @click="submitForm">确定</el-button>
@@ -90,8 +90,9 @@ if (props.row) {
 const cropRef = ref()
 const manualUploadRef = ref()
 
-/** 裁剪后直接上传（uploadRequest 为组件提供的外部上传方法），直接传项目 file-api 函数即可 */
-function cropUpload(file) {
+/** 裁剪后直接上传（uploadRequest 为组件提供的外部上传方法），直接传项目 file-api 函数即可。
+ *  注意：函数名不能与 <crop-upload> 标签的 camelCase 同名（如 cropUpload），否则模板编译时会被当作本地组件，导致挂载即触发 */
+function uploadCroppedImage(file) {
   return fileApi.uploadReturnUrl(file)
 }
 

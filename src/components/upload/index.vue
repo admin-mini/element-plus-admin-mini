@@ -176,8 +176,9 @@ function buildEchoItem(raw) {
   }
   if (props.resultType === 'url') {
     item.url = url || value || ''
-  } else if (value) {
-    // id 模式异步解析预览地址（图片模式用于缩略图展示）
+  } else if (value && props.mode === 'image') {
+    // 仅图片模式挂载时解析缩略图预览（picture-card 需要展示已有图片）；
+    // 文件列表模式无缩略图，预览地址在点击预览时按需解析，避免打开页面就自动调用下载接口
     resolveIdUrl(value).then((u) => {
       if (u) item.url = u
     })
@@ -306,9 +307,14 @@ function handleExceed(files) {
   message.warning(`最多只能上传 ${props.limit} 个文件`)
 }
 
-function handlePreview(file) {
-  if (!file.url) return
+async function handlePreview(file) {
   previewTitle.value = file.name
+  // 文件列表模式的 id 回显未预加载预览地址，点击预览时按需解析
+  if (!file.url && file.value && props.resultType === 'id') {
+    const u = await resolveIdUrl(file.value)
+    if (u) file.url = u
+  }
+  if (!file.url) return
   previewSrc.value = file.url
   previewVisible.value = true
 }

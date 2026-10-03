@@ -1,62 +1,95 @@
 <template>
-  <el-form ref="userRef" :model="form" :rules="rules" label-width="80px">
-    <el-form-item label="用户昵称" prop="nickName">
-      <el-input v-model="form.nickName" maxlength="30" />
+  <el-form ref="userRef" :model="form" :rules="rules" label-width="90px">
+    <el-form-item label="姓名" prop="name">
+      <el-input v-model="form.name" maxlength="30" placeholder="请输入姓名" />
     </el-form-item>
-    <el-form-item label="手机号码" prop="phonenumber">
-      <el-input v-model="form.phonenumber" maxlength="11" readonly />
+    <el-form-item label="昵称" prop="nickname">
+      <el-input v-model="form.nickname" maxlength="30" placeholder="请输入昵称" />
+    </el-form-item>
+    <el-form-item label="手机号码" prop="phone">
+      <el-input v-model="form.phone" maxlength="11" placeholder="请输入手机号码" />
     </el-form-item>
     <el-form-item label="邮箱" prop="email">
-      <el-input v-model="form.email" maxlength="50" />
+      <el-input v-model="form.email" maxlength="50" placeholder="请输入邮箱" />
     </el-form-item>
-    <el-form-item label="性别">
-      <el-radio-group v-model="form.sex">
-        <el-radio label="0">男</el-radio>
-        <el-radio label="1">女</el-radio>
-      </el-radio-group>
+    <el-form-item label="性别" prop="gender">
+      <select-dict :dict="$dict.sys_gender" v-model="form.gender" />
+    </el-form-item>
+    <el-form-item label="出生日期" prop="birthday">
+      <el-date-picker
+        v-model="form.birthday"
+        type="date"
+        value-format="YYYY-MM-DD"
+        placeholder="请选择出生日期"
+        style="width: 100%"
+      />
     </el-form-item>
     <el-form-item>
-      <el-button type="primary" @click="submit">保存</el-button>
+      <el-button type="primary" :loading="loading" @click="submit">保存</el-button>
     </el-form-item>
   </el-form>
 </template>
 
 <script setup>
-import { updateUserProfile } from "@/api/system/user";
+import { updateUserInfo } from '@/api/sys/user-center-api'
+import { getDict } from '@/utils/dict'
+import { useSystemStore } from '@/stores'
+import message from '@/utils/message'
 
 const props = defineProps({
   user: {
     type: Object
   }
-});
+})
 
+const systemStore = useSystemStore()
 const userRef = useTemplateRef('userRef')
-const form = ref({});
+const loading = ref(false)
+
+const form = ref({})
 const rules = ref({
-  nickName: [{ required: true, message: "用户昵称不能为空", trigger: "blur" }],
-  email: [{ required: true, message: "邮箱地址不能为空", trigger: "blur" }, { type: "email", message: "请输入正确的邮箱地址", trigger: ["blur", "change"] }],
-  phonenumber: [{ required: true, message: "手机号码不能为空", trigger: "blur" }, { pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: "请输入正确的手机号码", trigger: "blur" }],
-});
+  name: [{ required: true, message: "姓名不能为空", trigger: "blur" }],
+  email: [{ type: "email", message: "请输入正确的邮箱地址", trigger: ["blur", "change"] }],
+  phone: [{ pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: "请输入正确的手机号码", trigger: "blur" }]
+})
+
+/** 回显当前登录用户信息 */
+watch(() => props.user, user => {
+  if (user) {
+    form.value = {
+      name: user.name || '',
+      nickname: user.nickname || '',
+      phone: user.phone || '',
+      gender: user.gender !== undefined && user.gender !== null ? String(user.gender) : '',
+      birthday: user.birthday || '',
+      email: user.email || ''
+    }
+  }
+}, { immediate: true })
 
 /** 提交按钮 */
 function submit() {
   userRef.value.validate(valid => {
-    if (valid) {
-      updateUserProfile(form.value).then(response => {
-        ElMessage.success("修改成功");
-        props.user.phonenumber = form.value.phonenumber;
-        props.user.email = form.value.email;
-      });
+    if (!valid) return
+    const payload = { ...form.value, id: props.user?.id }
+    // 后端 gender 声明为 String，字典值若是数字类型则统一转字符串
+    if (payload.gender !== '' && payload.gender !== null && payload.gender !== undefined) {
+      payload.gender = String(payload.gender)
     }
-  });
-};
+    loading.value = true
+    updateUserInfo(payload)
+      .then(() => {
+        message.success("修改成功")
+        // 同步姓名到全局用户信息，供顶部头像/昵称展示
+        if (props.user && form.value.name) {
+          systemStore.state.user.name = form.value.name
+        }
+      })
+      .finally(() => {
+        loading.value = false
+      })
+  })
+}
 
-
-
-// 回显当前登录用户信息
-watch(() => props.user, user => {
-  if (user) {
-    form.value = { nickName: user.nickName, phonenumber: user.phonenumber, email: user.email, sex: user.sex };
-  }
-}, { immediate: true });
+getDict(['sys_gender'])
 </script>
