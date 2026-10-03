@@ -112,7 +112,10 @@ const props = defineProps({
   // resultCategory=array 时是否返回完整文件对象（含 name/url/value/size/type）
   completeResult: { type: Boolean, default: false },
   // resultType=id 时，将 id 转为可预览地址的函数，默认通过下载接口拉取 blob 预览
-  idToUrl: { type: Function, default: undefined }
+  idToUrl: { type: Function, default: undefined },
+  // 外部自定义上传方法 (file, engine) => Promise。可直接传项目 file-api 的上传函数或自定义实现；
+  // resolve 值兼容两种形态：直接返回 id/url，或返回项目统一的 { code, msg, data }（取 data）。不传则走内置 /dev/file/uploadReturnId|Url
+  uploadRequest: { type: Function, default: undefined }
 })
 
 const emit = defineEmits(['update:modelValue', 'change', 'success'])
@@ -199,23 +202,33 @@ watch(
   { immediate: true, deep: true }
 )
 
-/** 自定义上传：复用 file-api 的 uploadReturnId / uploadReturnUrl（自动携带 Token） */
+/** 自定义上传：默认复用 file-api（自动携带 Token），也可由外部通过 uploadRequest 传入处理函数 */
 function httpRequest({ file, onSuccess, onError }) {
   const uploadFile = fileList.value.find((f) => f.raw === file)
   // 上传前先生成本地预览地址，保证图片模式成功后有缩略图
   if (uploadFile && !uploadFile.url) {
     uploadFile.url = URL.createObjectURL(file)
   }
-  const request = props.resultType === 'id' ? fileApi.uploadReturnId : fileApi.uploadReturnUrl
-  request(file, props.engine)
-    .then((response) => {
-      const value = response.data
+  const request = async () => {
+    if (typeof props.uploadRequest === 'function') {
+      const result = await props.uploadRequest(file, props.engine)
+      // 兼容直接返回 id/url，或返回项目统一的 { code, msg, data } 响应体
+      return result && typeof result === 'object' && 'data' in result ? result.data : result
+    }
+    const response =
+      props.resultType === 'id'
+        ? await fileApi.uploadReturnId(file, props.engine)
+        : await fileApi.uploadReturnUrl(file, props.engine)
+    return response.data
+  }
+  request()
+    .then((value) => {
       if (uploadFile) {
         uploadFile.value = value
         // url 模式用服务端返回地址展示，id 模式保留本地预览
         if (props.resultType === 'url') uploadFile.url = value
       }
-      onSuccess(response)
+      onSuccess(value)
       emit('success', value)
     })
     .catch((error) => {

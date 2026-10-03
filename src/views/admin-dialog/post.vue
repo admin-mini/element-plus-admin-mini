@@ -53,8 +53,8 @@
       </el-form-item>
     </el-form>
 
-    <!-- 裁剪弹窗：裁剪完成回调里将裁剪后的文件直接上传；shape 可传 circle/rounded/square -->
-    <crop-upload ref="cropRef" shape="circle" @successful="handleCrop" />
+    <!-- 裁剪弹窗：shape 可传 circle/rounded/square；upload-request 传入上传方法后，裁剪确定即自动上传 -->
+    <crop-upload ref="cropRef" shape="circle" :upload-request="cropUpload" @successful="handleCrop" />
 
     <template #footer>
       <el-button type="primary" @click="submitForm">确定</el-button>
@@ -90,15 +90,15 @@ if (props.row) {
 const cropRef = ref()
 const manualUploadRef = ref()
 
-/** 裁剪完成 → 上传裁剪后的文件 → 回显头像 */
-async function handleCrop({ file }) {
-  try {
-    const response = await fileApi.uploadReturnUrl(file)
-    postData.avatar = response.data
-    message.success('裁剪上传成功')
-  } catch {
-    // 失败提示已由请求拦截器统一处理
-  }
+/** 裁剪后直接上传（uploadRequest 为组件提供的外部上传方法），直接传项目 file-api 函数即可 */
+function cropUpload(file) {
+  return fileApi.uploadReturnUrl(file)
+}
+
+/** 裁剪组件上传成功回调：value 为上传返回的 url */
+function handleCrop({ value }) {
+  postData.avatar = value
+  message.success('裁剪上传成功')
 }
 
 function submitForm() {

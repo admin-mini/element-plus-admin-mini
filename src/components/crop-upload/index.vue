@@ -90,7 +90,7 @@
 
     <template #footer>
       <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" @click="handleOk">确定裁剪</el-button>
+      <el-button type="primary" :loading="uploading" @click="handleOk">确定裁剪</el-button>
     </template>
   </el-dialog>
 </template>
@@ -116,7 +116,11 @@ const props = defineProps({
   // 裁剪输出格式 png | jpeg | webp
   outputType: { type: String, default: 'png' },
   // 弹窗标题
-  title: { type: String, default: '图片裁剪' }
+  title: { type: String, default: '图片裁剪' },
+  // 外部上传方法 (file) => Promise，裁剪确定后直接上传。resolve 值兼容两种形态：
+  // 直接返回 id/url，或返回项目统一的 { code, msg, data }（取 data）。
+  // 不传时通过 successful 事件返回裁剪文件，由页面自行上传
+  uploadRequest: { type: Function, default: undefined }
 })
 
 const emit = defineEmits(['successful'])
@@ -125,6 +129,7 @@ const visible = ref(false)
 const cropperRef = ref()
 const img = ref('')
 const fileName = ref('')
+const uploading = ref(false)
 
 // 实时裁剪预览：data.url 为原图，必须配合 data.img(尺寸+位移) 放入裁剪框容器裁剪展示
 const preview = reactive({ url: '', w: 0, h: 0, img: {} })
@@ -217,18 +222,37 @@ function stageStyle(size) {
   }
 }
 
-function handleOk() {
+async function handleOk() {
   if (!img.value) {
     message.warning('请先选择需要裁剪的图片')
     return
   }
-  cropperRef.value.getCropBlob((blob) => {
-    const file = new File([blob], fileName.value || 'crop.png', {
-      type: blob.type || 'image/png'
-    })
-    emit('successful', { fileName: file.name, blobData: blob, file })
-    visible.value = false
+  if (uploading.value) return
+  const blob = await new Promise((resolve) => cropperRef.value.getCropBlob(resolve))
+  const file = new File([blob], fileName.value || 'crop.png', {
+    type: blob.type || 'image/png'
   })
+  const payload = { fileName: file.name, blobData: blob, file }
+
+  // 外部传入上传方法：裁剪后直接上传，成功才关闭弹窗并回传 value
+  if (typeof props.uploadRequest === 'function') {
+    uploading.value = true
+    try {
+      const result = await props.uploadRequest(file)
+      // 兼容直接返回 id/url，或返回项目统一的 { code, msg, data } 响应体
+      const value = result && typeof result === 'object' && 'data' in result ? result.data : result
+      emit('successful', { ...payload, value })
+      visible.value = false
+    } catch {
+      message.error('上传失败，请重试')
+    } finally {
+      uploading.value = false
+    }
+    return
+  }
+
+  emit('successful', payload)
+  visible.value = false
 }
 
 function handleClear() {
