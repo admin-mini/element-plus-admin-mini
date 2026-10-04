@@ -83,6 +83,21 @@ export const constantRoutes = [
         meta: { title: '个人中心', icon: 'user' }
       }
     ]
+  },
+  // 消息中心（由顶栏铃铛进入，隐藏于侧边栏）
+  {
+    path: '/sys',
+    component: Layout,
+    hidden: true,
+    // redirect: 'noredirect',
+    children: [
+      {
+        path: 'message',
+        component: () => import('@/views/sys/message/index.vue'),
+        name: 'MessageCenter',
+        meta: { title: '消息中心', icon: 'Bell' }
+      }
+    ]
   }
 ]
 

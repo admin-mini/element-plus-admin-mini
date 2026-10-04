@@ -1,58 +1,45 @@
 <template>
   <div class="message-component">
-      <el-badge :value="unreadMessageNum" :max="99" :hidden="unreadMessageNum === 0">
-        <el-button link type="default" size="large" @click="openMessageList"><el-icon class="icon-btn"><BellFilled /></el-icon></el-button>
-      </el-badge>
+    <el-badge :value="messageStore.unreadCount" :max="99" :hidden="messageStore.unreadCount == 0">
+      <el-button link type="default" size="large" @click="openMessageList">
+        <el-icon class="icon-btn"><BellFilled /></el-icon>
+      </el-button>
+    </el-badge>
   </div>
 </template>
 
 <script setup name="DevUserMessage">
-import { ref, onMounted} from 'vue'
-import useAdminDialog from '@/plugins/use-admin-dialog';
+import { onMounted } from 'vue'
+import useAdminDialog from '@/plugins/use-admin-dialog'
+import { useMessageStore } from '@/stores/message'
+import { useSse } from './useSse'
 
 const adminDialog = useAdminDialog()
+const messageStore = useMessageStore()
+const { start } = useSse()
 
-//请自行安装
-//import { EventSourcePolyfill } from 'event-source-polyfill'
-
-const unreadMessageNum = ref(3) // 初始模拟未读数
-
-// --- SSE 连接逻辑 (保留框架，逻辑同你提供的代码) ---
-const createSseConnect = () => {
-  // 注意：此处 URL 仅为演示占位，实际开发需替换回 sysConfig.API_URL
-  console.log('SSE 连接初始化...')
-  // 如果你有真实环境，取消下面代码的注释并配置 tool 和 config
-  /*
-  const url = '/api/dev/message/createSseConnect'
-  const source = new EventSourcePolyfill(url, {
-    headers: { 'Authorization': 'your-token' },
-    heartbeatTimeout: 300000
-  })
-  source.addEventListener('message', (e) => {
-    const result = JSON.parse(e.data)
-    if (result.code === 200) unreadMessageNum.value = result.data
-  })
-  */
-}
-
-//打开消息里诶包
-const openMessageList=()=>{
-    adminDialog(
-          {
-              component: import('./message-list.vue'),//调起组件
-              props: {
-                  onSuccess: (eventData) => {
-                      
-                  }
-              },
-              dialogType:  'drawer',
-              dialogProps: { title: '消息列表', width: "400px" }
-          }
-      )
+// 打开消息列表抽屉
+const openMessageList = () => {
+  adminDialog(
+    {
+      component: import('./message-list.vue'), // 调起组件
+      props: {
+        // 抽屉关闭后刷新未读数
+        onEnd: () => {
+          messageStore.refreshUnread()
+        }
+      },
+      dialogType: 'drawer',
+      dialogProps: { title: '消息列表', width: '400px' }
+    }
+  )
 }
 
 onMounted(() => {
-  createSseConnect()
+  // 初始拉取未读数
+  messageStore.refreshUnread()
+  // 建立 SSE 长连接，实时接收新消息推送
+  start()
 })
 </script>
 
@@ -68,5 +55,4 @@ onMounted(() => {
     }
   }
 }
-
 </style>

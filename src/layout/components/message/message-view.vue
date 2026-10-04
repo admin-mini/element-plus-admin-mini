@@ -1,75 +1,91 @@
 <template>
-  <admin-dialog-content v-loading="messageLoading">
-    <div class="message-detail-container" >
+  <admin-dialog-content v-loading="loading">
+    <div class="message-detail-container">
       <el-descriptions :column="1" border>
         <el-descriptions-item label="主题">
-          <span class="title-text">{{ postData.title }}</span>
+          <span class="title-text">{{ detail.title }}</span>
         </el-descriptions-item>
         <el-descriptions-item label="发送人">
-          <el-tag size="small" effect="light">{{ postData.sender }}</el-tag>
+          <el-tag size="small" effect="light">{{ senderName }}</el-tag>
         </el-descriptions-item>
         <el-descriptions-item label="发送时间">
-          <span class="time-text">{{ postData.createTime }}</span>
+          <span class="time-text">{{ detail.createTime || '—' }}</span>
         </el-descriptions-item>
         <el-descriptions-item label="状态">
-          <el-badge is-dot :type="postData.read ? 'info' : 'danger'">
-            <span :style="{ color: postData.read ? '#909399' : '#f56c6c' }">
-              {{ postData.read ? '已读' : '未读' }}
-            </span>
-          </el-badge>
+          <el-tag size="small" :type="detail.read ? 'info' : 'danger'" effect="plain">
+            {{ detail.read ? '已读' : '未读' }}
+          </el-tag>
         </el-descriptions-item>
       </el-descriptions>
 
       <div class="message-body-wrapper">
         <div class="body-label">内容详情</div>
         <div class="body-content">
-          {{ postData.content || '暂无内容' }}
+          {{ detail.content || '暂无内容' }}
         </div>
       </div>
     </div>
 
     <template #footer>
       <el-button type="primary" @click="handleConfirm">我知道了</el-button>
-      <el-button @click="emits('end')">返回</el-button>
     </template>
   </admin-dialog-content>
 </template>
 
 <script setup>
-import { onMounted, reactive,ref } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue'
+import { getMessageCategoryConfig, getMessageDetail } from '@/api/sys/message-api'
+import { useMessageStore } from '@/stores/message'
 
-const emits = defineEmits(['end', 'success']);
-const props = defineProps(["row"]);
+const emits = defineEmits(['end', 'success'])
+const props = defineProps({
+  row: { type: Object, default: () => ({}) }
+})
 
-const messageLoading=ref(false);
+const messageStore = useMessageStore()
 
-// 基础数据结构
-const postData = reactive({
+const loading = ref(false)
+const detail = reactive({
   id: '',
   title: '',
-  sender: '',
-  createTime: '',
   content: '',
-  read: false
-});
+  senderUserId: '',
+  createTime: '',
+  category: '',
+  read: 0
+})
 
-// 数据回显
-if (props.row) {
- 
-}
+// 发送人：用户消息取 sender.name/nickname，系统消息按分类显示分类文字
+const senderName = computed(() => {
+  const d = detail
+  if (d.sender?.name || d.sender?.nickname) {
+    return d.sender.name || d.sender.nickname
+  }
+  if (d.category && d.category !== 'msg') {
+    return getMessageCategoryConfig(d.category).label
+  }
+  return d.senderUserId ? `用户${d.senderUserId}` : '系统通知'
+})
 
-onMounted(()=>{
-    messageLoading.value=true;
-    setTimeout(() => {
-        messageLoading.value=false;
-    //可以改为服务器端接口处理，如get(props.row.id)
-        Object.assign(postData, props.row);
-    }, 5000);
+onMounted(async () => {
+  if (!props.row?.id) return
+  loading.value = true
+  try {
+    // 详情接口会将消息标记为已读
+    const res = await getMessageDetail(props.row.id)
+    Object.assign(detail, res?.data || {})
+  } catch (e) {
+    // 接口异常由拦截器统一提示
+  } finally {
+    loading.value = false
+  }
 })
 
 function handleConfirm() {
-  // 触发成功事件，通常用于通知父组件更新未读状态
-  emits("success", postData);
+  // 消息已在查看详情时被置为已读，同步刷新全局未读数
+  messageStore.refreshUnread()
+  // 触发成功事件，通知父组件更新列表并关闭弹窗
+  emits('success', detail)
 }
 </script>
 
@@ -89,7 +105,7 @@ function handleConfirm() {
 
   .message-body-wrapper {
     margin-top: 20px;
-    
+
     .body-label {
       font-size: 14px;
       font-weight: bold;
@@ -97,7 +113,7 @@ function handleConfirm() {
       color: var(--el-text-color-regular);
       display: flex;
       align-items: center;
-      
+
       &::before {
         content: '';
         width: 3px;
