@@ -42,6 +42,6 @@ watch(() => props.option, render)
 <style scoped lang="scss">
 .log-chart {
   width: 100%;
-  height: 260px;
+  height: 180px;
 }
 </style>

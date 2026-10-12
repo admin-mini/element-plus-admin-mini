@@ -60,7 +60,9 @@
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="createTime" label="时间" width="180" />
+          <el-table-column prop="beginTime" label="开始时间" width="180">
+            <template #default="{ row }">{{ formatDateFull(row.beginTime) }}</template>
+          </el-table-column>
           <el-table-column label="操作" width="90" fixed="right">
             <template #default="{ row }">
               <el-button link type="primary" @click="handleDetail(row)">详情</el-button>
@@ -69,23 +71,18 @@
         </el-table>
       </template>
     </admin-table>
-
-    <el-dialog v-model="detailVisible" title="日志详情" width="860px">
-      <el-descriptions :column="2" border>
-        <el-descriptions-item v-for="key in detailKeys" :key="key" :label="detailLabels[key]">
-          {{ current[key] ?? '-' }}
-        </el-descriptions-item>
-      </el-descriptions>
-    </el-dialog>
   </div>
 </template>
 
 <script setup>
-import { computed, reactive, ref } from 'vue'
+import { computed, ref } from 'vue'
 import * as api from '@/api/dev/log-api'
+import useAdminDialog from '@/plugins/use-admin-dialog'
 import LogChart from './log-chart.vue'
 import message from '@/utils/message'
-import { syncConfirm } from '@/utils/utils'
+import { syncConfirm, formatDateFull } from '@/utils/utils'
+
+const adminDialog = useAdminDialog()
 
 const props = defineProps({
   // op=操作日志 exception；vis=访问日志 login/logout
@@ -112,51 +109,6 @@ const CONFIG = {
   }
 }
 
-const detailKeys = [
-  'id',
-  'category',
-  'title',
-  'modular',
-  'operationType',
-  'reqMethod',
-  'reqUrl',
-  'reqParams',
-  'operatorUserName',
-  'operatorIp',
-  'operatorAddress',
-  'operatorBrowser',
-  'operatorOs',
-  'className',
-  'funName',
-  'duration',
-  'exeStatus',
-  'exeMessage',
-  'resultData',
-  'createTime'
-]
-const detailLabels = {
-  id: 'ID',
-  category: '日志分类',
-  title: '日志标题',
-  modular: '模块',
-  operationType: '操作类型',
-  reqMethod: '请求方式',
-  reqUrl: '请求地址',
-  reqParams: '请求参数',
-  operatorUserName: '操作人',
-  operatorIp: '操作IP',
-  operatorAddress: '操作地址',
-  operatorBrowser: '浏览器',
-  operatorOs: '操作系统',
-  className: '类名',
-  funName: '方法名',
-  duration: '耗时(ms)',
-  exeStatus: '执行状态',
-  exeMessage: '执行消息',
-  resultData: '结果数据',
-  createTime: '创建时间'
-}
-
 const config = CONFIG[props.type]
 const categoryOptions = config.categoryOptions
 const chartTitle = config.chartTitle
@@ -164,8 +116,6 @@ const defaultQuery = { category: config.categoryOptions[0].value }
 
 const barData = ref([])
 const pieData = ref([])
-const detailVisible = ref(false)
-const current = reactive({})
 
 let $table
 function onTableInit(table) {
@@ -234,10 +184,13 @@ const pieOption = computed(() => ({
   ]
 }))
 
-async function handleDetail(row) {
-  const response = await api.getLogDetail(row.id)
-  Object.assign(current, response.data || row)
-  detailVisible.value = true
+function handleDetail(row) {
+  adminDialog({
+    component: import('./log-detail.vue'),
+    props: { row },
+    dialogProps: { title: '日志详情', width: '720px' },
+    dialogType: 'drawer'
+  })
 }
 
 function handleClear() {
