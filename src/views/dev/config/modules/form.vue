@@ -17,6 +17,22 @@
           active-value="true"
           inactive-value="false"
         />
+        <!-- 短信模板下拉（选项来自接口，支持搜索） -->
+        <el-select
+          v-else-if="field.type === 'smsTemplate'"
+          v-model="form[field.key]"
+          filterable
+          clearable
+          placeholder="请选择短信模板"
+          style="width: 100%"
+        >
+          <el-option
+            v-for="item in smsTemplateOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
         <!-- 单选 / 下拉 / 多选 -->
         <dict-input
           v-else-if="CHOICE_TYPES.includes(field.type)"
@@ -102,7 +118,7 @@ import { computed, reactive, ref, watch } from 'vue'
 import message from '@/utils/message'
 import * as configApi from '@/api/dev/config-api'
 import * as fileApi from '@/api/dev/file-api'
-import { getConfigField } from '../config-field'
+import { getConfigField, SMS_CHANNEL_OPTIONS } from '../config-field'
 
 const props = defineProps({
   // 配置分类，取值参考后端 DevConfigCategoryEnum
@@ -115,12 +131,43 @@ const props = defineProps({
 // 使用选项渲染的控件类型
 const CHOICE_TYPES = ['radio', 'select', 'checkbox']
 
+// 短信模板类型选项，取自后端 DevSmsTypeEnum
+const SMS_TYPE_LABELS = { 1: '验证码', 2: '通知类', 3: '营销类' }
+
 const loading = ref(false)
 const saving = ref(false)
 const uploadingKey = ref('')
 const formRef = ref()
 const items = ref([])
 const form = reactive({})
+
+// 可选的启用短信模板（smsTemplate 类型字段的下拉选项）
+const smsTemplates = ref([])
+const smsTemplateLoaded = ref(false)
+
+// 选项展示文案：名称（编码）｜通道｜类型；值为模板 id（字符串，与配置值一致）
+const smsTemplateOptions = computed(() =>
+  smsTemplates.value.map(item => ({
+    value: String(item.id),
+    label: `${item.name}（${item.code}）｜${smsChannelLabel(item.channelCode)}｜${smsTypeLabel(item.type)}`
+  }))
+)
+
+function smsChannelLabel(code) {
+  return SMS_CHANNEL_OPTIONS.find(item => item.value === code)?.label || code || '-'
+}
+
+function smsTypeLabel(type) {
+  return SMS_TYPE_LABELS[type] || '-'
+}
+
+/** 懒加载短信模板选项，仅保留启用状态 */
+async function loadSmsTemplates() {
+  if (smsTemplateLoaded.value) return
+  const response = await configApi.smsTemplateList()
+  smsTemplates.value = (response.data || []).filter(item => item.status === 1)
+  smsTemplateLoaded.value = true
+}
 
 /** 未在 config-field.js 中声明的 configKey，按名称自动推断控件类型 */
 function guessType(key) {
@@ -177,6 +224,10 @@ async function load() {
     })
     // 重置后清掉上一次的校验提示
     formRef.value?.clearValidate()
+    // 存在短信模板字段时再加载下拉选项
+    if (fields.value.some(field => field.type === 'smsTemplate')) {
+      await loadSmsTemplates()
+    }
   } finally {
     loading.value = false
   }

@@ -17,6 +17,7 @@
  *  date      日期（YYYY-MM-DD）
  *  datetime  日期时间（YYYY-MM-DD HH:mm:ss）
  *  upload    上传文件，值存上传接口返回的文件 url
+ *  smsTemplate  短信模板下拉（选项来自 /dev/config/smsTemplateList，支持搜索，值为模板 id）
  *
  * 其他可用属性：
  *  label        显示名称（不填则用后端的 remark，再兜底为 configKey）
@@ -308,6 +309,34 @@ const CONFIG_FIELDS = {
     type: 'input',
     label: '默认短信签名',
     rules: [fieldRules.required('请输入默认短信签名')]
+  },
+
+  /* ---------------- 短信场景配置 sms_scene ---------------- */
+  // 值为短信模板 id（DevSmsTemplateSelectorResult.id），选项来自 /dev/config/smsTemplateList
+  sms_scene_account_reg_code: {
+    type: 'smsTemplate',
+    label: '账户注册验证码',
+    rules: [fieldRules.required('请选择短信模板', 'change')]
+  },
+  sms_scene_account_login_code: {
+    type: 'smsTemplate',
+    label: '账户登录验证码',
+    rules: [fieldRules.required('请选择短信模板', 'change')]
+  },
+  sms_scene_password_get_code: {
+    type: 'smsTemplate',
+    label: '找回密码验证码',
+    rules: [fieldRules.required('请选择短信模板', 'change')]
+  },
+  sms_scene_password_update_code: {
+    type: 'smsTemplate',
+    label: '修改密码验证码',
+    rules: [fieldRules.required('请选择短信模板', 'change')]
+  },
+  sms_scene_bind_update_code: {
+    type: 'smsTemplate',
+    label: '更改绑定手机验证码',
+    rules: [fieldRules.required('请选择短信模板', 'change')]
   }
 }
 

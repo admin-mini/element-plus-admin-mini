@@ -17,3 +17,5 @@ export const editConfig = data => request('edit', data, 'post')
 export const deleteConfig = data => request('delete', data, 'post')
 // 批量更新配置值
 export const editConfigBatch = data => request('editBatch', data, 'post')
+// 配置可选短信模板（短信场景配置用）
+export const smsTemplateList = () => request('smsTemplateList', {}, 'post')
