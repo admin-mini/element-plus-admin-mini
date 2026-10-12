@@ -152,7 +152,11 @@ async function handleDetail(row) {
 }
 
 function handlePreview(row) {
-  window.open(row.fileUrl, '_blank')
+  adminDialog({
+    component: import('./modules/image-preview.vue'),
+    props: { src: row.fileUrl },
+    dialogProps: { title: row.name || '图片预览', width: '800px' }
+  })
 }
 
 async function handleDownload(row) {
