@@ -48,8 +48,9 @@
             <template #default="{ row }">{{ row.isSys === 1 ? '是' : '否' }}</template>
           </el-table-column>
           <el-table-column prop="remark" label="备注" min-width="160" show-overflow-tooltip />
-          <el-table-column label="操作" width="140" fixed="right">
+          <el-table-column label="操作" width="200" fixed="right">
             <template #default="{ row }">
+              <el-button link type="primary" :disabled="row.status !== 1" @click="handleSend(row)">发送</el-button>
               <el-button link type="primary" @click="handleEdit(row)">编辑</el-button>
               <el-button link type="danger" @click="handleDelete(row)">删除</el-button>
             </template>
@@ -88,7 +89,15 @@ function handleAdd() {
     props: {
       onSuccess: () => $table.getTable()
     },
-    dialogProps: { title: '新增短信模板', width: '620px' }
+    dialogProps: { title: '新增短信模板', width: '960px' }
+  })
+}
+
+function handleSend(record) {
+  adminDialog({
+    component: import('./modules/send-form.vue'),
+    props: { record },
+    dialogProps: { title: '发送短信', width: '560px' }
   })
 }
 
@@ -99,7 +108,7 @@ function handleEdit(record) {
       record,
       onSuccess: () => $table.getTable()
     },
-    dialogProps: { title: '编辑短信模板', width: '620px' }
+    dialogProps: { title: '编辑短信模板', width: '960px' }
   })
 }
 
