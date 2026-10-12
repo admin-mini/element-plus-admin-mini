@@ -34,7 +34,7 @@
 
 <script setup>
 import { computed, onMounted, reactive, ref } from 'vue'
-import { getMessageCategoryConfig, getMessageDetail } from '@/api/sys/message-api'
+import { getMessageCategoryConfig, getMessageDetail } from '@/api/dev/message-user-api'
 import { useMessageStore } from '@/stores/message'
 
 const emits = defineEmits(['end', 'success'])

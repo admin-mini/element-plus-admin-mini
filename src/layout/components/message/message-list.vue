@@ -46,7 +46,7 @@ import { onMounted, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
 import useAdminDialog from '@/plugins/use-admin-dialog'
-import { getMessageList, getMessageCategoryConfig, markAllMessageRead } from '@/api/sys/message-api'
+import { getMessageList, getMessageCategoryConfig, markAllMessageRead } from '@/api/dev/message-user-api'
 import { useMessageStore } from '@/stores/message'
 
 const router = useRouter()

@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import { getMessageList } from '@/api/sys/message-api'
+import { getMessageList } from '@/api/dev/message-user-api'
 
 /**
  * 站内信全局状态
