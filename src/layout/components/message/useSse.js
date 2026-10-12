@@ -2,7 +2,7 @@ import { onBeforeUnmount } from 'vue'
 import { EventSourcePolyfill } from 'event-source-polyfill'
 import { useSystemStore } from '@/stores'
 import { useMessageStore } from '@/stores/message'
-import { getSseUrl } from '@/api/sys/message-api'
+import { getSseUrl } from '@/api/dev/message-user-api'
 import tool from '@/utils/tool'
 
 /**
