@@ -28,7 +28,7 @@
 <script setup>
 import { reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
-import { sendMessage } from '@/api/sys/message-api'
+import { sendMessage } from '@/api/dev/message-user-api'
 
 const emits = defineEmits(['end', 'success'])
 
