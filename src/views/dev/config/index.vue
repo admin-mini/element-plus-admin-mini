@@ -57,7 +57,9 @@ const tabs = [
     type: 'form',
     children: [
       { name: 'sms-aliyun', label: '阿里云短信', category: 'sms_aliyun' },
-      { name: 'sms-tencent', label: '腾讯云短信', category: 'sms_tencent' }
+      { name: 'sms-tencent', label: '腾讯云短信', category: 'sms_tencent' },
+      // 短信场景与模板的绑定关系，取值参考后端 DevSmsSceneEnum
+      { name: 'sms-scene', label: '短信场景配置', category: 'sms_scene' }
     ]
   },
   {
