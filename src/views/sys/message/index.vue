@@ -62,13 +62,14 @@
             </template>
           </el-table-column>
           <el-table-column prop="content" label="内容" min-width="220" show-overflow-tooltip />
-          <el-table-column v-if="isSentTab" prop="receiverNames" label="接收人" min-width="150" show-overflow-tooltip />
-          <el-table-column v-else label="发送人" width="120">
+          <!-- sendPage 不返回 receiverInfoList，“我发送的”列表不展示接收人列 -->
+          <el-table-column v-if="!isSentTab" label="发送人" width="120">
             <template #default="{ row }">
               {{ getSenderText(row) }}
             </template>
           </el-table-column>
-          <el-table-column label="状态" width="90" align="center">
+          <el-table-column prop="createTime" label="时间" width="170" />
+          <el-table-column v-if="!isSentTab" label="状态" width="90" align="center">
             <template #default="{ row }">
               <el-tag size="small" :type="row.read ? 'info' : 'danger'" effect="plain">
                 {{ row.read ? '已读' : '未读' }}
@@ -96,7 +97,7 @@ import {
   getMessagePage,
   getSentMessagePage,
   markAllMessageRead
-} from '@/api/sys/message-api'
+} from '@/api/dev/message-user-api'
 import { useMessageStore } from '@/stores/message'
 
 const adminDialog = useAdminDialog()
@@ -113,17 +114,23 @@ function tableInit(table) {
   $table = table
   $table.query.current = 1
   $table.query.size = 10
-  $table.parseQuery = (query) => ({
-    category: activeCategory.value,
-    keywords: query.keywords || '',
-    read: query.read,
-    current: query.current || 1,
-    size: query.size || 10
-  })
+  // “我发送的”目录不接受 category/read 过滤，仅按关键词分页
+  $table.parseQuery = (query) => {
+    const params = {
+      keywords: query.keywords || '',
+      current: query.current || 1,
+      size: query.size || 10
+    }
+    if (!isSentTab.value) {
+      params.category = activeCategory.value
+      params.read = query.read
+    }
+    return params
+  }
   $table.parse = (res) => res.data.records
 }
 
-// 数据源：收件目录走真实分页接口，“我发送的”走模拟接口
+// 数据源：收件目录走收件分页，“我发送的”走发送分页
 function loadPage(query) {
   return isSentTab.value ? getSentMessagePage(query) : getMessagePage(query)
 }
@@ -157,17 +164,20 @@ function openSend() {
   })
 }
 
-// 查看详情（详情接口会将消息置为已读）
+// 查看详情（收件详情接口会将消息置为已读，“我发送的”走发送详情）
 function openDetail(row) {
+  const isSent = isSentTab.value
   adminDialog({
-    component: import('@/layout/components/message/message-view.vue'),
+    component: isSent
+      ? import('./modules/sent-detail.vue')
+      : import('@/layout/components/message/message-view.vue'),
     props: {
       row,
       onSuccess: () => {
         $table.getTable()
       }
     },
-    dialogProps: { title: '消息详情', width: '600px' }
+    dialogProps: { title: isSent ? '发送详情' : '消息详情', width: '600px' }
   })
 }
 
