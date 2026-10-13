@@ -22,13 +22,32 @@
           <el-option v-for="item in templateOptions" :key="item.code" :label="item.name" :value="item.code" />
         </el-select>
       </el-form-item>
+      <el-form-item label="模板内容" v-if="postData.content">
+        <el-input v-model="postData.content" type="textarea" :rows="4" readonly />
+      </el-form-item>
       <el-form-item label="接收号码" prop="phoneNumber" :rules="[$rules.required, $rules.phone]">
         <el-input v-model="postData.phoneNumber" placeholder="请输入接收手机号" />
       </el-form-item>
 
-      <el-form-item v-for="key in templateParams" :key="key" :label="key" :prop="`params.${key}`">
-        <el-input v-model="postData.params[key]" :placeholder="`请输入 ${key}`" />
+      <!-- 变量按模板详情的 variables 生成，需全部填充 -->
+      <el-form-item
+        v-for="variable in variables"
+        :key="variable.name"
+        :label="variable.name"
+        :prop="`params.${variable.name}`"
+        :rules="[$rules.required]"
+      >
+        <el-input
+          v-model="postData.params[variable.name]"
+          :type="variable.type === 2 ? 'number' : 'text'"
+          :placeholder="`请输入 ${variable.name}`"
+        />
       </el-form-item>
+      <el-empty
+        v-if="!loading && postData.templateCode && !variables.length"
+        description="该模板未定义变量"
+        :image-size="60"
+      />
     </el-form>
     <template #footer>
       <el-button @click="emits('end')">取消</el-button>
@@ -53,19 +72,21 @@ const loading = ref(false)
 const sending = ref(false)
 const formRef = ref()
 const templateOptions = ref([])
-// 模板详情中声明的参数（${key} 占位符）
-const templateParams = ref([])
+// 模板详情中声明的变量 [{ name, type }]
+const variables = ref([])
 
 const postData = reactive({
   channelCode: undefined,
   templateCode: undefined,
+  content: '',
   phoneNumber: undefined,
   params: {}
 })
 
 async function onChannelChange() {
   postData.templateCode = undefined
-  templateParams.value = []
+  postData.content = ''
+  variables.value = []
   postData.params = {}
   templateOptions.value = []
   loading.value = true
@@ -82,16 +103,20 @@ async function onChannelChange() {
 }
 
 async function onTemplateChange(templateCode) {
-  templateParams.value = []
+  postData.content = ''
+  variables.value = []
   postData.params = {}
   const template = templateOptions.value.find(item => item.code === templateCode)
   if (!template) return
   loading.value = true
   try {
+    // 变量与模板内容以详情返回为准
     const response = await api.getTemplateDetail(template.id)
-    templateParams.value = response.data?.params || []
-    templateParams.value.forEach(key => {
-      postData.params[key] = ''
+    const data = response.data || {}
+    postData.content = data.content || ''
+    variables.value = data.variables || []
+    variables.value.forEach(variable => {
+      postData.params[variable.name] = ''
     })
   } finally {
     loading.value = false

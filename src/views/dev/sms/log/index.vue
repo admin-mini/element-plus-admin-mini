@@ -54,19 +54,10 @@
         </el-table>
       </template>
     </admin-table>
-
-    <el-dialog v-model="detailVisible" title="发送记录详情" width="760px">
-      <el-descriptions :column="2" border>
-        <el-descriptions-item v-for="key in detailKeys" :key="key" :label="detailLabels[key]">
-          {{ current[key] ?? '-' }}
-        </el-descriptions-item>
-      </el-descriptions>
-    </el-dialog>
   </div>
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue'
 import * as api from '@/api/dev/sms-api'
 import useAdminDialog from '@/plugins/use-admin-dialog'
 import message from '@/utils/message'
@@ -82,42 +73,7 @@ const typeOptions = [
   { label: '营销类', value: 3 }
 ]
 
-const detailKeys = [
-  'id',
-  'channelCode',
-  'templateCode',
-  'type',
-  'phone',
-  'signName',
-  'content',
-  'templateParam',
-  'userId',
-  'userType',
-  'sendTime',
-  'apiResultCode',
-  'apiResultMsg',
-  'apiRequestId'
-]
-const detailLabels = {
-  id: '记录ID',
-  channelCode: '短信通道',
-  templateCode: '模板编码',
-  type: '短信类型',
-  phone: '手机号',
-  signName: '签名',
-  content: '短信内容',
-  templateParam: '发送参数',
-  userId: '接收人ID',
-  userType: '接收人类型',
-  sendTime: '发送时间',
-  apiResultCode: '返回码',
-  apiResultMsg: '返回消息',
-  apiRequestId: '请求ID'
-}
-
 const adminDialog = useAdminDialog()
-const detailVisible = ref(false)
-const current = reactive({})
 
 let $table
 function onTableInit(table) {
@@ -141,10 +97,13 @@ function handleSend() {
   })
 }
 
-async function handleDetail(row) {
-  const response = await api.getLogDetail(row.id)
-  Object.assign(current, response.data || row)
-  detailVisible.value = true
+function handleDetail(record) {
+  adminDialog({
+    component: import('./modules/log-detail.vue'),
+    props: { record },
+    dialogType: 'drawer',
+    dialogProps: { title: '发送记录详情', width: '600px' }
+  })
 }
 
 function handleDelete(row) {

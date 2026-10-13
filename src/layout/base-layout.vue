@@ -5,12 +5,9 @@
             <div class="admin-header">
                 <div class="admin-header-left" :class="{ 'admin-header-collapse': systemStore.menuCollapse }">
                     <div class="header-brand">
-                        <el-icon size="28px">
-                            <GoodsFilled />
-                        </el-icon>
-
+                        <img class="header-logo" :src="logoUrl" alt="logo" />
                     </div>
-                    <div class="brand-text">{{ $env.VITE_APP_NAME }}</div>
+                    <div class="brand-text">{{ sysTitle }}</div>
                 </div>
 
                 <div class="admin-menu-collapse">
@@ -73,15 +70,27 @@ import { useSystemStore } from '@/stores'
 import baseNavigator from './base-navigator.vue'
 import { useDark, useToggle, useStorage } from '@vueuse/core'
 import adminRouterView from "./admin-router-view.vue"
-import { computed, h, ref } from 'vue'
+import { computed, h, onMounted, ref } from 'vue'
 import tagList from './tag-list.vue'
 import SETTING from '@/utils/setting'
 import UserBar from './components/user-bar.vue'
 import Message from './components/message/index.vue'
+// 系统 logo（本地资源）
+import logoUrl from '@/assets/images/logo.png'
 
 
 
 const systemStore = useSystemStore()
+
+// logo 名称以系统配置为准
+const sysTitle = computed(() => systemStore.state.sysInfo?.sys_title || import.meta.env.VITE_APP_NAME)
+
+onMounted(() => {
+    // 已有缓存则不再重复请求
+    if (!systemStore.state.sysInfo) {
+        systemStore.loadSysConfig()
+    }
+})
 
 function logout() {
     systemStore.logout()

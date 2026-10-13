@@ -1,25 +1,42 @@
 <template>
   <div class="admin-login-container">
     <div class="admin-login">
+      <!-- 左侧：科技感配图 -->
+      <div class="admin-login-banner">
+        <img class="banner-img" :src="bannerUrl" alt="科技感配图" />
+        <!-- 左下角联系方式，取自系统配置 -->
+        <div class="banner-footer">
+          <p v-if="sysInfo.sys_tel">客服电话：{{ sysInfo.sys_tel }}</p>
+          <p v-if="sysInfo.sys_email">联系邮箱：{{ sysInfo.sys_email }}</p>
+        </div>
+      </div>
+
+      <!-- 右侧：登录表单 -->
       <div class="admin-login-form">
         <h3 class="title">
-          <el-icon size="40px">
-            <Notification />
-          </el-icon>
-          管理平台
+          <img class="login-logo" :src="logoUrl" alt="logo" />
+          {{ sysInfo.sys_title || '欢迎登录' }}
         </h3>
+        <p class="sub-title">请输入账号信息以继续</p>
 
         <el-form :model="postData" :rules="rules" @submit.prevent="submit" ref="postForm">
-          <el-form-item label="" prop="userName" style="margin-bottom: 40px">
-            <el-input autocomplete="off" v-model="postData.username" placeholder="用户名"></el-input>
+          <el-form-item prop="username">
+            <el-input autocomplete="off" v-model="postData.username" placeholder="请输入用户名" :prefix-icon="User" />
           </el-form-item>
-          <el-form-item label="" prop="passWord" style="margin-bottom: 40px">
-            <el-input v-model="postData.password" type="password" placeholder="密码"></el-input>
+          <el-form-item prop="password">
+            <el-input
+              v-model="postData.password"
+              type="password"
+              show-password
+              placeholder="请输入密码"
+              :prefix-icon="Lock"
+              @keyup.enter="submit"
+            />
           </el-form-item>
           <el-form-item>
             <el-button native-type="submit" autocomplete="off" :loading="loading" type="primary"
               class="admin-block-button login-btn">
-              登录
+              登 录
             </el-button>
           </el-form-item>
         </el-form>
@@ -29,18 +46,25 @@
 </template>
 
 <script setup>
-import md5 from '@/utils/md5.js'
 import { ElMessage } from 'element-plus'
-import { reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import  * as loginApi  from '@/api/auth/auth-login-api'
 import { useSystemStore } from '@/stores/index'
 import $rules from '@/utils/rules'
 import { useRouter } from 'vue-router'
 import { useTagView } from '@/stores/tag-view'
 import smCrypto from '@/utils/smCrypto'
+// 登录页左侧科技感配图（本地资源，避免外链过期）
+import bannerUrl from '@/assets/images/login-banner.jpg'
+// 系统 logo（本地资源）
+import logoUrl from '@/assets/images/logo.png'
+
 const router = useRouter()
 const postForm = ref()
 const systemStore = useSystemStore()
+
+// 系统基础信息，由 sysConfigList 的 key/value 列表转换而来（存于全局 store）
+const sysInfo = computed(() => systemStore.state.sysInfo || {})
 const postData = reactive({
   username: import.meta.env.DEV?'superAdmin':'',
   password: import.meta.env.DEV?"123456":""
@@ -71,6 +95,11 @@ function submit() {
     }
   })
 }
+
+onMounted(() => {
+  // 加载系统基础信息（标题、联系方式、logo 名称等）
+  systemStore.loadSysConfig()
+})
 </script>
 
 <style lang="scss">
@@ -83,51 +112,113 @@ function submit() {
   background-size: cover;
   display: flex;
   align-items: center;
-  justify-self: center;
+  justify-content: center;
 
   .admin-login {
-    width: 500px;
+    width: 900px;
+    max-width: calc(100% - 40px);
+    min-height: 520px;
     margin: 0 auto;
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    align-items: stretch;
+    overflow: hidden;
     box-sizing: border-box;
-    /* 渐变背景 */
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    /* 透明白色背景 */
-    border-radius: 15px;
-    // backdrop-filter: blur(10px);
-    /* 毛玻璃效果 */
-    // box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-    // background: linear-gradient(135deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 1));
-    /* 渐变背景 */
+    border-radius: 16px;
+    background-color: #fff;
+    box-shadow: 0 20px 60px rgba(31, 66, 135, 0.15);
   }
 
-  .login-btn {
-    height: 45px;
-    line-height: 45px;
-    font-size: 20px;
-    padding: 0;
+  /* 左侧图片区域 */
+  .admin-login-banner {
+    position: relative;
+    flex: 0 0 45%;
+    overflow: hidden;
+    background: linear-gradient(135deg, #1f6feb, #4c9aff);
+
+    .banner-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* 左下角版权信息 */
+    .banner-footer {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 24px 32px 26px;
+      color: #fff;
+      font-size: 13px;
+      line-height: 1.8;
+      background: linear-gradient(180deg, rgba(6, 26, 66, 0) 0%, rgba(6, 26, 66, 0.65) 100%);
+
+      p {
+        margin: 0;
+      }
+    }
   }
 
+  /* 右侧表单区域 */
   .admin-login-form {
-    width: 100%;
-    padding: 15px 30px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 48px 56px;
+    box-sizing: border-box;
 
     .title {
       display: flex;
       align-items: center;
-      // justify-content: center;
-      font-size: 35px;
-      font-weight: normal;
+      gap: 10px;
+      margin: 0;
+      font-size: 26px;
+      font-weight: 500;
       color: var(--el-color-primary);
-      font-weight: 300;
+    }
+
+    .login-logo {
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
+    }
+
+    .sub-title {
+      margin: 10px 0 32px;
+      font-size: 14px;
+      color: #8a94a6;
     }
 
     .el-input__inner {
       height: 45px;
       line-height: 45px;
-      font-size: 18px;
+      font-size: 16px;
+    }
+  }
+
+  .login-btn {
+    margin-top: 8px;
+    height: 45px;
+    line-height: 45px;
+    font-size: 17px;
+    letter-spacing: 4px;
+    padding: 0;
+  }
+
+  /* 小屏幕下隐藏左侧配图，表单占满 */
+  @media (max-width: 768px) {
+    .admin-login {
+      min-height: auto;
+    }
+
+    .admin-login-banner {
+      display: none;
+    }
+
+    .admin-login-form {
+      padding: 40px 28px;
     }
   }
 }

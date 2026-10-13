@@ -50,7 +50,7 @@
           <el-table-column prop="remark" label="备注" min-width="160" show-overflow-tooltip />
           <el-table-column label="操作" width="200" fixed="right">
             <template #default="{ row }">
-              <el-button link type="primary" :disabled="row.status !== 1" @click="handleSend(row)">发送</el-button>
+              <el-button link type="primary" :disabled="row.status !== 1" @click="handleSend(row)">测试</el-button>
               <el-button link type="primary" @click="handleEdit(row)">编辑</el-button>
               <el-button link type="danger" @click="handleDelete(row)">删除</el-button>
             </template>
@@ -97,7 +97,7 @@ function handleSend(record) {
   adminDialog({
     component: import('./modules/send-form.vue'),
     props: { record },
-    dialogProps: { title: '发送短信', width: '560px' }
+    dialogProps: { title: '测试发送', width: '560px' }
   })
 }
 

@@ -5,6 +5,7 @@ export const pinia = createPinia()
 import packageJson from '../../package.json'
 import router from '@/router/index'
 import { getLoginUser } from '@/api/auth/auth-login-api'
+import { getSysConfigList } from '@/api/dev/config-api'
 import { useMediaQuery } from '@vueuse/core'
 import { ElMessage } from 'element-plus'
 import { id } from 'element-plus/es/locales.mjs'
@@ -69,6 +70,24 @@ export const useSystemStore = defineStore('user', () => {
   function setToken(token) {
     state.value.token = token
   }
+  /**
+   * 加载系统基础信息：将 sysConfigList 的 [{configKey,configValue}] 转为 key/value 存入 state.sysInfo
+   * 供登录页与主框架（logo 名称等）使用
+   */
+  function loadSysConfig() {
+    return getSysConfigList()
+      .then((res) => {
+        const sysInfo = {}
+        ;(res.data || []).forEach((item) => {
+          if (item?.configKey) sysInfo[item.configKey] = item.configValue
+        })
+        state.value.sysInfo = sysInfo
+        return sysInfo
+      })
+      .catch(() => {
+        // 基础信息非核心流程，失败时不影响使用
+      })
+  }
   function setTenantId(tenantId) {
     state.value.tenantId = tenantId
   }
@@ -81,6 +100,6 @@ export const useSystemStore = defineStore('user', () => {
     return !!state.value.token
   })
 
-  return { state, login, setToken, logout, isLogin,getUserInfo, setMenuCollapse, menuCollapse, isSmallScreen }
+  return { state, login, setToken, logout, isLogin,getUserInfo, setMenuCollapse, menuCollapse, isSmallScreen, loadSysConfig }
 })
 // pinia.use(useSystemStore)

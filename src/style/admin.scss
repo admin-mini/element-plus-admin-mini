@@ -270,6 +270,12 @@ input:-internal-autofill-selected {
     display: flex;
     align-items: center;
     justify-content: center;
+
+    .header-logo {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+    }
   }
 
   .brand-text {

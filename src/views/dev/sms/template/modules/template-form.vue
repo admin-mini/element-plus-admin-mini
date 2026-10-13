@@ -21,6 +21,9 @@
           <el-form-item label="模板名称" prop="name" :rules="[$rules.required]">
             <el-input v-model="postData.name" placeholder="请输入模板名称" />
           </el-form-item>
+          <el-form-item label="短信签名" prop="signName">
+            <el-input v-model="postData.signName" placeholder="请输入短信签名" />
+          </el-form-item>
           <el-form-item label="短信通道" prop="channelCode" :rules="[$rules.required]">
             <el-select v-model="postData.channelCode" placeholder="请选择短信通道" style="width: 100%">
               <el-option v-for="item in channelOptions" :key="item.value" :label="item.label" :value="item.value" />
@@ -129,6 +132,7 @@ const postData = ref({
   isSys: 0,
   code: undefined,
   name: undefined,
+  signName: undefined,
   apiTemplateId: undefined,
   content: '',
   status: 1,
@@ -168,13 +172,14 @@ function submitForm() {
   formRef.value?.validate(valid => {
     if (!valid) return
     loading.value = true
-    const { id, channelCode, code, name, apiTemplateId, content, status, remark, type, isSys } =
+    const { id, channelCode, code, name, signName, apiTemplateId, content, status, remark, type, isSys } =
       postData.value
     // type、isSys 仅新增时可设置，编辑时控件禁用，随表单原值提交（后端字段为 @NotNull）
     const params = {
       channelCode,
       code,
       name,
+      signName,
       apiTemplateId,
       content,
       status,
