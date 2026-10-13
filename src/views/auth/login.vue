@@ -4,8 +4,12 @@
       <!-- 左侧：科技感配图 -->
       <div class="admin-login-banner">
         <img class="banner-img" :src="bannerUrl" alt="科技感配图" />
-        <!-- 左下角联系方式，取自系统配置 -->
+        <!-- 左下角版权信息，取自系统配置 -->
         <div class="banner-footer">
+          <p class="footer-title">
+            <el-icon><Notification /></el-icon>
+            {{ sysInfo.sys_title || '管理平台' }}
+          </p>
           <p v-if="sysInfo.sys_tel">客服电话：{{ sysInfo.sys_tel }}</p>
           <p v-if="sysInfo.sys_email">联系邮箱：{{ sysInfo.sys_email }}</p>
         </div>
@@ -14,8 +18,10 @@
       <!-- 右侧：登录表单 -->
       <div class="admin-login-form">
         <h3 class="title">
-          <img class="login-logo" :src="logoUrl" alt="logo" />
-          {{ sysInfo.sys_title || '欢迎登录' }}
+          <el-icon size="32">
+            <Notification />
+          </el-icon>
+          欢迎登录
         </h3>
         <p class="sub-title">请输入账号信息以继续</p>
 
@@ -47,8 +53,9 @@
 
 <script setup>
 import { ElMessage } from 'element-plus'
-import { computed, onMounted, reactive, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import  * as loginApi  from '@/api/auth/auth-login-api'
+import * as configApi from '@/api/dev/config-api'
 import { useSystemStore } from '@/stores/index'
 import $rules from '@/utils/rules'
 import { useRouter } from 'vue-router'
@@ -56,15 +63,19 @@ import { useTagView } from '@/stores/tag-view'
 import smCrypto from '@/utils/smCrypto'
 // 登录页左侧科技感配图（本地资源，避免外链过期）
 import bannerUrl from '@/assets/images/login-banner.jpg'
-// 系统 logo（本地资源）
-import logoUrl from '@/assets/images/logo.png'
 
 const router = useRouter()
 const postForm = ref()
 const systemStore = useSystemStore()
 
-// 系统基础信息，由 sysConfigList 的 key/value 列表转换而来（存于全局 store）
-const sysInfo = computed(() => systemStore.state.sysInfo || {})
+// 系统基础信息，由 sysConfigList 的 key/value 列表转换而来
+const sysInfo = reactive({
+  sys_title: '',
+  sys_tel: '',
+  sys_email: '',
+  login_mode: '',
+  register_enable: ''
+})
 const postData = reactive({
   username: import.meta.env.DEV?'superAdmin':'',
   password: import.meta.env.DEV?"123456":""
@@ -97,8 +108,16 @@ function submit() {
 }
 
 onMounted(() => {
-  // 加载系统基础信息（标题、联系方式、logo 名称等）
-  systemStore.loadSysConfig()
+  // 加载系统基础配置，将 [{configKey, configValue}] 列表转为 key/value 使用
+  configApi
+    .getSysConfigList()
+    .then(res => {
+      ;(res.data || []).forEach(item => {
+        if (item?.configKey) sysInfo[item.configKey] = item.configValue
+      })
+    })
+    // 基础信息非登录必需，失败时不打断登录页
+    .catch(() => {})
 })
 </script>
 
@@ -157,6 +176,16 @@ onMounted(() => {
       p {
         margin: 0;
       }
+
+      .footer-title {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 4px;
+        font-size: 16px;
+        font-weight: 600;
+        letter-spacing: 1px;
+      }
     }
   }
 
@@ -172,17 +201,11 @@ onMounted(() => {
     .title {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       margin: 0;
       font-size: 26px;
       font-weight: 500;
       color: var(--el-color-primary);
-    }
-
-    .login-logo {
-      width: 36px;
-      height: 36px;
-      object-fit: contain;
     }
 
     .sub-title {
