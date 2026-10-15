@@ -24,3 +24,13 @@ export const login=( loginParams)=> {
 export const getLoginUser=()=> {
      return baseRequest("/auth/user/getLoginUser")
 }
+
+/**
+ * 切换租户（登录成功后可用）
+ * 返回结果与登录接口一致：{ token, tenantId, username, name }
+ *
+ * @param switchParams { tenantId }
+ */
+export const switchTenant=(switchParams)=> {
+  return baseRequest("/auth/user/switchTenant",switchParams,"post")
+}

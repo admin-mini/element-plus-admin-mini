@@ -45,3 +45,11 @@ export function updateAvatarBase64(avatar) {
 export function updatePassword(data) {
   return postQuery('updatePassword', data)
 }
+
+/**
+ * 获取当前用户的租户列表
+ * @returns {Promise<{code,msg,data}>} data 含 current（当前租户）与 tenants（我的所有租户）
+ */
+export function getTenants() {
+  return ajax.get('/sys/userCenter/tenants')
+}
