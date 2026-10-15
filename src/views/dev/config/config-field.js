@@ -323,7 +323,7 @@ const CONFIG_FIELDS = {
     label: '账户登录验证码',
     rules: [fieldRules.required('请选择短信模板', 'change')]
   },
-  sms_scene_password_get_code: {
+  sms_scene_password_find_code: {
     type: 'smsTemplate',
     label: '找回密码验证码',
     rules: [fieldRules.required('请选择短信模板', 'change')]
