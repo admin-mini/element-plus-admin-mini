@@ -97,6 +97,16 @@ const currentCategory = computed(() => {
 </script>
 
 <style scoped lang="scss">
+/* 配置表单内容较高，页面级容器自身滚动；
+   不动全局 .admin-view（表格页依赖它不滚动、由表格内部滚动） */
+.config-view {
+  overflow-y: auto;
+
+  /* flex 子项默认会被压缩，禁止收缩保证卡片按内容撑高、由容器滚动 */
+  > .el-card {
+    flex-shrink: 0;
+  }
+}
 
 .child-tabs {
   margin-bottom: 24px;

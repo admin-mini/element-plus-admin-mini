@@ -153,6 +153,27 @@ const CONFIG_FIELDS = {
     type: 'switch',
     label: '登录图片验证码'
   },
+  account_register_enable: {
+    type: 'switch',
+    label: '开启账号注册'
+  },
+  account_register_sms_code_enable: {
+    type: 'switch',
+    label: '注册开启短信验证码'
+  },
+  account_login_methods: {
+    type: 'checkbox',
+    label: '开启登录方式',
+    options: [
+      { label: '账号密码登录', value: 'password' },
+      { label: '手机验证码登录', value: 'sms' }
+    ],
+    tip: '值存为逗号分隔字符串，如 password,sms'
+  },
+  account_find_password_enable: {
+    type: 'switch',
+    label: '开启短信找回密码'
+  },
 
   /* ---------------- 密码配置 password_config ---------------- */
   auth_login_pwd_error_count_limit: {

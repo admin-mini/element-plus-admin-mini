@@ -19,6 +19,22 @@ export default {
     message: '用户名必须以字母开头，且仅包含字母、数字或下划线',
     trigger: 'blur'
   },
+  // 密码强度：数字 / 小写字母 / 大写字母 / 符号（区分大小写即大小写算两类）至少包含 2 种
+  passwordStrength: {
+    trigger: 'blur',
+    validator: (rule, value, callback) => {
+      if (value == '') {
+        callback()
+        return false
+      }
+      const kinds = [/[a-z]/, /[A-Z]/, /\d/, /[^a-zA-Z0-9]/].filter((reg) => reg.test(value)).length
+      if (kinds < 2) {
+        callback(new Error('密码须包含数字、字母（区分大小写）、符号中至少2种'))
+        return false
+      }
+      callback()
+    }
+  },
   checkPassword(postData, key, postForm) {
     return {
       validator: function (rule, value, callback) {
