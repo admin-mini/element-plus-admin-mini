@@ -276,6 +276,12 @@ defineExpose({ load })
 <style scoped lang="scss">
 .config-form {
   max-width: 900px;
+
+  // 点击 label 不再触发关联控件的原生默认行为（单控件时 el-form-item 会给 label 绑定 for，
+  // 对 el-switch 而言点 label 会直接切换开关，容易误触），因此禁用 label 的鼠标事件
+  :deep(.el-form-item__label) {
+    pointer-events: none;
+  }
 }
 
 .config-upload {
