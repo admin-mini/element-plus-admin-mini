@@ -35,12 +35,13 @@
 
     <!-- 裁剪主体 -->
     <div class="crop-body">
-      <div class="crop-stage">
+      <div class="crop-stage" :style="{ '--crop-bg': backgroundColor || 'transparent' }">
         <VueCropper
           ref="cropperRef"
           :img="img"
           :output-size="1"
           :output-type="outputType"
+          :fill-color="backgroundColor"
           :info="true"
           :fixed="true"
           :fixed-number="cropperProps.fixedNumber"
@@ -115,6 +116,9 @@ const props = defineProps({
   autoCropWidth: { type: Number, default: 200 },
   // 裁剪输出格式 png | jpeg | webp
   outputType: { type: String, default: 'png' },
+  // 裁剪结果背景色：透明图片（PNG）会先铺一层背景再导出，避免透明区域在上传/后端转码后被处理成暗色（黑色）背景。
+  // 默认铺纯白底；如需保留原始透明通道，传空字符串 ''
+  backgroundColor: { type: String, default: '#ffffff' },
   // 弹窗标题
   title: { type: String, default: '图片裁剪' },
   // 外部上传方法 (file) => Promise，裁剪确定后直接上传。resolve 值兼容两种形态：
@@ -315,7 +319,8 @@ defineExpose({ show })
 
     :deep(.vue-cropper) {
       height: 100%;
-      background: #f5f7fa;
+      // 与导出背景保持一致：透明图片按 backgroundColor 铺底（默认纯白），避免透明区域呈现为暗色背景
+      background: var(--crop-bg, #fff);
       border: 1px solid #e4e7ed;
       border-radius: 4px;
     }
