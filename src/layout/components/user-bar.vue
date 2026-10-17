@@ -2,7 +2,7 @@
     <el-dropdown ref="dropdownRef" popper-class="user-menu-popper">
         <span class="el-dropdown-link">
             <el-avatar :size="26" :src="systemStore.state?.user?.avatar" style="margin-right: 5px" >
-            {{ nickName.substring(0,1) }}
+            {{ nickName.substring(0,1).toUpperCase() }}
             </el-avatar>
             <div class="username">
                 {{ nickName }}
