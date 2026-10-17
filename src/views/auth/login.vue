@@ -43,7 +43,6 @@
               show-password
               placeholder="请输入密码"
               :prefix-icon="Lock"
-              @keyup.enter="submitPassword"
             />
           </el-form-item>
           <el-form-item v-if="captchaOpen" prop="validCode">
@@ -53,7 +52,6 @@
                 placeholder="请输入验证码"
                 :prefix-icon="Key"
                 maxlength="6"
-                @keyup.enter="submitPassword"
               />
               <nuocao-image-captcha
                 ref="loginCaptchaRef"
@@ -90,7 +88,6 @@
                 placeholder="请输入短信验证码"
                 :prefix-icon="Message"
                 maxlength="6"
-                @keyup.enter="submitSms"
               />
               <nuocao-sms-btn
                 :phone="smsForm.phone"
@@ -211,6 +208,8 @@ function onLoginCaptcha(data) {
 }
 
 function submitPassword() {
+  // 重入守卫：回车/点击/双击只触发一次提交
+  if (loading.value) return
   pwdFormRef.value.validate((valid) => {
     if (!valid) {
       ElMessage.warning('请填写完整信息')
@@ -259,6 +258,8 @@ const smsRules = reactive({
 })
 
 function submitSms() {
+  // 重入守卫：回车/点击/双击只触发一次提交
+  if (loading.value) return
   smsFormRef.value.validate((valid) => {
     if (!valid) {
       ElMessage.warning('请填写完整信息')
