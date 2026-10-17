@@ -15,21 +15,30 @@
 
       <el-divider content-position="left">菜单授权</el-divider>
       <el-form-item label="授权菜单" prop="menuIds">
-        <div class="menu-tree-wrap">
-          <el-tree
-            ref="menuTreeRef"
-            :data="menuTree"
-            node-key="id"
-            show-checkbox
-            default-expand-all
-            :props="{ label: 'title', children: 'children' }"
-            :check-strictly="false"
-          >
-            <template #default="{ data }">
-              <span>{{ data.title }}</span>
+        <!-- 授权精确到每个操作按钮：菜单行勾选代表授权其下全部菜单与按钮，操作授权列可单独勾选某个按钮 -->
+        <el-table
+          class="menu-permission-table"
+          :data="menuTree"
+          row-key="id"
+          border
+          default-expand-all
+          max-height="320"
+          :tree-props="{ children: 'children' }"
+        >
+          <el-table-column prop="title" label="菜单名称" min-width="180">
+            <template #default="{ row }">
+              <el-checkbox :model-value="isNodeChecked(row)" :indeterminate="isNodeIndeterminate(row)" @change="(checked) => toggleNode(row, checked)">{{ row.title || row.name }}</el-checkbox>
             </template>
-          </el-tree>
-        </div>
+          </el-table-column>
+          <el-table-column label="操作授权" min-width="420">
+            <template #default="{ row }">
+              <el-space wrap>
+                <el-checkbox v-for="button in getButtons(row)" :key="button.id" :model-value="selectedIds.has(normalizeId(button.id))" @change="(checked) => toggleId(button.id, checked)">{{ button.title || button.name }}</el-checkbox>
+              </el-space>
+              <span v-if="!getButtons(row).length" class="muted-text">—</span>
+            </template>
+          </el-table-column>
+        </el-table>
       </el-form-item>
     </el-form>
     <template #footer>
@@ -40,11 +49,11 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, nextTick } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import baseRequest from '@/api/base-request.js'
 import message from '@/utils/message'
 import tool from '@/utils/tool'
 import { getDict } from '@/utils/dict'
-import * as menuApi from '@/api/sys/menu-api'
 import * as tenantApi from '@/api/sys/tenant-api'
 
 getDict(['common_enable_status'])
@@ -54,8 +63,8 @@ const emits = defineEmits(['end', 'success'])
 
 const formRef = ref()
 const loading = ref(false)
-const menuTreeRef = ref()
 const menuTree = ref([])
+const selectedIds = ref(new Set())
 const isEditing = computed(() => !!props.row?.id)
 
 const postData = ref({
@@ -67,9 +76,41 @@ const postData = ref({
 
 const rules = {}
 
-/** 加载菜单树 */
+const normalizeId = (id) => String(id)
+const childrenOf = (node) => (Array.isArray(node?.children) ? node.children : [])
+const getButtons = (node) => childrenOf(node).filter((item) => String(item.type).toLowerCase() === 'button')
+function flatten(node, result = []) {
+  if (!node) return result
+  result.push(node)
+  childrenOf(node).forEach((child) => flatten(child, result))
+  return result
+}
+function descendants(node) {
+  return flatten(node).map((item) => normalizeId(item.id))
+}
+function isNodeChecked(node) {
+  const ids = descendants(node)
+  return ids.length > 0 && ids.every((id) => selectedIds.value.has(id))
+}
+function isNodeIndeterminate(node) {
+  const ids = descendants(node)
+  const count = ids.filter((id) => selectedIds.value.has(id)).length
+  return count > 0 && count < ids.length
+}
+function toggleId(id, checked) {
+  const next = new Set(selectedIds.value)
+  checked ? next.add(normalizeId(id)) : next.delete(normalizeId(id))
+  selectedIds.value = next
+}
+function toggleNode(node, checked) {
+  const next = new Set(selectedIds.value)
+  descendants(node).forEach((id) => (checked ? next.add(id) : next.delete(id)))
+  selectedIds.value = next
+}
+
+/** 加载带按钮的菜单树 */
 function loadMenuTree() {
-  menuApi.getMenuTree().then((resp) => { menuTree.value = resp.data || [] }).catch(() => {})
+  baseRequest('/sys/menu/treeButton').then((resp) => { menuTree.value = resp.data || [] }).catch(() => {})
 }
 
 /** 编辑时回显套餐详情 */
@@ -78,13 +119,7 @@ function loadDetail(id) {
   tenantApi.getTenantPackageDetail(id).then((resp) => {
     const data = resp.data || {}
     postData.value = Object.assign({}, postData.value, data, { enableStatus: data.enableStatus ?? 1 })
-    if (Array.isArray(data.menuIds) && data.menuIds.length) {
-      // 等待菜单树渲染后再回显勾选（el-tree 级联会自动把“子全部选中”的父级置为勾选，
-      // 部分选中的父级自动置为半选，因此这里只需回填已选节点）
-      nextTick(() => {
-        menuTreeRef.value?.setCheckedKeys(data.menuIds, false)
-      })
-    }
+    selectedIds.value = new Set((Array.isArray(data.menuIds) ? data.menuIds : []).map(normalizeId))
   }).catch(() => {}).finally(() => { loading.value = false })
 }
 
@@ -94,11 +129,9 @@ function submitForm() {
       message.error('请填写完整信息')
       return
     }
-    // 收集勾选菜单：仅取“完全选中”的节点。
-    // el-tree 级联规则下，父级只有在所有子级都选中时才会被勾选（部分选中为半选状态），
-    // 因此无需合并半选节点，否则回显时会把未授权的子菜单一并勾选。
+    // 提交精确到按钮的授权集合：菜单与按钮 id 均在此集合中，按钮即 type 为 button 的菜单记录
     const payload = tool.cloneDeep(postData.value)
-    payload.menuIds = menuTreeRef.value?.getCheckedKeys() || []
+    payload.menuIds = Array.from(selectedIds.value)
     loading.value = true
     const fn = isEditing.value ? tenantApi.editTenantPackage : tenantApi.addTenantPackage
     fn(payload).then((resp) => {
@@ -115,13 +148,11 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.menu-tree-wrap {
+.menu-permission-table {
   width: 100%;
-  max-height: 320px;
-  overflow: auto;
-  padding: 8px;
-  border: 1px solid var(--el-border-color);
-  border-radius: 4px;
-  box-sizing: border-box;
+}
+.muted-text {
+  color: var(--el-text-color-secondary);
+  font-size: 13px;
 }
 </style>
