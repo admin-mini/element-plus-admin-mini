@@ -85,6 +85,11 @@ const props = defineProps({
     type: String,
     default: 'default'
   },
+  // 是否校验手机号：默认开启；部分场景（如已绑定手机号改密）手机号由后端决定且前端仅拿到脱敏号码，可传 false 跳过校验
+  validatePhone: {
+    type: Boolean,
+    default: true
+  },
   // 弹窗标题
   title: {
     type: String,
@@ -105,8 +110,10 @@ const form = reactive({
   validCodeReqId: ''
 })
 
-// 是否禁用按钮：倒计时中或未填写手机号
-const isDisabled = computed(() => countdown.value > 0 || !props.phone)
+// 是否禁用按钮：倒计时中，或需要校验手机号但未填写手机号
+const isDisabled = computed(
+  () => countdown.value > 0 || (props.validatePhone && !props.phone)
+)
 
 // 按钮文案
 const btnText = computed(() =>
@@ -157,10 +164,12 @@ async function send() {
 
   sending.value = true
   try {
-    const resp = await props.smsApiFn({
-      ...form,
-      phone: props.phone
-    })
+    const params = { ...form }
+    // 仅在需要校验手机号时携带 phone；脱敏号码场景（validatePhone=false）由后端自行确定手机号，不传该参数
+    if (props.validatePhone) {
+      params.phone = props.phone
+    }
+    const resp = await props.smsApiFn(params)
     // 兼容接口直接返回数据 或 包一层 data 两种结构
     const data = resp?.data || resp
 
@@ -180,13 +189,16 @@ async function send() {
 
 // 打开弹窗并校验手机号
 function open() {
-  if (!props.phone) {
-    ElMessage.warning('请输入手机号')
-    return
-  }
-  if (!$rules.phone.pattern.test(props.phone)) {
-    ElMessage.warning($rules.phone.message)
-    return
+  // validatePhone 为 false 时跳过手机号校验（如脱敏号码场景）
+  if (props.validatePhone) {
+    if (!props.phone) {
+      ElMessage.warning('请输入手机号')
+      return
+    }
+    if (!$rules.phone.pattern.test(props.phone)) {
+      ElMessage.warning($rules.phone.message)
+      return
+    }
   }
   visible.value = true
 }

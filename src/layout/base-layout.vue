@@ -5,9 +5,9 @@
             <div class="admin-header">
                 <div class="admin-header-left" :class="{ 'admin-header-collapse': systemStore.menuCollapse }">
                     <div class="header-brand">
-                        <img class="header-logo" :src="logoUrl" alt="logo" />
+                        <img class="header-logo" :src="brandLogo" alt="logo" />
                     </div>
-                    <div class="brand-text">{{ sysTitle }}</div>
+                    <div ref="brandTextRef" class="brand-text">{{ brandTitle }}</div>
                 </div>
 
                 <div class="admin-menu-collapse">
@@ -70,11 +70,12 @@ import { useSystemStore } from '@/stores'
 import baseNavigator from './base-navigator.vue'
 import { useDark, useToggle, useStorage } from '@vueuse/core'
 import adminRouterView from "./admin-router-view.vue"
-import { computed, h, onMounted, ref } from 'vue'
+import { computed, h, nextTick, onMounted, ref, watch } from 'vue'
 import tagList from './tag-list.vue'
 import SETTING from '@/utils/setting'
 import UserBar from './components/user-bar.vue'
 import Message from './components/message/index.vue'
+import { useUserTenants } from './use-user-tenants'
 // 系统 logo（本地资源）
 import logoUrl from '@/assets/images/logo.png'
 
@@ -82,8 +83,43 @@ import logoUrl from '@/assets/images/logo.png'
 
 const systemStore = useSystemStore()
 
-// logo 名称以系统配置为准
+// 是否多租户模式（与 sys/user/index.vue 的判断保持一致）
+const TENANT_ENABLE = import.meta.env.VITE_TENANT_ENABLE === 'true'
+
+// 租户信息与顶栏用户下拉共用同一份数据（use-user-tenants 内按 token 缓存，只请求一次）
+const { currentTenant } = useUserTenants()
+
+// 系统名称以系统配置为准
 const sysTitle = computed(() => systemStore.state.sysInfo?.sys_title || import.meta.env.VITE_APP_NAME)
+
+// 多租户模式展示当前租户名称与 logo；租户无 logo（接口未返回）时回退默认 logo
+const brandLogo = computed(() => (TENANT_ENABLE && currentTenant.value?.logo) || logoUrl)
+const brandTitle = computed(
+    () => (TENANT_ENABLE && currentTenant.value?.tenantName) || sysTitle.value
+)
+
+// 标题 DOM 引用与字号上下限（标题过长时自动缩小字号，最多显示 2 行）
+const brandTextRef = ref(null)
+const BRAND_FONT_MAX = 22
+const BRAND_FONT_MIN = 12
+
+/**
+ * 标题超过 2 行（由 CSS 的 line-clamp 限制）时逐级缩小字号，
+ * 直到刚好放进 2 行；到最小字号仍放不下则由 CSS 截断
+ */
+async function fitBrandTitle() {
+    await nextTick()
+    const el = brandTextRef.value
+    if (!el) return
+    for (let size = BRAND_FONT_MAX; size >= BRAND_FONT_MIN; size--) {
+        el.style.fontSize = `${size}px`
+        if (el.scrollHeight <= el.clientHeight) return
+    }
+}
+
+// 标题变化（系统配置/租户信息异步加载）或菜单折叠状态变化（折叠时标题隐藏）后重新适配字号
+watch([brandTitle, () => systemStore.menuCollapse], fitBrandTitle)
+onMounted(fitBrandTitle)
 
 onMounted(() => {
     // 已有缓存则不再重复请求

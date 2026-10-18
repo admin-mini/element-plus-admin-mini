@@ -227,9 +227,10 @@ input:-internal-autofill-selected {
     width: calc(var(--slide-width) + 1px);
     display: flex;
     align-items: center;
-    justify-content: center;
+    // logo 与系统/租户名称左对齐
+    justify-content: flex-start;
     flex-shrink: 0;
-    padding-right: 10px; //修复视觉偏右
+    padding-left: 10px;
     padding-top: 5px; //修复视觉偏上
     border-right: 1px solid var(--el-border-color-lighter);
 
@@ -242,6 +243,8 @@ input:-internal-autofill-selected {
 
   .admin-header-collapse {
     width: calc(var(--menu-collapse-width) + 1px);
+    // 折叠后名称隐藏、只剩 logo，保持居中
+    justify-content: center;
     padding: 0;
 
     .brand-text {
@@ -279,10 +282,19 @@ input:-internal-autofill-selected {
   }
 
   .brand-text {
+    // 占满 logo 右侧剩余空间，超长时换行（最多 2 行，字号由 base-layout 内的 JS 自动缩小）
+    flex: 1;
+    min-width: 0;
     font-size: 22px;
     padding-left: 10px;
-
     letter-spacing: 1px;
+    // 覆盖 .admin-header 继承的 60px 行高，否则两行会撑破 60px 的头部高度
+    line-height: 1.25;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    word-break: break-all;
   }
 
   .admin-menu {

@@ -76,11 +76,18 @@ export const constantRoutes = [
     hidden: true,
     // redirect: 'noredirect',
     children: [
+      // 账号设置（由顶栏用户下拉菜单进入，隐藏于侧边栏）
+      {
+        path: 'account',
+        component: () => import('@/views/sys/user/account/index.vue'),
+        name: 'AccountSetting',
+        meta: { title: '账号设置', icon: 'lock' }
+      },
       {
         path: 'profile',
         component: () => import('@/views/sys/user/profile/index.vue'),
         name: 'Profile',
-        meta: { title: '个人中心', icon: 'user' }
+        meta: { title: '个人信息', icon: 'user' }
       }
     ]
   },

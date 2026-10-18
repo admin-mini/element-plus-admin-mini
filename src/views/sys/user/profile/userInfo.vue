@@ -59,7 +59,7 @@ watch(() => props.user, user => {
       name: user.name || '',
       nickname: user.nickname || '',
       phone: user.phone || '',
-      gender: user.gender !== undefined && user.gender !== null ? String(user.gender) : '',
+      gender: user.gender ?? null,
       birthday: user.birthday || '',
       email: user.email || ''
     }

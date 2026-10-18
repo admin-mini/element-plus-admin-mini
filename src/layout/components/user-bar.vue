@@ -20,9 +20,14 @@
                 因此这里不使用 #title，直接把图标与文字放在默认插槽
             -->
                 <el-menu class="user-menu" :collapse="true" :ellipsis="false" @select="handleMenuSelect">
+                    <el-menu-item index="account">
+                        <el-icon><lock /></el-icon>
+                        <span>账号设置</span>
+                    </el-menu-item>
+
                     <el-menu-item index="uc">
                         <el-icon><user /></el-icon>
-                        <span>个人中心</span>
+                        <span>个人信息</span>
                     </el-menu-item>
 
                     <el-menu-item index="clearCache">
@@ -68,10 +73,10 @@
 
 <script setup>
 import { useSystemStore } from '@/stores'
-import { computed, onMounted, ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getTenants } from '@/api/sys/user-center-api'
+import { useUserTenants } from '@/layout/use-user-tenants'
 import { switchTenant } from '@/api/auth/auth-login-api'
 import packageJson from '../../../package.json'
 
@@ -84,30 +89,11 @@ const router = useRouter()
 // 下拉实例，用于点击菜单项后主动收起（el-menu 不会自动关闭外层下拉）
 const dropdownRef = ref()
 
-// 我的租户列表与当前租户ID
-const tenantList = ref([])
-const currentTenantId = ref(null)
+// 我的租户列表与当前租户ID：由 use-user-tenants 统一请求并按 token 缓存，多处复用只请求一次
+const { tenantList, currentTenantId } = useUserTenants()
 
 const nickName = computed(() => {
     return systemStore.state?.user?.name || 'admin'
-})
-
-// 加载租户列表，兼容 current 的 id/tenantId 字段命名
-function loadTenants() {
-    return getTenants()
-        .then(res => {
-            const data = res.data || {}
-            const current = data.current || {}
-            currentTenantId.value = current.id ?? current.tenantId ?? systemStore.state.tenantId
-            tenantList.value = data.tenants || []
-        })
-        .catch(() => {
-            // 无租户/接口异常时不展示租户分组，错误提示由请求拦截器处理
-        })
-}
-
-onMounted(() => {
-    loadTenants()
 })
 
 function closeDropdown() {
@@ -116,6 +102,11 @@ function closeDropdown() {
 
 // el-menu 的 select 事件，index 即各菜单项的标识
 async function handleMenuSelect(index) {
+    if (index === 'account') {
+        closeDropdown()
+        router.push('/user/account')
+        return
+    }
     if (index === 'uc') {
         closeDropdown()
         router.push('/user/profile')

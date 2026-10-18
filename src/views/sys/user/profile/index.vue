@@ -13,10 +13,6 @@
           </div>
           <ul class="list-group list-group-striped">
             <li class="list-group-item">
-              <svg-icon name="user" />用户ID
-              <div class="pull-right">{{ profile?.id ?? '-' }}</div>
-            </li>
-            <li class="list-group-item">
               <svg-icon name="user" />用户姓名
               <div class="pull-right">{{ profile?.name ?? '-' }}</div>
             </li>
@@ -36,6 +32,15 @@
               <svg-icon name="date" />出生日期
               <div class="pull-right">{{ profile?.birthday ?? '-' }}</div>
             </li>
+            <li class="list-group-item">
+              <svg-icon name="peoples" />所属部门
+              <!-- 接口字段为 orgName，兼容可能返回的 orgNames -->
+              <div class="pull-right">{{ profile?.orgName || profile?.orgNames || '-' }}</div>
+            </li>
+            <li class="list-group-item">
+              <svg-icon name="role" />所属角色
+              <div class="pull-right">{{ profile?.roleNames || '-' }}</div>
+            </li>
           </ul>
         </el-card>
       </el-col>
@@ -50,7 +55,11 @@
             <el-tab-pane label="基本资料" name="userinfo">
               <userInfo :user="profile" @success="handleInfoSuccess" />
             </el-tab-pane>
-            <el-tab-pane label="修改密码" name="resetPwd">
+            <!--
+              修改密码入口已统一迁移至「账号设置」(/user/account) 页面，此处永久隐藏（v-if="false"）并保留原实现。
+              如需恢复入口，删除 v-if="false" 即可。
+            -->
+            <el-tab-pane v-if="false" label="修改密码" name="resetPwd">
               <resetPwd />
             </el-tab-pane>
           </el-tabs>
@@ -80,6 +89,12 @@ const genderLabel = computed(() => {
   if (val === undefined || val === null || val === '') return '-'
   const item = dict.sys_gender.get(val)
   return item ? item.label : val
+})
+
+/** 所属角色：接口返回角色名称数组，拼接展示 */
+const roleLabel = computed(() => {
+  const list = profile.value.roleNames
+  return Array.isArray(list) && list.length ? list.join('、') : '-'
 })
 
 /** 拉取个人资料，并同步全局用户信息（顶部栏头像/昵称） */
