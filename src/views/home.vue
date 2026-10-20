@@ -139,7 +139,7 @@ const userInfo = computed(()=>{
   return systemStore?.state?.user;
 })
 const nickName = computed(()=>{
-  return systemStore?.state?.user?.name || systemStore?.state?.user?.nickName;
+  return systemStore?.state?.user?.name || systemStore?.state?.user?.nickName || "";
 })
 
 
