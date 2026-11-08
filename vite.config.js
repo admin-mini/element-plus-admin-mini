@@ -8,10 +8,8 @@ import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
-import UnoCSS from 'unocss/vite'
 export default defineConfig({
   plugins: [
-    UnoCSS(),
     vue(),
     vueJsx(),
     AutoImport({
@@ -59,17 +57,15 @@ export default defineConfig({
     },
     extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue']
   },
+  // 显式预构建：这些依赖仅在懒加载路由/组件中被引用，若不提前构建，
+  // 首次进入对应页面时 Vite 会在运行中重新预构建，导致旧依赖 URL 失效，
+  // 出现 “504 Outdated Optimize Dep” 并中断正在进行的动态 import。
+  optimizeDeps: {
+    include: ['sm-crypto-v2', 'echarts', 'vue-cropper', 'sortablejs']
+  },
   base: '/element-plus-admin-mini',
   server: {
     host: '0.0.0.0',
     port: 9988
-  },
-  build: {
-    rollupOptions: {
-      input: {
-        index: path.resolve(__dirname, 'index.html'),
-        notice: path.resolve(__dirname, 'notice.html')
-      }
-    }
   }
 })

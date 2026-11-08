@@ -181,15 +181,14 @@
       v-if="postData.buttons.length === 0" 
       type="primary" 
       plain 
-      class="w-full border-dashed"
+      icon="Plus"
+      class="add-btn"
       @click="addButton(-1)"
-    >
-      <i class="i-carbon-add mr-1"></i>添加
-    </el-button>
+    >添加</el-button>
 
     <template v-else>
-      <div v-for="(item, index) in postData.buttons" :key="index" class="flex gap-3 mb-4">
-        <el-row :gutter="10" class="w-full">
+      <div v-for="(item, index) in postData.buttons" :key="index" class="button-row">
+        <el-row :gutter="10">
           <el-col :span="9">
             <el-form-item :prop="'buttons.' + index + '.code'" :rules="{ required: true, message: '请输入权限标识', trigger: 'blur' }">
               <el-input v-model="item.code" placeholder="权限Code,如sys:user:edit" />
@@ -205,7 +204,6 @@
               <el-button @click="addButton(index)" icon="Plus">
               </el-button>
               <el-button @click="removeButton(index)" icon="Delete">
-                <i class="i-ic-round-remove"></i>
               </el-button>
             </el-button-group>
           </el-col>
@@ -219,15 +217,14 @@
       v-if="postData.query.length === 0" 
       type="primary" 
       plain 
-      class="w-full border-dashed"
+      icon="Plus"
+      class="add-btn"
       @click="addQuery(-1)"
-    >
-      <i class="i-carbon-add mr-1"></i>添加
-    </el-button>
+    >添加</el-button>
 
     <template v-else>
-      <div v-for="(item, index) in postData.query" :key="index" class="flex gap-3 mb-4">
-        <el-row :gutter="10" class="w-full">
+      <div v-for="(item, index) in postData.query" :key="index" class="button-row">
+        <el-row :gutter="10">
           <el-col :span="9">
             <el-form-item :prop="'query.' + index + '.key'">
               <el-input v-model="item.key" :placeholder="参数key" />
@@ -428,3 +425,22 @@ onMounted(() => {
   }
 })
 </script>
+
+<style scoped>
+/* 空态“添加”按钮：占满一行并显示虚线边框 */
+.add-btn {
+  width: 100%;
+  border-style: dashed;
+}
+
+/* 权限按钮 / 请求参数的每一行：横向排列，间距 12px，行间距 16px */
+.button-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.button-row :deep(.el-row) {
+  width: 100%;
+}
+</style>
