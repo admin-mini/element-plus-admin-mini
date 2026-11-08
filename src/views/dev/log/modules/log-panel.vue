@@ -23,11 +23,6 @@
               <el-input v-model="$table.query.title" clearable />
             </el-form-item>
             <template #last>
-              <el-radio-group v-model="$table.query.category" @change="$table.search()">
-                <el-radio-button v-for="item in categoryOptions" :key="item.value" :value="item.value">
-                  {{ item.label }}
-                </el-radio-button>
-              </el-radio-group>
               <el-button native-type="submit" type="primary" icon="Search" :loading="$table.loading">
                 搜索
               </el-button>
@@ -85,34 +80,24 @@ import { syncConfirm, formatDateFull } from '@/utils/utils'
 const adminDialog = useAdminDialog()
 
 const props = defineProps({
-  // op=操作日志 exception；vis=访问日志 login/logout
+  // operate=操作日志；login=登录日志
   type: {
     type: String,
-    default: 'op'
+    default: 'operate'
   }
 })
 
-const CONFIG = {
-  op: {
-    chartTitle: '近一周操作日志趋势',
-    categoryOptions: [
-      { label: '操作日志', value: 'operate' },
-      { label: '异常日志', value: 'exception' }
-    ]
-  },
-  vis: {
-    chartTitle: '近一周访问日志趋势',
-    categoryOptions: [
-      { label: '登录日志', value: 'login' },
-      { label: '登出日志', value: 'logout' }
-    ]
-  }
+const CATEGORY_LABELS = {
+  operate: '操作日志',
+  login: '登录日志'
+}
+const CHART_TITLES = {
+  operate: '近一周操作日志趋势',
+  login: '近一周登录日志趋势'
 }
 
-const config = CONFIG[props.type]
-const categoryOptions = config.categoryOptions
-const chartTitle = config.chartTitle
-const defaultQuery = { category: config.categoryOptions[0].value }
+const chartTitle = CHART_TITLES[props.type]
+const defaultQuery = { category: props.type }
 
 const barData = ref([])
 const pieData = ref([])
@@ -123,11 +108,11 @@ function onTableInit(table) {
 }
 
 function categoryLabel(category) {
-  return categoryOptions.find(item => item.value === category)?.label || category
+  return CATEGORY_LABELS[category] || category
 }
 
 function refreshChart() {
-  if (props.type === 'op') {
+  if (props.type === 'operate') {
     api.getOpBarChartData().then(res => (barData.value = res.data || []))
     api.getOpPieChartData().then(res => (pieData.value = res.data || []))
   } else {
@@ -139,7 +124,7 @@ refreshChart()
 
 const mainOption = computed(() => {
   const list = barData.value
-  if (props.type === 'op') {
+  if (props.type === 'operate') {
     // 后端返回平铺结构：{ date, title, count }
     const dates = [...new Set(list.map(item => item.date))]
     const titles = [...new Set(list.map(item => item.title))]
@@ -160,14 +145,11 @@ const mainOption = computed(() => {
   }
   return {
     tooltip: { trigger: 'axis' },
-    legend: { data: ['登录数量', '登出数量'] },
+    legend: { data: ['登录数量'] },
     grid: { left: '10%', right: '5%', bottom: '15%', top: '18%' },
     xAxis: { type: 'category', data: list.map(item => item.date) },
     yAxis: { type: 'value', minInterval: 1 },
-    series: [
-      { name: '登录数量', type: 'line', smooth: true, data: list.map(item => item.loginCount) },
-      { name: '登出数量', type: 'line', smooth: true, data: list.map(item => item.logoutCount) }
-    ]
+    series: [{ name: '登录数量', type: 'line', smooth: true, data: list.map(item => item.loginCount) }]
   }
 })
 
