@@ -1,7 +1,7 @@
 <template>
     <div class="gen-basic" v-loading="loading">
         <el-alert type="warning" :closable="false" show-icon class="gen-basic-tip"
-            title="后端数据源未在表列表接口返回，当前固定使用 master；所属模块/上级目录待后端字段映射修复后才会落库。" />
+            title="数据源由数据表列表接口返回；所属模块/上级目录待后端字段映射修复后才会落库。" />
 
         <el-form ref="formRef" :model="form" :rules="rules" label-width="120px">
             <el-row :gutter="24">
@@ -129,9 +129,6 @@ import { ElMessage } from 'element-plus'
 import * as genApi from '@/api/dev/gen-api'
 import { useSystemStore } from '@/stores/index'
 
-// 后端 dbTables 未返回数据源名，单数据源固定为 master
-const DATA_SOURCE_NAME = 'master'
-
 const systemStore = useSystemStore()
 const formRef = ref()
 const loading = ref(false)
@@ -139,6 +136,8 @@ const dbTableLoading = ref(false)
 const dbTableOptions = ref([])
 const dbColumns = ref([])
 const menuTree = ref([])
+// 详情回显时接口返回的数据源，作为数据表列表未命中时的兜底
+const detailDataSource = ref('')
 
 const form = reactive(createDefaultForm())
 
@@ -229,22 +228,34 @@ function recalcNames() {
 }
 
 function loadOptions() {
+    const tasks = []
     if (!dbTableOptions.value.length) {
-        genApi
-            .getDbTables()
-            .then((res) => {
-                dbTableOptions.value = res.data || []
-            })
-            .catch(() => { })
+        tasks.push(
+            genApi
+                .getDbTables()
+                .then((res) => {
+                    dbTableOptions.value = res.data || []
+                })
+                .catch(() => { })
+        )
     }
     if (!menuTree.value.length) {
-        genApi
-            .getMenuTree()
-            .then((res) => {
-                menuTree.value = res.data || []
-            })
-            .catch(() => { })
+        tasks.push(
+            genApi
+                .getMenuTree()
+                .then((res) => {
+                    menuTree.value = res.data || []
+                })
+                .catch(() => { })
+        )
     }
+    return Promise.all(tasks)
+}
+
+// 数据源由数据表列表接口返回，按表名匹配；详情回显时用接口返回的数据源兜底
+function resolveDataSource() {
+    const table = dbTableOptions.value.find((item) => item.tableName === form.tableName)
+    return table?.dataSource || detailDataSource.value || ''
 }
 
 function loadColumns(autoFill) {
@@ -252,9 +263,15 @@ function loadColumns(autoFill) {
         dbColumns.value = []
         return
     }
+    const dataSourceName = resolveDataSource()
+    if (!dataSourceName) {
+        dbColumns.value = []
+        ElMessage.warning('未获取到该数据表的数据源，请重新选择数据表')
+        return
+    }
     dbTableLoading.value = true
     genApi
-        .getDbTableColumns(DATA_SOURCE_NAME, form.tableName)
+        .getDbTableColumns(dataSourceName, form.tableName)
         .then((res) => {
             dbColumns.value = res.data || []
             if (autoFill) {
@@ -288,10 +305,12 @@ function applyAutoFill(columns) {
 }
 
 function handleTableChange() {
+    detailDataSource.value = ''
     loadColumns(true)
 }
 
 function applyDetail(data) {
+    detailDataSource.value = data.dataSourceName || data.dataSource || ''
     Object.assign(form, {
         id: data.id,
         tableName: data.tableName ?? '',
@@ -322,29 +341,32 @@ function applyDetail(data) {
 function onOpen(id, fallback) {
     Object.assign(form, createDefaultForm())
     form.id = id
+    detailDataSource.value = ''
     nextTick(() => formRef.value?.clearValidate())
-    loadOptions()
 
-    if (fallback) {
-        applyDetail(fallback)
-        loadColumns(false)
-        return
-    }
-    if (!id) {
-        return
-    }
-
-    loading.value = true
-    genApi
-        .getGenDetail(id)
-        .then((res) => {
-            applyDetail(res.data || {})
+    // 先确保数据表列表就绪，再回显并加载字段（需要其中的数据源）
+    return loadOptions().then(() => {
+        if (fallback) {
+            applyDetail(fallback)
             loadColumns(false)
-        })
-        .catch(() => { })
-        .finally(() => {
-            loading.value = false
-        })
+            return
+        }
+        if (!id) {
+            return
+        }
+
+        loading.value = true
+        return genApi
+            .getGenDetail(id)
+            .then((res) => {
+                applyDetail(res.data || {})
+                loadColumns(false)
+            })
+            .catch(() => { })
+            .finally(() => {
+                loading.value = false
+            })
+    })
 }
 
 function buildPayload() {
@@ -371,7 +393,7 @@ function buildPayload() {
         moduleId: form.module || '',
         menuParentId: form.menuPid || '',
         isGrid: Number(form.gridWhether),
-        dataSourceName: DATA_SOURCE_NAME
+        dataSourceName: resolveDataSource()
     }
 }
 
