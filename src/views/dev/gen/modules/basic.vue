@@ -1,7 +1,7 @@
 <template>
     <div class="gen-basic" v-loading="loading">
         <el-alert type="warning" :closable="false" show-icon class="gen-basic-tip"
-            title="数据源由数据表列表接口返回；所属模块/上级目录待后端字段映射修复后才会落库。" />
+            title="数据源由数据表列表接口返回；上级菜单按 menuParentId 提交，需后端新增/编辑参数同步支持后才会落库。" />
 
         <el-form ref="formRef" :model="form" :rules="rules" label-width="120px">
             <el-row :gutter="24">
@@ -54,17 +54,10 @@
                 </el-col>
 
                 <el-col :span="12">
-                    <el-form-item label="所属模块" prop="module">
-                        <el-tree-select v-model="form.module" :data="menuTree" :props="moduleTreeProps"
+                    <el-form-item label="上级菜单" prop="menuParentId">
+                        <el-tree-select v-model="form.menuParentId" :data="menuTree" :props="parentTreeProps"
                             check-strictly :render-after-expand="false" clearable filterable
-                            placeholder="请选择所属模块" style="width: 100%" />
-                    </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                    <el-form-item label="上级目录" prop="menuPid">
-                        <el-tree-select v-model="form.menuPid" :data="menuTree" :props="parentTreeProps"
-                            check-strictly :render-after-expand="false" clearable filterable
-                            placeholder="请选择上级目录" style="width: 100%" />
+                            placeholder="请选择上级菜单" style="width: 100%" />
                     </el-form-item>
                 </el-col>
 
@@ -74,8 +67,8 @@
                     </el-form-item>
                 </el-col>
                 <el-col :span="12">
-                    <el-form-item label="业务名" prop="busName">
-                        <el-input v-model="form.busName" placeholder="如 user" />
+                    <el-form-item label="业务名" prop="businessName">
+                        <el-input v-model="form.businessName" placeholder="如 user" />
                     </el-form-item>
                 </el-col>
 
@@ -94,8 +87,8 @@
                 </el-col>
 
                 <el-col :span="12">
-                    <el-form-item label="使用栅格" prop="gridWhether">
-                        <el-radio-group v-model="form.gridWhether">
+                    <el-form-item label="使用栅格" prop="isGrid">
+                        <el-radio-group v-model="form.isGrid">
                             <el-radio value="1">是</el-radio>
                             <el-radio value="0">否</el-radio>
                         </el-radio-group>
@@ -147,10 +140,9 @@ const rules = {
     moduleName: [{ required: true, message: '请输入模块名', trigger: 'blur' }],
     pluginName: [{ required: true, message: '请输入插件名', trigger: 'blur' }],
     generateType: [{ required: true, message: '请选择生成方式', trigger: 'change' }],
-    module: [{ required: true, message: '请选择所属模块', trigger: 'change' }],
-    menuPid: [{ required: true, message: '请选择上级目录', trigger: 'change' }],
+    menuParentId: [{ required: true, message: '请选择上级菜单', trigger: 'change' }],
     functionName: [{ required: true, message: '请输入功能名', trigger: 'blur' }],
-    busName: [{ required: true, message: '请输入业务名', trigger: 'blur' }],
+    businessName: [{ required: true, message: '请输入业务名', trigger: 'blur' }],
     className: [{ required: true, message: '请输入类名', trigger: 'blur' }],
     formLayout: [{ required: true, message: '请选择表单布局', trigger: 'change' }],
     sortCode: [{ required: true, message: '请输入显示排序', trigger: 'change' }],
@@ -159,13 +151,6 @@ const rules = {
 }
 
 const pkOptions = computed(() => dbColumns.value || [])
-
-const moduleTreeProps = {
-    value: 'id',
-    label: 'title',
-    children: 'children',
-    disabled: (data) => data.type !== 'dir'
-}
 
 const parentTreeProps = {
     value: 'id',
@@ -183,14 +168,13 @@ function createDefaultForm() {
         moduleName: 'biz',
         removeTablePrefix: 1,
         generateType: 'zip',
-        module: '',
-        menuPid: '',
+        menuParentId: '',
         mobileModule: '',
         functionName: '',
-        busName: '',
+        businessName: '',
         className: '',
         formLayout: 'vertical',
-        gridWhether: '1',
+        isGrid: '1',
         sortCode: 99,
         authorName: systemStore.state.user?.name || '',
         packageName: 'com.nuocao'
@@ -222,9 +206,9 @@ function recalcNames() {
     if (!form.tableName) {
         return
     }
-    const baseName = getTableNameNoPrefix()
-    form.className = toPascalCase(baseName)
-    form.busName = toCamelCase(baseName)
+    // 移除前缀仅作用于业务名，类名始终使用完整表名
+    form.className = toPascalCase(form.tableName)
+    form.businessName = toCamelCase(getTableNameNoPrefix())
 }
 
 function loadOptions() {
@@ -319,19 +303,13 @@ function applyDetail(data) {
         moduleName: data.moduleName ?? '',
         removeTablePrefix: Number(data.removeTablePrefix ?? 1),
         generateType: data.generateType || 'zip',
-        module: data.moduleId != null ? data.moduleId : data.module ?? '',
-        menuPid:
-            data.menuParentId != null
-                ? data.menuParentId
-                : data.menuPid != null
-                    ? data.menuPid
-                    : '',
+        menuParentId: data.menuParentId != null ? data.menuParentId : '',
         mobileModule: data.mobileModule || '',
         functionName: data.functionName ?? '',
-        busName: data.businessName || data.busName || '',
+        businessName: data.businessName || data.businessName || '',
         className: data.className ?? '',
         formLayout: data.formLayout || 'vertical',
-        gridWhether: String(data.isGrid ?? data.gridWhether ?? 1),
+        isGrid: String(data.isGrid ?? data.isGrid ?? 1),
         sortCode: data.sortCode ?? 99,
         authorName: data.authorName ?? '',
         packageName: data.packageName ?? ''
@@ -378,21 +356,17 @@ function buildPayload() {
         moduleName: form.moduleName,
         removeTablePrefix: Number(form.removeTablePrefix),
         generateType: form.generateType,
-        module: String(form.module ?? ''),
-        menuPid: String(form.menuPid ?? ''),
+        menuParentId: String(form.menuParentId ?? ''),
         mobileModule: form.mobileModule || '',
         functionName: form.functionName,
-        busName: form.busName,
+        businessName: form.businessName,
         className: form.className,
         formLayout: form.formLayout,
-        gridWhether: String(form.gridWhether),
+        isGrid: String(form.isGrid),
         sortCode: Number(form.sortCode) || 0,
         authorName: form.authorName,
         packageName: form.packageName,
-        // 后端字段映射修复后可直接使用，当前会被忽略
-        moduleId: form.module || '',
-        menuParentId: form.menuPid || '',
-        isGrid: Number(form.gridWhether),
+        isGrid: Number(form.isGrid),
         dataSourceName: resolveDataSource()
     }
 }
@@ -418,10 +392,9 @@ async function onSubmit() {
             ...form,
             ...data,
             id: form.id,
-            businessName: data.businessName || form.busName,
-            isGrid: Number(form.gridWhether),
-            moduleId: form.module,
-            menuParentId: form.menuPid
+            businessName: data.businessName || form.businessName,
+            isGrid: Number(form.isGrid),
+            menuParentId: form.menuParentId
         }
     } finally {
         loading.value = false
