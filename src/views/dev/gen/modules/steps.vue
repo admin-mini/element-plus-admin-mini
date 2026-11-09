@@ -38,8 +38,6 @@
                         </div>
                     </template>
                 </el-result>
-
-                <preview-panel v-if="tableId" :table-id="tableId" />
             </div>
         </div>
 
@@ -63,7 +61,6 @@ import useAdminDialog from '@/plugins/use-admin-dialog'
 import * as genApi from '@/api/dev/gen-api'
 import basic from './basic.vue'
 import configPanel from './config.vue'
-import previewPanel from './preview-panel.vue'
 
 const emits = defineEmits(['closed'])
 const adminDialog = useAdminDialog()
