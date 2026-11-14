@@ -228,8 +228,7 @@ function submitPassword() {
     loginApi
       .login(postData)
       .then((res) => {
-        systemStore.login(res.data)
-        router.replace('/')
+        handleLoginResult(res.data)
       })
       .catch(() => {
         // 登录失败刷新图片验证码，避免旧请求号复用
@@ -277,13 +276,30 @@ function submitSms() {
         validCodeReqId: smsForm.validCodeReqId
       })
       .then((res) => {
-        systemStore.login(res.data)
-        router.replace('/')
+        handleLoginResult(res.data)
       })
       .finally(() => {
         loading.value = false
       })
   })
+}
+
+/**
+ * 统一处理登录结果：
+ * needBindMfa -> 强制 2FA 且未绑定，扫码绑定后重新登录
+ * needMfa     -> 已绑定，输入动态码后才签发 token
+ */
+function handleLoginResult(data) {
+  if (data?.needBindMfa) {
+    openMfaBind(data)
+    return
+  }
+  if (data?.needMfa) {
+    openMfaVerify(data)
+    return
+  }
+  systemStore.login(data)
+  router.replace('/')
 }
 
 // 切换登录方式时清理校验状态
@@ -316,6 +332,39 @@ function openFindPassword() {
   adminDialog({
     component: import('./components/find-password-form.vue'),
     dialogProps: { title: '找回密码', width: '480px' }
+  })
+}
+
+/* ---------------- 2FA 动态码验证 / 首次绑定 ---------------- */
+function openMfaVerify(data) {
+  adminDialog({
+    component: import('./components/mfa-verify-form.vue'),
+    props: {
+      mfaReqId: data.mfaReqId,
+      userId: data.userId,
+      username: data.username,
+      expiresIn: data.mfaExpiresIn || 300,
+      onSuccess: (loginData) => {
+        systemStore.login(loginData)
+        router.replace('/')
+      }
+    },
+    dialogProps: { title: '双重验证', width: '440px', closeOnClickModal: false, class: 'mfa-dialog' }
+  })
+}
+
+function openMfaBind(data) {
+  adminDialog({
+    component: import('./components/mfa-bind-form.vue'),
+    props: {
+      mfaReqId: data.mfaReqId,
+      userId: data.userId,
+      bindId: data.bindId,
+      qrCodeDataUrl: data.qrCodeDataUrl,
+      bindExpiresIn: data.bindExpiresIn || 900,
+      onEnd: () => {}
+    },
+    dialogProps: { title: '绑定身份验证器', width: '460px', closeOnClickModal: false, class: 'mfa-dialog' }
   })
 }
 
@@ -502,6 +551,31 @@ onMounted(() => {
 
   .el-input {
     flex: 1;
+  }
+}
+
+/* 双重验证弹窗（登录动态码验证 / 首次绑定），非 scoped 以覆盖弹窗 */
+.mfa-dialog {
+  overflow: hidden;
+  border-radius: 16px;
+
+  .el-dialog__header {
+    padding: 20px 24px 0;
+    margin-right: 0;
+  }
+
+  .el-dialog__title {
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .el-dialog__headerbtn {
+    top: 14px;
+    right: 14px;
+  }
+
+  .el-dialog__body {
+    padding: 12px 24px 24px;
   }
 }
 </style>

@@ -114,3 +114,27 @@ export function getUpdatePwdPhoneValidCode(data) {
 export function updatePwdByPhone(data) {
   return postAccountQuery('updatePwdByPhone', data)
 }
+
+/**
+ * 获取当前用户 2FA 绑定状态
+ * @returns {Promise<{code,msg,data}>} data 含 bound、status、statusName、activatedAt、lastUsedAt、lockedUntil、failedAttempts
+ */
+export function getMfaStatus() {
+  return ajax.get('/sys/accountCenter/mfa/status')
+}
+
+/**
+ * 发起 2FA 绑定（已登录场景）
+ * @returns {Promise<{code,msg,data}>} data 含 bindId、otpauthUri、qrCodeDataUrl、expiresIn
+ */
+export function mfaBindInit() {
+  return ajax.post('/sys/accountCenter/mfa/bindInit')
+}
+
+/**
+ * 确认 2FA 绑定（已登录场景）
+ * @param {Object} data { bindId, code: 身份验证器动态码 }
+ */
+export function mfaBindConfirm(data) {
+  return postAccountQuery('mfa/bindConfirm', data)
+}

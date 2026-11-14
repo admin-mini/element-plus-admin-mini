@@ -70,6 +70,22 @@ export const register=( registerParams)=> {
   return request("register",registerParams,"post")
 }
 
+/**
+ * 2FA 动态码登录验证（携带登录返回的 mfaReqId 与 userId，成功后才返回 token）
+ * @params {mfaReqId, userId, code}
+ */
+export const loginMfaVerify=(params)=> {
+  return baseRequest("/auth/mfa/loginVerify",params,"post")
+}
+
+/**
+ * 登录流程中未绑定 2FA 的用户确认绑定（成功后需重新登录）
+ * @params {mfaReqId, userId, bindId, code}
+ */
+export const mfaBindConfirmByLogin=(params)=> {
+  return baseRequest("/sys/accountCenter/mfa/bindConfirmByLogin",params,"post")
+}
+
 /** 获取登录用户信息（获取的为当前租户的，每个租户的登录状态单独存储，只是用统一的account登录 */
 export const getLoginUser=()=> {
      return baseRequest("/auth/user/getLoginUser")

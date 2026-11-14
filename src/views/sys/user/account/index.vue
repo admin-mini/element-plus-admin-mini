@@ -11,6 +11,9 @@
         <el-tab-pane label="手机号改密" name="pwdByPhone">
           <updatePwdByPhone :username="detail.username" :phone="detail.phone" />
         </el-tab-pane>
+        <el-tab-pane label="双重验证" name="mfa">
+          <mfa-bind />
+        </el-tab-pane>
       </el-tabs>
     </el-card>
   </div>
@@ -20,6 +23,7 @@
 import updatePwdByOld from './modules/update-pwd-by-old.vue'
 import bindPhone from './modules/bind-phone.vue'
 import updatePwdByPhone from './modules/update-pwd-by-phone.vue'
+import mfaBind from './modules/mfa-bind.vue'
 import { getAccountDetail } from '@/api/sys/user-center-api'
 
 // 账号设置：集中管理密码修改与手机号绑定，原先散落在个人信息页的修改密码已统一迁移至此
