@@ -4,11 +4,13 @@
       <template #search>
         <el-form :inline="true" :model="$table.query" @submit.prevent="$table.search">
           <admin-grid :cols="4" :x-gap="20">
-            <el-form-item label="用户名称">
-              <el-input v-model="$table.query.ownerName" clearable placeholder="支持模糊查询" />
+            <el-form-item label="用户类型">
+              <el-select v-model="$table.query.ownerType" clearable placeholder="全部">
+                <el-option v-for="item in ownerTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
+              </el-select>
             </el-form-item>
-            <el-form-item label="用户ID">
-              <el-input v-model="$table.query.ownerId" clearable />
+            <el-form-item label="用户名">
+              <el-input v-model="$table.query.username" clearable placeholder="请输入完整用户名" />
             </el-form-item>
             <el-form-item label="状态">
               <el-select v-model="$table.query.status" clearable placeholder="全部">
@@ -26,9 +28,12 @@
 
       <template #table>
         <el-table :data="$table.data" v-loading="$table.loading">
-          <el-table-column prop="ownerName" label="用户名称" min-width="140" show-overflow-tooltip />
-          <el-table-column prop="ownerId" label="用户ID" width="180" />
-          <el-table-column prop="ownerType" label="主体类型" width="100" />
+          <el-table-column prop="ownerName" label="用户名" min-width="140" show-overflow-tooltip>
+            <template #default="{ row }">{{ row.ownerName || '-' }}</template>
+          </el-table-column>
+          <el-table-column prop="ownerType" label="用户类型" width="100">
+            <template #default="{ row }">{{ ownerTypeLabel(row.ownerType) }}</template>
+          </el-table-column>
           <el-table-column prop="status" label="状态" width="100">
             <template #default="{ row }">
               <el-tag :type="statusTagType(row.status)">{{ statusLabel(row.status) }}</el-tag>
@@ -41,15 +46,15 @@
           <el-table-column prop="createTime" label="创建时间" width="170" />
           <el-table-column label="操作" width="200" fixed="right">
             <template #default="{ row }">
-              <el-button link type="primary" v-if="$p('dev:mfa:reset')" @click="handleReset(row)">重置</el-button>
+              <el-button link type="primary" v-if="$p('sys:mfa:reset')" @click="handleReset(row)">重置</el-button>
               <el-button
                 link
                 type="warning"
-                v-if="$p('dev:mfa:disable')"
+                v-if="$p('sys:mfa:disable')"
                 :disabled="row.status === 4"
                 @click="handleDisable(row)"
               >失效</el-button>
-              <el-button link type="danger" v-if="$p('dev:mfa:delete')" @click="handleDelete(row)">删除</el-button>
+              <el-button link type="danger" v-if="$p('sys:mfa:delete')" @click="handleDelete(row)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -59,9 +64,14 @@
 </template>
 
 <script setup>
-import * as api from '@/api/dev/mfa-api'
+import * as api from '@/api/sys/mfa-api'
 import message from '@/utils/message'
 import { syncConfirm } from '@/utils/utils'
+
+const ownerTypeOptions = [
+  { label: '账号', value: 'account' },
+  { label: '用户', value: 'user' }
+]
 
 const statusOptions = [
   { label: '绑定中', value: 1 },
@@ -73,6 +83,10 @@ let $table
 
 function onTableInit(table) {
   $table = table
+}
+
+function ownerTypeLabel(ownerType) {
+  return ownerTypeOptions.find((item) => item.value === ownerType)?.label || '-'
 }
 
 function statusLabel(status) {
@@ -90,8 +104,12 @@ function ownerParam(row) {
   return { tenantId: row.tenantId, ownerType: row.ownerType, ownerId: row.ownerId }
 }
 
+function displayName(row) {
+  return row.ownerName || '该用户'
+}
+
 function handleReset(row) {
-  syncConfirm(`确定重置用户“${row.ownerName || row.ownerId}”的2FA失败次数并解锁？`, () => api.resetMfa(ownerParam(row)))
+  syncConfirm(`确定重置用户“${displayName(row)}”的2FA失败次数并解锁？`, () => api.resetMfa(ownerParam(row)))
     .then(() => {
       message.success('重置成功')
       $table.getTable()
@@ -101,7 +119,7 @@ function handleReset(row) {
 
 function handleDisable(row) {
   syncConfirm(
-    `确定失效用户“${row.ownerName || row.ownerId}”的2FA绑定？失效后该用户下次登录需要重新绑定。`,
+    `确定失效用户“${displayName(row)}”的2FA绑定？失效后该用户下次登录需要重新绑定。`,
     () => api.disableMfa(ownerParam(row))
   )
     .then(() => {
@@ -113,7 +131,7 @@ function handleDisable(row) {
 
 function handleDelete(row) {
   syncConfirm(
-    `确定删除用户“${row.ownerName || row.ownerId}”的2FA绑定？删除后该用户下次登录需要重新绑定。`,
+    `确定删除用户“${displayName(row)}”的2FA绑定？删除后该用户下次登录需要重新绑定。`,
     () => api.deleteMfa(ownerParam(row))
   )
     .then(() => {

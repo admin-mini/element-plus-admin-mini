@@ -71,8 +71,8 @@ export const register=( registerParams)=> {
 }
 
 /**
- * 2FA 动态码登录验证（携带登录返回的 mfaReqId 与 userId，成功后才返回 token）
- * @params {mfaReqId, userId, code}
+ * 2FA 动态码登录验证（携带登录返回的 mfaReqId，成功后才返回 token）
+ * @params {mfaReqId, code}
  */
 export const loginMfaVerify=(params)=> {
   return baseRequest("/auth/mfa/loginVerify",params,"post")
@@ -80,7 +80,7 @@ export const loginMfaVerify=(params)=> {
 
 /**
  * 登录流程中未绑定 2FA 的用户确认绑定（成功后需重新登录）
- * @params {mfaReqId, userId, bindId, code}
+ * @params {mfaReqId, bindId, code}
  */
 export const mfaBindConfirmByLogin=(params)=> {
   return baseRequest("/sys/accountCenter/mfa/bindConfirmByLogin",params,"post")

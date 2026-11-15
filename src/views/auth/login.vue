@@ -341,7 +341,6 @@ function openMfaVerify(data) {
     component: import('./components/mfa-verify-form.vue'),
     props: {
       mfaReqId: data.mfaReqId,
-      userId: data.userId,
       username: data.username,
       expiresIn: data.mfaExpiresIn || 300,
       onSuccess: (loginData) => {
@@ -358,7 +357,6 @@ function openMfaBind(data) {
     component: import('./components/mfa-bind-form.vue'),
     props: {
       mfaReqId: data.mfaReqId,
-      userId: data.userId,
       bindId: data.bindId,
       qrCodeDataUrl: data.qrCodeDataUrl,
       bindExpiresIn: data.bindExpiresIn || 900,

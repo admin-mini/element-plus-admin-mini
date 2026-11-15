@@ -1,10 +1,10 @@
 import baseRequest from '../base-request.js'
 
-const request = (url, data, method) => baseRequest(`/dev/mfa/${url}`, data, method)
+const request = (url, data, method) => baseRequest(`/sys/mfa/${url}`, data, method)
 
 /**
  * 2FA 绑定分页
- * @param {Object} data { tenantId, ownerType, ownerId, ownerName, status, current, size }
+ * @param {Object} data { tenantId, ownerType, username, status, current, size }
  */
 export const getMfaPage = (data) => request('page', data)
 
@@ -27,15 +27,15 @@ export const resetMfa = (data) => request('reset', data, 'post')
 export const disableMfa = (data) => request('disable', data, 'post')
 
 /**
- * 删除绑定（逻辑删除，用户下次登录可重新绑定）
+ * 删除绑定（用户下次登录可重新绑定）
  * @param {Object} data { tenantId, ownerType, ownerId }
  */
 export const deleteMfa = (data) => request('delete', data, 'post')
 
-const requestEvent = (url, data, method) => baseRequest(`/dev/mfaEvent/${url}`, data, method)
+const requestEvent = (url, data, method) => baseRequest(`/sys/mfaEvent/${url}`, data, method)
 
 /**
  * 2FA 操作事件分页（只读审计）
- * @param {Object} data { tenantId, ownerType, ownerId, event, startTime, endTime, current, size }
+ * @param {Object} data { tenantId, ownerType, username, event, startTime, endTime, current, size }
  */
 export const getMfaEventPage = (data) => requestEvent('page', data)

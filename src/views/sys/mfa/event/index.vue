@@ -4,8 +4,13 @@
       <template #search>
         <el-form :inline="true" :model="$table.query" @submit.prevent="$table.search">
           <admin-grid :cols="4" :x-gap="20">
-            <el-form-item label="用户ID">
-              <el-input v-model="$table.query.ownerId" clearable />
+            <el-form-item label="用户类型">
+              <el-select v-model="$table.query.ownerType" clearable placeholder="全部">
+                <el-option v-for="item in ownerTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="用户名">
+              <el-input v-model="$table.query.username" clearable placeholder="请输入完整用户名" />
             </el-form-item>
             <el-form-item label="事件类型">
               <el-select v-model="$table.query.event" clearable placeholder="全部">
@@ -38,8 +43,12 @@
               <el-tag :type="eventTagType(row.event)">{{ eventLabel(row.event) }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="ownerId" label="用户ID" width="180" />
-          <el-table-column prop="ownerType" label="主体类型" width="100" />
+          <el-table-column prop="ownerName" label="用户名" min-width="140" show-overflow-tooltip>
+            <template #default="{ row }">{{ row.ownerName || '-' }}</template>
+          </el-table-column>
+          <el-table-column prop="ownerType" label="用户类型" width="100">
+            <template #default="{ row }">{{ ownerTypeLabel(row.ownerType) }}</template>
+          </el-table-column>
           <el-table-column prop="refId" label="关联ID" min-width="180" show-overflow-tooltip />
           <el-table-column prop="ip" label="IP" width="140" />
           <el-table-column prop="detail" label="详情" min-width="200" show-overflow-tooltip />
@@ -53,7 +62,12 @@
 
 <script setup>
 import { ref } from 'vue'
-import * as api from '@/api/dev/mfa-api'
+import * as api from '@/api/sys/mfa-api'
+
+const ownerTypeOptions = [
+  { label: '账号', value: 'account' },
+  { label: '用户', value: 'user' }
+]
 
 const eventOptions = [
   { label: '发起绑定', value: 'bind_init' },
@@ -80,6 +94,10 @@ function onTimeChange(range) {
   if (!$table) return
   $table.query.startTime = range?.[0] || undefined
   $table.query.endTime = range?.[1] || undefined
+}
+
+function ownerTypeLabel(ownerType) {
+  return ownerTypeOptions.find((item) => item.value === ownerType)?.label || '-'
 }
 
 function eventLabel(event) {

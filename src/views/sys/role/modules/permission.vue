@@ -5,7 +5,7 @@
       <el-select v-if="mode === 'data'" v-model="scopeType" class="scope-select" placeholder="选择数据权限" @change="handleScopeChange"><el-option v-for="item in scopeOptions" :key="item.value" :label="item.label" :value="item.value" /></el-select>
     </div>
     <el-alert v-if="mode === 'data' && scopeType === 'custom'" title="请选择允许访问的部门" type="info" :closable="false" show-icon />
-    <el-table v-if="mode === 'permission'" class="permission-table" :data="treeData" row-key="id" border default-expand-all :tree-props="{ children: 'children' }">
+    <el-table v-if="mode === 'permission'" class="permission-table" :data="menuTableData" row-key="id" border default-expand-all :tree-props="{ children: 'children' }">
       <el-table-column prop="title" label="菜单名称" min-width="180">
         <template #default="{ row }"><el-checkbox :model-value="isNodeChecked(row)" :indeterminate="isNodeIndeterminate(row)" @change="(checked) => toggleNode(row, checked)">{{ row.title || row.name }}</el-checkbox></template>
       </el-table-column>
@@ -32,9 +32,16 @@ const roleId = computed(() => props.role.id), roleName = computed(() => props.ro
 const scopeOptions = [{ value: 'all', label: '全部数据' }, { value: 'custom', label: '自定义数据' }, { value: 'only', label: '本部门数据' }, { value: 'child', label: '本部门级子部门数据' }, { value: 'self', label: '仅本人自己数据' }]
 const normalizeId = (id) => String(id)
 const childrenOf = (node) => Array.isArray(node?.children) ? node.children : []
-const getButtons = (node) => childrenOf(node).filter((item) => String(item.type).toLowerCase() === 'button')
+const isButton = (node) => String(node?.type).toLowerCase() === 'button'
+// 表格节点由原始树复制而来，复制时把直属按钮存到 buttons，供“操作授权”列渲染
+const getButtons = (node) => node?.buttons || childrenOf(node).filter(isButton)
+// 表格树只渲染目录/菜单，按钮不再作为子行出现
+function toMenuTree(nodes) { return nodes.filter((node) => !isButton(node)).map((node) => { const children = toMenuTree(childrenOf(node)); return { ...node, buttons: childrenOf(node).filter(isButton), children: children.length ? children : undefined } }) }
+const menuTableData = computed(() => toMenuTree(treeData.value))
+// 勾选状态以原始树为准（含按钮），保证勾选菜单时其下按钮同步
+const rawNodeMap = computed(() => { const map = new Map(); treeData.value.forEach((node) => flatten(node).forEach((item) => map.set(normalizeId(item.id), item))); return map })
 function flatten(node, result = []) { if (!node) return result; result.push(node); childrenOf(node).forEach((child) => flatten(child, result)); return result }
-function descendants(node) { return flatten(node).map((item) => normalizeId(item.id)) }
+function descendants(node) { return flatten(rawNodeMap.value.get(normalizeId(node.id)) || node).map((item) => normalizeId(item.id)) }
 function isNodeChecked(node) { const ids = descendants(node); return ids.length > 0 && ids.every((id) => selectedIds.value.has(id)) }
 function isNodeIndeterminate(node) { const ids = descendants(node); const count = ids.filter((id) => selectedIds.value.has(id)).length; return count > 0 && count < ids.length }
 function toggleId(id, checked) { const next = new Set(selectedIds.value); checked ? next.add(normalizeId(id)) : next.delete(normalizeId(id)); selectedIds.value = next }

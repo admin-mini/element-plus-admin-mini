@@ -53,7 +53,6 @@ import * as loginApi from '@/api/auth/auth-login-api'
 
 const props = defineProps({
   mfaReqId: { type: String, required: true },
-  userId: { type: [Number, String], required: true },
   username: { type: String, default: '' },
   expiresIn: { type: Number, default: 300 },
   onSuccess: { type: Function, default: () => {} }
@@ -103,7 +102,6 @@ function submit() {
     loginApi
       .loginMfaVerify({
         mfaReqId: props.mfaReqId,
-        userId: props.userId,
         code: form.code
       })
       .then((res) => {

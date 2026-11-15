@@ -66,7 +66,6 @@ import * as loginApi from '@/api/auth/auth-login-api'
 
 const props = defineProps({
   mfaReqId: { type: String, required: true },
-  userId: { type: [Number, String], required: true },
   bindId: { type: String, required: true },
   qrCodeDataUrl: { type: String, default: '' },
   bindExpiresIn: { type: Number, default: 900 },
@@ -117,7 +116,6 @@ function submit() {
     loginApi
       .mfaBindConfirmByLogin({
         mfaReqId: props.mfaReqId,
-        userId: props.userId,
         bindId: props.bindId,
         code: form.code
       })

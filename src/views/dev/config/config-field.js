@@ -109,7 +109,12 @@ export const SMS_CHANNEL_OPTIONS = [
   { label: '阿里云', value: 'aliyun' },
   { label: '腾讯云', value: 'tencent' }
 ]
-
+/** 是否开启2FA验证码，取自后端 SmsChannelEnum */
+export const MFA_ENFORCEMENT_OPTIONS = [
+  { label: '关闭', value: '0' },
+  { label: '启用（可选）', value: '1' },
+  { label: '启用（必绑）', value: '2' }
+]
 const CONFIG_FIELDS = {
   /* ---------------- 系统配置 sys_config ---------------- */
   sys_title: {
@@ -170,11 +175,20 @@ const CONFIG_FIELDS = {
     ],
     tip: '值存为逗号分隔字符串，如 password,sms'
   },
+  
   account_find_password_enable: {
     type: 'switch',
     label: '开启短信找回密码'
   },
-
+  //  SmsConstants.sys_default_sms_channel_code
+  account_login_2fa_verify: {
+    type: 'radio',
+    label: '2FA动态码',
+    options: MFA_ENFORCEMENT_OPTIONS,
+    rules: [fieldRules.required('请选择是否开启2FA动态码', 'change')],
+     tip: '使用用户名密码登录时，需要使用动态码'
+  },
+  
   /* ---------------- 密码配置 password_config ---------------- */
   auth_login_pwd_error_count_limit: {
     type: 'number',
