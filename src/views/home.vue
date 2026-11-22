@@ -17,6 +17,9 @@
                 </el-col>
                 <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
                     <div class="user-status-right">
+                        <div class="ws-demo-entry">
+                            <el-button size="small" type="primary" plain @click="openWsDemo">WS演示</el-button>
+                        </div>
                         <div class="task-stats">
                             <div class="stat-btn">
                             <span class="dot warning"></span>
@@ -132,7 +135,17 @@
 import { ref, onMounted, onUnmounted,computed } from 'vue'
 import * as echarts from 'echarts'
 import { useSystemStore } from '@/stores/index'
+import useAdminDialog from '@/plugins/use-admin-dialog'
 const systemStore = useSystemStore()
+const adminDialog = useAdminDialog()
+
+// 打开 WebSocket 演示弹窗（全局连接已由 App.vue 建立，这里只做订阅展示）
+const openWsDemo = () => {
+  adminDialog({
+    component: import('./websocket.vue'),
+    dialogProps: { title: 'WebSocket 演示', width: '760px', top: '8vh', alignCenter: false }
+  })
+}
 
 
 const userInfo = computed(()=>{
@@ -262,6 +275,10 @@ $text-sub: var(--el-text-color-regular);
         justify-content: space-between;
         height: 100%;
         padding: 5px 0;
+
+        .ws-demo-entry {
+          margin-bottom: 8px;
+        }
 
         .task-stats {
           display: flex;
